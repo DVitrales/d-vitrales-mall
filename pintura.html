@@ -4,15 +4,127 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galería de Pintura - D'Vitrales Mall</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5eee5;
+      color: #3f3025;
+    }
+
+    header {
+      padding: 35px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #d9c0a5, #f5dfc5);
+    }
+
+    h1 {
+      font-size: 32px;
+      margin: 10px 0;
+    }
+
+    .bienvenida {
+      font-size: 18px;
+    }
+
+    .intro {
+      text-align: center;
+      padding: 25px 20px 10px;
+    }
+
+    .intro p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .galeria {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      padding: 20px 15px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .obra {
+      background: white;
+      border-radius: 18px;
+      padding: 20px 10px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+    }
+
+    .obra .icono {
+      font-size: 55px;
+      margin-bottom: 10px;
+    }
+
+    .obra h2 {
+      font-size: 17px;
+      margin: 8px 0;
+    }
+
+    .obra p {
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .proximamente {
+      text-align: center;
+      margin: 20px;
+      padding: 20px;
+      background: #ead8c3;
+      border-radius: 18px;
+      font-size: 15px;
+    }
+
+    footer {
+      margin-top: 20px;
+      padding: 25px;
+      text-align: center;
+      background: #dfc9b0;
+    }
+  </style>
 </head>
 
 <body>
 
-  <h1>🎨 Galería de Pintura</h1>
+  <header>
+    <div class="bienvenida">✨ Bienvenidos ✨</div>
+    <h1>🎨 Galería de Pintura</h1>
+  </header>
 
-  <p>Bienvenidos a la Galería de Pintura de D'Vitrales Mall.</p>
+  <section class="intro">
+    <p>
+      Un espacio para descubrir obras, artistas,
+      colores e historias que cobran vida a través del arte.
+    </p>
+  </section>
 
-  <p>Un espacio donde las obras de arte cobran vida.</p>
+  <section class="galeria">
+
+    <div class="obra">
+      <div class="icono">🖼️</div>
+      <h2>Obras destacadas</h2>
+      <p>Próximamente conocerás nuestras primeras obras.</p>
+    </div>
+
+    <div class="obra">
+      <div class="icono">🎨</div>
+      <h2>Nuevos artistas</h2>
+      <p>Descubre artistas y sus propuestas.</p>
+    </div>
+
+  </section>
+
+  <div class="proximamente">
+    ✨ La galería crecerá con nuevas obras y colecciones.
+  </div>
+
+  <footer>
+    🏛️ D'Vitrales Mall · Galería de Pintura
+  </footer>
 
 </body>
 </html>
