@@ -3,134 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centro Comercial D'Vitrales</title>
+    <title>D'Vitrales Mall - Centro Comercial Virtual & Galerías de Arte</title>
+    <!-- Librería A-Frame para Realidad Virtual -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <style>
         body {
             margin: 0;
+            overflow: hidden;
             font-family: Arial, sans-serif;
+        }
+        /* Pantalla de Bienvenida / Anfitriona de la Portada */
+        #modal-bienvenida {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 18, 14, 0.92);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .tarjeta-bienvenida {
             background: #f7f1e8;
-            color: #3f3025;
-            text-align: center;
-        }
-
-        .encabezado {
-            padding: 35px 20px;
-            background: linear-gradient(135deg, #ead7c0, #f8e9d7);
-        }
-
-        .encabezado h1 {
-            font-size: 38px;
-            margin: 10px 0;
-        }
-
-        .bienvenida {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        .subtitulo {
-            font-size: 16px;
-        }
-
-        .secciones {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            padding: 25px 15px;
-            max-width: 800px;
-            margin: auto;
-        }
-
-        .tarjeta {
-            background: white;
-            padding: 25px 10px;
-            border-radius: 18px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.10);
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .icono {
-            font-size: 38px;
-        }
-
-        .tarjeta h2 {
-            font-size: 18px;
-            margin: 10px 0 5px;
-        }
-
-        .tarjeta p {
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .especial {
-            grid-column: 1 / -1;
-        }
-
-        .pie-de-pagina {
+            color: #21150e;
+            width: 380px;
+            max-width: 90%;
             padding: 25px;
-            background: #e8d5c1;
-            margin-top: 10px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            border: 2px solid #d4af37;
+        }
+        .avatar-anfitriona {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #d4af37;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .tarjeta-bienvenida h2 {
+            margin-top: 0;
+            color: #4a2e1b;
+            font-size: 22px;
+        }
+        .tarjeta-bienvenida p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #3d2c21;
+        }
+        .btn-ingresar {
+            background: #5c3a21;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #d4af37;
+            width: 100%;
+        }
+        .btn-ingresar:hover {
+            background: #7a4f30;
+        }
+
+        /* Menú flotante de acceso rápido a departamentos dentro del Mall */
+        #menu-departamentos {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            background: rgba(43, 31, 24, 0.85);
+            padding: 10px 15px;
+            border-radius: 25px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border: 1px solid #d4af37;
+            max-width: 95%;
+        }
+        .btn-depto {
+            background: #d4af37;
+            color: #21150e;
+            padding: 8px 14px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .btn-depto:hover {
+            background: #f3c653;
         }
     </style>
 </head>
 <body>
-    <header class="encabezado">
-        <div class="bienvenida">✨ Bienvenidos ✨</div>
-        <h1>Centro Comercial D'Vitrales</h1>
-        <div class="subtitulo">Un mundo donde el arte cobra vida</div>
-    </header>
 
-    <section class="secciones">
-        <a href="pintura.html" class="tarjeta">
-            <div class="icono">🎨</div>
-            <h2>Galería de Pintura</h2>
-            <p>Descubre obras de arte y nuevos artistas.</p>
-        </a>
-
-        <a href="escultura.html" class="tarjeta">
-            <div class="icono">🗿</div>
-            <h2>Galería de Escultura</h2>
-            <p>Explora formas, materiales y creatividad.</p>
-        </a>
-
-        <div class="tarjeta">
-            <div class="icono">🏺</div>
-            <h2>Piezas Decorativas</h2>
-            <p>Encuentra piezas especiales para tu espacio.</p>
+    <!-- VENTANA DE BIENVENIDA CON LA ANFITRIONA D'VITRALES -->
+    <div id="modal-bienvenida">
+        <div class="tarjeta-bienvenida">
+            <!-- Aquí puedes usar tu imagen de la anfitriona en el repositorio (ej. el nombre de tu archivo de imagen) -->
+            <img src="IMG_20260916_10....jpg" alt="Anfitriona D'Vitrales" class="avatar-anfitriona" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300'">
+            <h2>¡Bienvenido a D'Vitrales Mall!</h2>
+            <p>Hola, soy tu anfitriona virtual. Es un placer recibirte en nuestro exclusivo centro comercial de arte, alta costura, literatura y diseño. Permíteme guiarte a través de nuestras galerías y experiencias únicas.</p>
+            <button class="btn-ingresar" onclick="entrarAlMall()">Explorar el Mall 🏛️✨</button>
         </div>
+    </div>
 
-        <div class="tarjeta">
-            <div class="icono">🍫</div>
-            <h2>Galería de Chocolateros</h2>
-            <p>Arte en Cacao - Creaciones únicas en chocolate.</p>
-        </div>
+    <!-- MENÚ DE ACCESO RÁPIDO INFERIOR EN EL LOBBY -->
+    <div id="menu-departamentos">
+        <a href="pintura.html" class="btn-depto">🖼️ Pintura</a>
+        <a href="escultura.html" class="btn-depto">🗿 Escultura</a>
+        <a href="moda.html" class="btn-depto">👗 Moda</a>
+        <a href="libreria.html" class="btn-depto">📚 Librería</a>
+        <a href="chocolates.html" class="btn-depto">🍫 Chocolates</a>
+        <a href="decoracion.html" class="btn-depto">🏡 Decoración</a>
+        <a href="musica.html" class="btn-depto">🎵 Música</a>
+    </div>
 
-        <div class="tarjeta">
-            <div class="icono">👗</div>
-            <h2>Boutique de Moda</h2>
-            <p>Moda, pasarela y nuevas colecciones.</p>
-        </div>
+    <!-- ESCENARIO 3D DEL LOBBY / FACHADA PRINCIPAL -->
+    <a-scene>
+        <!-- Iluminación del Lobby -->
+        <a-light type="ambient" color="#ffedd0" intensity="0.8"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.7" position="2 6 3"></a-light>
+        <a-light type="point" color="#ffca99" intensity="0.6" position="0 4 0"></a-light>
 
-        <div class="tarjeta especial">
-            <div class="icono">📚</div>
-            <h2>Libros y Series Digitales</h2>
-            <p>Historias, novelas y series para descubrir.</p>
-        </div>
+        <!-- Cielo exterior del centro comercial -->
+        <a-sky color="#120d0a"></a-sky>
 
-        <div class="tarjeta especial">
-            <div class="icono">🎵🎬</div>
-            <h2>Música y Videoclips</h2>
-            <p>Descubre canciones originales, melodías y producciones audiovisuales.</p>
-        </div>
-    </section>
+        <!-- Gran Piso del Lobby -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#2b1d15"></a-plane>
 
-    <footer class="pie-de-pagina">
-        D'Vitrales Mall · Arte · Moda · Historias
-    </footer>
+        <!-- PAREDES Y FACHADA INTERIOR DEL LOBBY -->
+        <a-plane position="0 4 -10" width="20" height="8" color="#4a3528"></a-plane>
+        <a-plane position="-10 4 0" rotation="0 90 0" width="20" height="8" color="#3d2c21"></a-plane>
+        <a-plane position="10 4 0" rotation="0 -90 0" width="20" height="8" color="#3d2c21"></a-plane>
+
+        <!-- MONUMENTO / FUENTE O MOSTRADOR CENTRAL DEL LOBBY -->
+        <a-box position="0 0.8 0" width="3" height="1.6" depth="3" color="#21150e"></a-box>
+        <a-box position="0 1.62 0" width="3.4" height="0.05" depth="3.4" color="#d4af37"></a-box>
+        
+        <!-- Elemento escultórico central de bienvenida en el lobby -->
+        <a-cylinder position="0 2.4 0" radius="0.5" height="1.2" color="#5c3a21"></a-cylinder>
+        <a-sphere position="0 3.2 0" radius="0.35" color="#d4af37"></a-sphere>
+
+        <!-- CARTEL / PLACA PRINCIPAL DE BIENVENIDA EN LA PARED DEL FONDO -->
+        <a-box position="0 3.5 -9.85" width="6" height="1.8" depth="0.1" color="#d4af37"></a-box>
+        <a-plane position="0 3.5 -9.75" width="5.6" height="1.4" color="#f7f1e8"></a-plane>
+
+        <!-- Cámara de recorrido libre -->
+        <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 6">
+            <a-cursor color="#ead7c0"></a-cursor>
+        </a-entity>
+    </a-scene>
+
+    <script>
+        function entrarAlMall() {
+            // Oculta la pantalla de bienvenida y permite explorar el lobby 3D
+            document.getElementById('modal-bienvenida').style.display = 'none';
+        }
+    </script>
+
 </body>
 </html>
-
-    
