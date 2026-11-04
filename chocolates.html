@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Chocolatería Fina - D'Vitrales Mall</title>
+    <!-- Librería A-Frame para Realidad Virtual -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+        .boton-volver {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            background: rgba(63, 48, 37, 0.85);
+            color: #f7f1e8;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid #ead7c0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botón para regresar al centro comercial -->
+    <a href="index.html" class="boton-volver">⬅ Volver al Centro Comercial</a>
+
+    <!-- Escenario 3D de la Galería de Chocolate -->
+    <a-scene>
+        <!-- Iluminación cálida, dorada y brillante para resaltar los destellos del chocolate -->
+        <a-light type="ambient" color="#ffedd0" intensity="0.8"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.7" position="2 6 3"></a-light>
+        <a-light type="point" color="#ffca99" intensity="0.6" position="0 4 0"></a-light>
+
+        <!-- Cielo exterior oscuro y elegante -->
+        <a-sky color="#1a120e"></a-sky>
+
+        <!-- Piso de la galería (Efecto mármol o madera fina en tonos cacao) -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="16" height="16" color="#2b1d15"></a-plane>
+
+        <!-- PAREDES DE LA GALERÍA DE CHOCOLATE -->
+        <a-plane position="0 3 -8" width="16" height="6" color="#4a3528"></a-plane>
+        <a-plane position="-8 3 0" rotation="0 90 0" width="16" height="6" color="#3d2c21"></a-plane>
+        <a-plane position="8 3 0" rotation="0 -90 0" width="16" height="6" color="#3d2c21"></a-plane>
+        <a-plane position="0 3 8" rotation="0 180 0" width="16" height="6" color="#4a3528"></a-plane>
+
+        <!-- VITRINA CENTRAL PRINCIPAL (Para la Muñeca / Muñeco de Chocolate Destacado) -->
+        <!-- Base de la vitrina -->
+        <a-box position="0 0.8 0" width="2.2" height="1.6" depth="2.2" color="#21150e"></a-box>
+        <!-- Tapa de cristal / exhibidor superior -->
+        <a-box position="0 1.9 0" width="2.4" height="0.05" depth="2.4" color="#d4af37"></a-box>
+        
+        <!-- Simulación de la Escultura Comestible (Muñeca/Muñeco de Chocolate en el centro) -->
+        <!-- Cuerpo estilizado de chocolate -->
+        <a-cylinder position="0 2.4 0" radius="0.3" height="0.9" color="#5c3a21"></a-cylinder>
+        <!-- Cabeza de chocolate -->
+        <a-sphere position="0 3.0 0" radius="0.22" color="#4a2e1b"></a-sphere>
+
+        <!-- VITRINAS LATERALES (Para colecciones de sabores y tamaños variados) -->
+        <!-- Vitrina Izquierda -->
+        <a-box position="-5 0.7 -2" width="1.6" height="1.4" depth="1.6" color="#21150e"></a-box>
+        <a-box position="-5 1.42 -2" width="1.8" height="0.04" depth="1.8" color="#d4af37"></a-box>
+        <!-- Pieza de chocolate en vitrina izquierda -->
+        <a-box position="-5 1.7 -2" width="0.5" height="0.5" depth="0.5" color="#6b4423" rotation="0 45 0"></a-box>
+
+        <!-- Vitrina Derecha -->
+        <a-box position="5 0.7 -2" width="1.6" height="1.4" depth="1.6" color="#21150e"></a-box>
+        <a-box position="5 1.42 -2" width="1.8" height="0.04" depth="1.8" color="#d4af37"></a-box>
+        <!-- Pieza de chocolate en vitrina derecha -->
+        <a-box position="5 1.7 -2" width="0.5" height="0.5" depth="0.5" color="#3b220c" rotation="0 30 0"></a-box>
+
+        <!-- PANELES DE INFORMACIÓN / PLACAS DE SABORES (Simulados en las paredes) -->
+        <a-box position="0 2.2 -7.9" width="3" height="1" depth="0.05" color="#d4af37"></a-box>
+        <a-plane position="0 2.2 -7.85" width="2.8" height="0.8" color="#f7f1e8"></a-plane>
+
+        <!-- Cámara de recorrido libre -->
+        <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 6">
+            <a-cursor color="#ead7c0"></a-cursor>
+        </a-entity>
+    </a-scene>
+
+</body>
+</html>
