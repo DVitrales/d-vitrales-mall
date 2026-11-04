@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galería de Escultura 3D - D'Vitrales Mall</title>
+    <title>Galería de Escultura y Arte Tridimensional - D'Vitrales Mall</title>
     <!-- Librería A-Frame para Realidad Virtual -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <style>
@@ -12,63 +12,190 @@
             top: 20px;
             left: 20px;
             z-index: 999;
-            background: rgba(63, 48, 37, 0.85);
+            background: rgba(43, 31, 24, 0.85);
             color: #f7f1e8;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 10px 18px;
+            border-radius: 20px;
             text-decoration: none;
             font-family: Arial, sans-serif;
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border: 1px solid #ead7c0;
+            border: 1px solid #d4af37;
+            font-size: 14px;
+        }
+        .boton-carrito {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: #d4af37;
+            color: #21150e;
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 14px;
+        }
+        /* Ventana Modal / Emergente de Información, Ficha y Artista */
+        #modal-producto {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 340px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: #f7f1e8;
+            color: #21150e;
+            padding: 20px;
+            border-radius: 12px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-family: Arial, sans-serif;
+            border: 2px solid #d4af37;
+        }
+        #modal-producto h3 { margin-top: 0; color: #4a2e1b; border-bottom: 1px solid #d4af37; padding-bottom: 5px; }
+        .seccion-info { font-size: 13px; margin: 8px 0; line-height: 1.4; }
+        .btn-accion {
+            background: #5c3a21;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-cerrar {
+            background: #a94442;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Botón para regresar al index -->
-    <a href="index.html" class="boton-volver">⬅ Volver al Centro Comercial</a>
+    <!-- Botones de navegación superior -->
+    <a href="index.html" class="boton-volver">⬅ Volver al Mall</a>
+    <button class="boton-carrito" onclick="verCarrito()">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
 
-    <!-- Escenario 3D para Esculturas -->
+    <!-- VENTANA EMERGENTE (MODAL) PARA ESCULTURA Y ARTISTA -->
+    <div id="modal-producto">
+        <h3 id="modal-titulo">Título de la Escultura</h3>
+        <p class="seccion-info"><strong>Escultor/a:</strong> <span id="modal-artista">Nombre del Artista</span></p>
+        <p class="seccion-info"><strong>Biografía:</strong> <span id="modal-bio">Hoja de vida corta del creador.</span></p>
+        <p class="seccion-info"><strong>Materiales y Dimensiones:</strong> <span id="modal-material">Detalles técnicos de la obra.</span></p>
+        <p class="seccion-info"><strong>Precio:</strong> <span id="modal-precio" style="color: #8b5a2b; font-weight: bold;">$0.00</span></p>
+        <button class="btn-accion" onclick="agregarAlCarritoFromModal()">Adquirir Escultura 🗿</button>
+        <button class="btn-accion btn-cerrar" onclick="cerrarModal()">Cerrar</button>
+    </div>
+
+    <!-- Escenario 3D de la Galería de Escultura -->
     <a-scene>
-        <!-- Iluminación museográfica cálida para resaltar volúmenes -->
-        <a-light type="ambient" color="#fceee9" intensity="0.7"></a-light>
-        <a-light type="directional" color="#ffffff" intensity="0.6" position="2 5 2"></a-light>
+        <!-- Iluminación Museográfica para destacar relieves y volúmenes -->
+        <a-light type="ambient" color="#f5ebe0" intensity="0.7"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.7" position="2 6 3"></a-light>
+        <a-light type="point" color="#fffaed" intensity="0.5" position="0 4 0"></a-light>
 
-        <!-- Cielo del entorno -->
-        <a-sky color="#241d1a"></a-sky>
+        <!-- Cielo exterior -->
+        <a-sky color="#1a120e"></a-sky>
 
-        <!-- Piso de la Galería -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="14" height="14" color="#d9c4b0"></a-plane>
+        <!-- Piso de la galería -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="16" height="16" color="#33241c"></a-plane>
 
-        <!-- Paredes del Salón de Esculturas -->
-        <a-plane position="0 3 -7" width="14" height="6" color="#f4ede2"></a-plane>
-        <a-plane position="-7 3 0" rotation="0 90 0" width="14" height="6" color="#ebdccb"></a-plane>
-        <a-plane position="7 3 0" rotation="0 -90 0" width="14" height="6" color="#ebdccb"></a-plane>
-        <a-plane position="0 3 7" rotation="0 180 0" width="14" height="6" color="#f4ede2"></a-plane>
+        <!-- PAREDES DE LA GALERÍA -->
+        <a-plane position="0 3 -8" width="16" height="6" color="#423126"></a-plane>
+        <a-plane position="-8 3 0" rotation="0 90 0" width="16" height="6" color="#38291f"></a-plane>
+        <a-plane position="8 3 0" rotation="0 -90 0" width="16" height="6" color="#38291f"></a-plane>
 
-        <!-- PEDESTAL CENTRAL (Para escultura principal o de gran formato) -->
-        <a-box position="0 0.7 0" width="1.8" height="1.4" depth="1.8" color="#3f3025"></a-box>
-        <a-box position="0 1.42 0" width="2" height="0.04" depth="2" color="#5c4435"></a-box>
+        <!-- ================= MOBILIARIO DECORATIVO DEL SALÓN ================= -->
+        <!-- Banca central de descanso -->
+        <a-box position="0 0.3 -2" width="2.4" height="0.4" depth="0.9" color="#21150e"></a-box>
+        <a-box position="0 0.7 -2.35" width="2.4" height="0.6" depth="0.15" color="#21150e"></a-box>
 
-        <!-- PEDESTAL LATERAL IZQUIERDO -->
-        <a-box position="-4 0.5 -2" width="1.2" height="1.0" depth="1.2" color="#4a382b"></a-box>
-        <a-box position="-4 1.02 -2" width="1.3" height="0.04" depth="1.3" color="#5c4435"></a-box>
+        <!-- Macetero o elemento decorativo en esquina -->
+        <a-box position="-6 0.5 -6" width="1.0" height="1.0" depth="1.0" color="#261c14"></a-box>
 
-        <!-- PEDESTAL LATERAL DERECHO -->
-        <a-box position="4 0.5 -2" width="1.2" height="1.0" depth="1.2" color="#4a382b"></a-box>
-        <a-box position="4 1.02 -2" width="1.3" height="0.04" depth="1.3" color="#5c4435"></a-box>
+        <!-- ================= ESCULTURA 1: PEDESTAL CENTRAL (PRINCIPAL) ================= -->
+        <a-entity position="0 0 0" onclick="mostrarDetalle('Esencia Orgánica', 'Vances Studio', 'Taller especializado en la volumetría contemporánea, la pureza de las formas y el diseño de autor.', 'Resina de alta densidad con acabado en pátina de bronce envejecido. 45 x 30 x 25 cm.', 850.00)">
+            <!-- Pedestal -->
+            <a-box position="0 0.8 0" width="1.4" height="1.6" depth="1.4" color="#261c14"></a-box>
+            <a-box position="0 1.62 0" width="1.6" height="0.04" depth="1.6" color="#d4af37"></a-box>
+            <!-- Pieza escultórica abstracta / figurativa -->
+            <a-cylinder position="0 2.3 0" radius="0.35" height="1.2" color="#6e503f"></a-cylinder>
+            <a-sphere position="0 3.0 0" radius="0.28" color="#543b2d"></a-sphere>
+        </a-entity>
 
-        <!-- BANCA DE DESCANSO PARA VISITANTES -->
-        <a-box position="0 0.4 4" width="3" height="0.4" depth="0.8" color="#3f3025"></a-box>
-        <a-box position="-1.2 0.2 4" width="0.2" height="0.4" depth="0.7" color="#241d1a"></a-box>
-        <a-box position="1.2 0.2 4" width="0.2" height="0.4" depth="0.7" color="#241d1a"></a-box>
+        <!-- ================= ESCULTURA 2: PEDESTAL IZQUIERDO ================= -->
+        <a-entity position="-5 0 -3" onclick="mostrarDetalle('Equilibrio Ancestral', 'Gema', 'Escultora y restauradora con amplia trayectoria en la reinterpretación de texturas clásicas.', 'Piedra reconstruida y pasta mineral pulida a mano. 50 x 20 x 20 cm.', 720.00)">
+            <!-- Pedestal -->
+            <a-box position="0 0.7 0" width="1.2" height="1.4" depth="1.2" color="#261c14"></a-box>
+            <a-box position="0 1.42 0" width="1.4" height="0.04" depth="1.4" color="#d4af37"></a-box>
+            <!-- Pieza escultórica -->
+            <a-box position="0 2.0 0" width="0.5" height="1.0" depth="0.5" color="#7a5c47" rotation="0 45 0"></a-box>
+        </a-entity>
+
+        <!-- ================= ESCULTURA 3: PEDESTAL DERECHO ================= -->
+        <a-entity position="5 0 -3" onclick="mostrarDetalle('Danza de Sombras', 'Yandier', 'Artista multidisciplinaria enfocada en la expresión profunda del movimiento y la plástica visual.', 'Pulpa de papel texturizada de alta resistencia con acabado metálico. 60 x 25 x 25 cm.', 790.00)">
+            <!-- Pedestal -->
+            <a-box position="0 0.7 0" width="1.2" height="1.4" depth="1.2" color="#261c14"></a-box>
+            <a-box position="0 1.42 0" width="1.4" height="0.04" depth="1.4" color="#d4af37"></a-box>
+            <!-- Pieza escultórica -->
+            <a-box position="0 2.0 0" width="0.6" height="1.1" depth="0.4" color="#4a3324" rotation="0 30 0"></a-box>
+        </a-entity>
 
         <!-- Cámara de recorrido libre -->
         <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 6">
             <a-cursor color="#ead7c0"></a-cursor>
         </a-entity>
     </a-scene>
+
+    <script>
+        let esculturaActual = "";
+        let precioActual = 0;
+        let carrito = [];
+
+        function mostrarDetalle(titulo, artista, bio, material, precio) {
+            esculturaActual = titulo;
+            precioActual = precio;
+            document.getElementById('modal-titulo').innerText = titulo;
+            document.getElementById('modal-artista').innerText = artista;
+            document.getElementById('modal-bio').innerText = bio;
+            document.getElementById('modal-material').innerText = material;
+            document.getElementById('modal-precio').innerText = "$" + precio.toFixed(2);
+            document.getElementById('modal-producto').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-producto').style.display = 'none';
+        }
+
+        function agregarAlCarritoFromModal() {
+            carrito.push({ nombre: esculturaActual, precio: precioActual });
+            document.getElementById('contador-carrito').innerText = carrito.length;
+            alert("¡La escultura \"" + esculturaActual + "\" se ha añadido al carrito de compras!");
+            cerrarModal();
+        }
+
+        function verCarrito() {
+            if (carrito.length === 0) {
+                alert("Tu carrito de compras en esta galería está vacío.");
+            } else {
+                let resumen = "Esculturas en tu carrito:\n";
+                let total = 0;
+                carrito.forEach((item, index) => {
+                    resumen += (index + 1) + ". " + item.nombre + " - $" + item.precio.toFixed(2) + "\n";
+                    total += item.precio;
+                });
+                resumen += "\nTotal de la selección: $" + total.toFixed(2);
+                alert(resumen);
+            }
+        }
+    </script>
 
 </body>
 </html>
