@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muebles y Decoración del Hogar - D'Vitrales Mall</title>
+    <!-- Librería A-Frame para Realidad Virtual -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+        .boton-volver {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            background: rgba(63, 48, 37, 0.85);
+            color: #f7f1e8;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid #ead7c0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botón para regresar al centro comercial -->
+    <a href="index.html" class="boton-volver">⬅ Volver al Centro Comercial</a>
+
+    <!-- Escenario 3D de Decoración de Interiores y Exteriores -->
+    <a-scene>
+        <!-- Iluminación cálida y natural para ambientes de hogar -->
+        <a-light type="ambient" color="#fff5ec" intensity="0.8"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.6" position="3 6 4"></a-light>
+
+        <!-- Cielo exterior -->
+        <a-sky color="#1f1815"></a-sky>
+
+        <!-- Piso principal de la tienda (Efecto madera elegante) -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="16" height="16" color="#382921"></a-plane>
+
+        <!-- PAREDES DE LA TIENDA DE DECORACIÓN -->
+        <a-plane position="0 3 -8" width="16" height="6" color="#4a3a30"></a-plane>
+        <a-plane position="-8 3 0" rotation="0 90 0" width="16" height="6" color="#3d2f26"></a-plane>
+        <a-plane position="8 3 0" rotation="0 -90 0" width="16" height="6" color="#3d2f26"></a-plane>
+        <a-plane position="0 3 8" rotation="0 180 0" width="16" height="6" color="#4a3a30"></a-plane>
+
+        <!-- ================= ZONA DE INTERIORES (Lado Izquierdo) ================= -->
+        <!-- Sofá de diseño para Sala de Estar -->
+        <a-box position="-4 0.4 -2" width="2.6" height="0.6" depth="1.2" color="#5c4435"></a-box>
+        <!-- Respaldo del sofá -->
+        <a-box position="-4 1.1 -2.5" width="2.6" height="1.0" depth="0.2" color="#5c4435"></a-box>
+        <!-- Mesa de centro decorativa -->
+        <a-box position="-4 0.3 -0.5" width="1.4" height="0.4" depth="0.8" color="#261c14"></a-box>
+
+        <!-- ================= ZONA DE EXTERIORES / TERRAZA (Lado Derecho) ================= -->
+        <!-- Tarima de madera clara para exterior -->
+        <a-plane position="4 0.02 -2" rotation="-90 0 0" width="5" height="5" color="#544033"></a-plane>
+        <!-- Mesa de jardín -->
+        <a-box position="4 0.5 -2" width="1.6" height="0.8" depth="1.6" color="#2b1f17"></a-box>
+        <!-- Silla de terraza 1 -->
+        <a-box position="4 0.4 -0.8" width="0.6" height="0.8" depth="0.6" color="#423126"></a-box>
+        <!-- Silla de terraza 2 -->
+        <a-box position="4 0.4 -3.2" width="0.6" height="0.8" depth="0.6" color="#423126"></a-box>
+
+        <!-- ================= MUEBLE / MOSTRADOR CENTRAL ================= -->
+        <a-box position="0 0.5 3" width="3.2" height="1.0" depth="1.2" color="#2b1f17"></a-box>
+        <a-box position="0 1.02 3" width="3.4" height="0.04" depth="1.4" color="#d4af37"></a-box>
+
+        <!-- Panel / Letrero informativo de la tienda en el fondo -->
+        <a-box position="0 2.5 -7.9" width="4" height="1" depth="0.05" color="#d4af37"></a-box>
+        <a-plane position="0 2.5 -7.85" width="3.8" height="0.8" color="#f7f1e8"></a-plane>
+
+        <!-- Cámara de recorrido libre -->
+        <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 6">
+            <a-cursor color="#ead7c0"></a-cursor>
+        </a-entity>
+    </a-scene>
+
+</body>
+</html>
