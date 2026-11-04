@@ -14,20 +14,80 @@
             z-index: 999;
             background: rgba(63, 48, 37, 0.85);
             color: #f7f1e8;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 10px 18px;
+            border-radius: 20px;
             text-decoration: none;
             font-family: Arial, sans-serif;
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             border: 1px solid #ead7c0;
+            font-size: 14px;
+        }
+        .boton-carrito {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: #d4af37;
+            color: #21150e;
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 14px;
+        }
+        /* Ventana Modal / Emergente de Información y Producto */
+        #modal-producto {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background: #f7f1e8;
+            color: #21150e;
+            padding: 20px;
+            border-radius: 12px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-family: Arial, sans-serif;
+            border: 2px solid #d4af37;
+        }
+        #modal-producto h3 { margin-top: 0; color: #4a2e1b; }
+        .btn-accion {
+            background: #5c3a21;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-cerrar {
+            background: #a94442;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Botón para regresar al centro comercial -->
-    <a href="index.html" class="boton-volver">⬅ Volver al Centro Comercial</a>
+    <!-- Botones de navegación superior -->
+    <a href="index.html" class="boton-volver">⬅ Volver al Mall</a>
+    <button class="boton-carrito" onclick="verCarrito()">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
+
+    <!-- VENTANA EMERGENTE (MODAL) PARA DETALLES Y COMPRA -->
+    <div id="modal-producto">
+        <h3 id="modal-titulo">Detalle del Producto</h3>
+        <p id="modal-descripcion">Información detallada sobre tamaños y sabores.</p>
+        <p><strong>Precio:</strong> <span id="modal-precio">$45.00</span></p>
+        <button class="btn-accion" onclick="agregarAlCarritoDesdeModal()">Añadir al Carrito 🛍️</button>
+        <button class="btn-accion btn-cerrar" onclick="cerrarModal()">Cerrar</button>
+    </div>
 
     <!-- Escenario 3D de la Galería de Chocolate -->
     <a-scene>
@@ -39,7 +99,7 @@
         <!-- Cielo exterior oscuro y elegante -->
         <a-sky color="#1a120e"></a-sky>
 
-        <!-- Piso de la galería (Efecto mármol o madera fina en tonos cacao) -->
+        <!-- Piso de la galería -->
         <a-plane position="0 0 0" rotation="-90 0 0" width="16" height="16" color="#2b1d15"></a-plane>
 
         <!-- PAREDES DE LA GALERÍA DE CHOCOLATE -->
@@ -48,32 +108,33 @@
         <a-plane position="8 3 0" rotation="0 -90 0" width="16" height="6" color="#3d2c21"></a-plane>
         <a-plane position="0 3 8" rotation="0 180 0" width="16" height="6" color="#4a3528"></a-plane>
 
-        <!-- VITRINA CENTRAL PRINCIPAL (Para la Muñeca / Muñeco de Chocolate Destacado) -->
-        <!-- Base de la vitrina -->
-        <a-box position="0 0.8 0" width="2.2" height="1.6" depth="2.2" color="#21150e"></a-box>
-        <!-- Tapa de cristal / exhibidor superior -->
-        <a-box position="0 1.9 0" width="2.4" height="0.05" depth="2.4" color="#d4af37"></a-box>
-        
-        <!-- Simulación de la Escultura Comestible (Muñeca/Muñeco de Chocolate en el centro) -->
-        <!-- Cuerpo estilizado de chocolate -->
-        <a-cylinder position="0 2.4 0" radius="0.3" height="0.9" color="#5c3a21"></a-cylinder>
-        <!-- Cabeza de chocolate -->
-        <a-sphere position="0 3.0 0" radius="0.22" color="#4a2e1b"></a-sphere>
+        <!-- ================= VITRINA CENTRAL PRINCIPAL (Interactiva) ================= -->
+        <a-entity position="0 0 0" onclick="mostrarDetalle('Muñeca de Chocolate de Lujo', 'Figura artesanal tallada a mano con acabados finos. Altura: 30 cm. Sabores disponibles: Cacao 70% amargo, Chocolate con leche y relleno de avellanas.', 55.00)">
+            <!-- Base de la vitrina -->
+            <a-box position="0 0.8 0" width="2.2" height="1.6" depth="2.2" color="#21150e"></a-box>
+            <!-- Tapa de cristal / exhibidor superior -->
+            <a-box position="0 1.9 0" width="2.4" height="0.05" depth="2.4" color="#d4af37"></a-box>
+            <!-- Escultura Comestible (Muñeca/Muñeco de Chocolate en el centro) -->
+            <a-cylinder position="0 2.4 0" radius="0.3" height="0.9" color="#5c3a21"></a-cylinder>
+            <a-sphere position="0 3.0 0" radius="0.22" color="#4a2e1b"></a-sphere>
+        </a-entity>
 
-        <!-- VITRINAS LATERALES (Para colecciones de sabores y tamaños variados) -->
-        <!-- Vitrina Izquierda -->
-        <a-box position="-5 0.7 -2" width="1.6" height="1.4" depth="1.6" color="#21150e"></a-box>
-        <a-box position="-5 1.42 -2" width="1.8" height="0.04" depth="1.8" color="#d4af37"></a-box>
-        <!-- Pieza de chocolate en vitrina izquierda -->
-        <a-box position="-5 1.7 -2" width="0.5" height="0.5" depth="0.5" color="#6b4423" rotation="0 45 0"></a-box>
+        <!-- ================= VITRINAS LATERALES (Para colecciones de sabores y tamaños) ================= -->
+        <!-- Vitrina Izquierda Interactiva -->
+        <a-entity position="-5 0 -2" onclick="mostrarDetalle('Colección Bombones de Autor', 'Caja de exhibición con 12 piezas esculpidas. Sabores surtidos: Maracuyá, Café espresso, Almendras y Cacao orgánico.', 35.00)">
+            <a-box position="0 0.7 0" width="1.6" height="1.4" depth="1.6" color="#21150e"></a-box>
+            <a-box position="0 1.42 0" width="1.8" height="0.04" depth="1.8" color="#d4af37"></a-box>
+            <a-box position="0 1.7 0" width="0.5" height="0.5" depth="0.5" color="#6b4423" rotation="0 45 0"></a-box>
+        </a-entity>
 
-        <!-- Vitrina Derecha -->
-        <a-box position="5 0.7 -2" width="1.6" height="1.4" depth="1.6" color="#21150e"></a-box>
-        <a-box position="5 1.42 -2" width="1.8" height="0.04" depth="1.8" color="#d4af37"></a-box>
-        <!-- Pieza de chocolate en vitrina derecha -->
-        <a-box position="5 1.7 -2" width="0.5" height="0.5" depth="0.5" color="#3b220c" rotation="0 30 0"></a-box>
+        <!-- Vitrina Derecha Interactiva -->
+        <a-entity position="5 0 -2" onclick="mostrarDetalle('Escultura de Oso de Chocolate', 'Figura tridimensional decorativa de chocolate blanco y oscuro. Altura: 25 cm. Ideal para regalos y coleccionistas.', 42.00)">
+            <a-box position="0 0.7 0" width="1.6" height="1.4" depth="1.6" color="#21150e"></a-box>
+            <a-box position="0 1.42 0" width="1.8" height="0.04" depth="1.8" color="#d4af37"></a-box>
+            <a-box position="0 1.7 0" width="0.5" height="0.5" depth="0.5" color="#3b220c" rotation="0 30 0"></a-box>
+        </a-entity>
 
-        <!-- PANELES DE INFORMACIÓN / PLACAS DE SABORES (Simulados en las paredes) -->
+        <!-- PANELES DE INFORMACIÓN / PLACAS DE SABORES EN LA PARED -->
         <a-box position="0 2.2 -7.9" width="3" height="1" depth="0.05" color="#d4af37"></a-box>
         <a-plane position="0 2.2 -7.85" width="2.8" height="0.8" color="#f7f1e8"></a-plane>
 
@@ -82,6 +143,47 @@
             <a-cursor color="#ead7c0"></a-cursor>
         </a-entity>
     </a-scene>
+
+    <script>
+        let productoActual = "";
+        let precioActual = 0;
+        let carrito = [];
+
+        function mostrarDetalle(nombre, descripcion, precio) {
+            productoActual = nombre;
+            precioActual = precio;
+            document.getElementById('modal-titulo').innerText = nombre;
+            document.getElementById('modal-descripcion').innerText = descripcion;
+            document.getElementById('modal-precio').innerText = "$" + precio.toFixed(2);
+            document.getElementById('modal-producto').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-producto').style.display = 'none';
+        }
+
+        function agregarAlCarritoDesdeModal() {
+            carrito.push({ nombre: productoActual, precio: precioActual });
+            document.getElementById('contador-carrito').innerText = carrito.length;
+            alert("¡" + productoActual + " fue agregado al carrito con éxito!");
+            cerrarModal();
+        }
+
+        function verCarrito() {
+            if (carrito.length === 0) {
+                alert("Tu carrito de compras en esta tienda está vacío.");
+            } else {
+                let resumen = "Productos en tu carrito:\n";
+                let total = 0;
+                carrito.forEach((item, index) => {
+                    resumen += (index + 1) + ". " + item.nombre + " - $" + item.precio.toFixed(2) + "\n";
+                    total += item.precio;
+                });
+                resumen += "\nTotal a pagar: $" + total.toFixed(2);
+                alert(resumen);
+            }
+        }
+    </script>
 
 </body>
 </html>
