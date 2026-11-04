@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Música y Videos - D'Vitrales Mall</title>
+    <!-- Librería A-Frame para Realidad Virtual -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+        .boton-volver {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            background: rgba(63, 48, 37, 0.85);
+            color: #f7f1e8;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid #ead7c0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botón para regresar al centro comercial -->
+    <a href="index.html" class="boton-volver">⬅ Volver al Centro Comercial</a>
+
+    <!-- Escenario 3D de Música y Videoclips -->
+    <a-scene>
+        <!-- Iluminación moderna y ambiental para estudio musical -->
+        <a-light type="ambient" color="#f2e6ff" intensity="0.7"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.6" position="0 6 3"></a-light>
+        <!-- Luz puntual con toque creativo/musical -->
+        <a-light type="point" color="#e0c3fc" intensity="0.5" position="0 4 -2"></a-light>
+
+        <!-- Cielo exterior -->
+        <a-sky color="#141017"></a-sky>
+
+        <!-- Piso principal del estudio (Efecto acústico oscuro y elegante) -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="16" height="16" color="#241b2b"></a-plane>
+
+        <!-- PAREDES DE LA TIENDA DE MÚSICA -->
+        <a-plane position="0 3 -8" width="16" height="6" color="#362942"></a-plane>
+        <a-plane position="-8 3 0" rotation="0 90 0" width="16" height="6" color="#2b1f36"></a-plane>
+        <a-plane position="8 3 0" rotation="0 -90 0" width="16" height="6" color="#2b1f36"></a-plane>
+        <a-plane position="0 3 8" rotation="0 180 0" width="16" height="6" color="#362942"></a-plane>
+
+        <!-- ================= PANTALLA PRINCIPAL DE VIDEOCLIPS ================= -->
+        <!-- Estructura de la pantalla gigante -->
+        <a-box position="0 3 -7.9" width="8.2" height="4.4" depth="0.1" color="#120d17"></a-box>
+        <!-- Panel de visualización de video -->
+        <a-plane position="0 3 -7.83" width="7.8" height="4.0" color="#050308"></a-plane>
+        <!-- Simulación de anuncio / barra interactiva publicitaria inferior -->
+        <a-box position="0 0.8 -7.8" width="4.5" height="0.6" depth="0.05" color="#9b5de5"></a-box>
+
+        <!-- ================= ZONA DE EXHIBICIÓN DE ÁLBUMES Y DISCOS ================= -->
+        <!-- Estante Izquierdo de Música -->
+        <a-box position="-7 1.5 -2" width="0.4" height="3" depth="2.5" color="#1c1424"></a-box>
+        <!-- Portadas de discos decorativas en la pared izquierda -->
+        <a-box position="-7.82 2.2 -2" rotation="0 90 0" width="1.2" height="1.2" depth="0.04" color="#f15bb5"></a-box>
+
+        <!-- Estante Derecho de Música -->
+        <a-box position="7 1.5 -2" width="0.4" height="3" depth="2.5" color="#1c1424"></a-box>
+        <!-- Portadas de discos decorativas en la pared derecha -->
+        <a-box position="7.82 2.2 -2" rotation="0 -90 0" width="1.2" height="1.2" depth="0.04" color="#00bbf9"></a-box>
+
+        <!-- ================= ASIENTOS / ZONA DE ESCRUCHA PARA VISITANTES ================= -->
+        <a-box position="0 0.4 -2" width="3.2" height="0.5" depth="1" color="#4a355c"></a-box>
+        <a-box position="0 0.9 -2.4" width="3.2" height="0.8" depth="0.2" color="#4a355c"></a-box>
+
+        <!-- Panel Informativo de la Tienda -->
+        <a-box position="0 5.4 -7.9" width="3.5" height="0.8" depth="0.05" color="#f15bb5"></a-box>
+
+        <!-- Cámara de recorrido libre -->
+        <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 6">
+            <a-cursor color="#ead7c0"></a-cursor>
+        </a-entity>
+    </a-scene>
+
+</body>
+</html>
