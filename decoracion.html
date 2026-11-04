@@ -12,28 +12,94 @@
             top: 20px;
             left: 20px;
             z-index: 999;
-            background: rgba(63, 48, 37, 0.85);
+            background: rgba(43, 31, 24, 0.85);
             color: #f7f1e8;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 10px 18px;
+            border-radius: 20px;
             text-decoration: none;
             font-family: Arial, sans-serif;
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border: 1px solid #ead7c0;
+            border: 1px solid #d4af37;
+            font-size: 14px;
+        }
+        .boton-carrito {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: #d4af37;
+            color: #21150e;
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 14px;
+        }
+        /* Ventana Modal / Emergente de Información de Decoración */
+        #modal-producto {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 340px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: #f7f1e8;
+            color: #21150e;
+            padding: 20px;
+            border-radius: 12px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-family: Arial, sans-serif;
+            border: 2px solid #d4af37;
+        }
+        #modal-producto h3 { margin-top: 0; color: #4a2e1b; border-bottom: 1px solid #d4af37; padding-bottom: 5px; }
+        .seccion-info { font-size: 13px; margin: 8px 0; line-height: 1.4; }
+        .btn-accion {
+            background: #5c3a21;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-cerrar {
+            background: #a94442;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Botón para regresar al centro comercial -->
-    <a href="index.html" class="boton-volver">⬅ Volver al Centro Comercial</a>
+    <!-- Botones de navegación superior -->
+    <a href="index.html" class="boton-volver">⬅ Volver al Mall</a>
+    <button class="boton-carrito" onclick="verCarrito()">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
+
+    <!-- VENTANA EMERGENTE (MODAL) PARA MUEBLE Y DISEÑO -->
+    <div id="modal-producto">
+        <h3 id="modal-titulo">Nombre de la Pieza</h3>
+        <p class="seccion-info"><strong>Estudio / Diseñador:</strong> <span id="modal-artista">Vances Studio</span></p>
+        <p class="seccion-info"><strong>Descripción y Estilo:</strong> <span id="modal-bio">Confort y estética refinada para embellecer espacios.</span></p>
+        <p class="seccion-info"><strong>Materiales y Uso:</strong> <span id="modal-material">Estructura de madera noble y acabados para interior/exterior.</span></p>
+        <p class="seccion-info"><strong>Precio:</strong> <span id="modal-precio" style="color: #8b5a2b; font-weight: bold;">$0.00</span></p>
+        <button class="btn-accion" onclick="agregarAlCarritoFromModal()">Adquirir Mueble 🏡</button>
+        <button class="btn-accion btn-cerrar" onclick="cerrarModal()">Cerrar</button>
+    </div>
 
     <!-- Escenario 3D de Decoración de Interiores y Exteriores -->
     <a-scene>
         <!-- Iluminación cálida y natural para ambientes de hogar -->
         <a-light type="ambient" color="#fff5ec" intensity="0.8"></a-light>
         <a-light type="directional" color="#ffffff" intensity="0.6" position="3 6 4"></a-light>
+        <a-light type="point" color="#fffaed" intensity="0.5" position="0 4 0"></a-light>
 
         <!-- Cielo exterior -->
         <a-sky color="#1f1815"></a-sky>
@@ -45,39 +111,87 @@
         <a-plane position="0 3 -8" width="16" height="6" color="#4a3a30"></a-plane>
         <a-plane position="-8 3 0" rotation="0 90 0" width="16" height="6" color="#3d2f26"></a-plane>
         <a-plane position="8 3 0" rotation="0 -90 0" width="16" height="6" color="#3d2f26"></a-plane>
-        <a-plane position="0 3 8" rotation="0 180 0" width="16" height="6" color="#4a3a30"></a-plane>
 
-        <!-- ================= ZONA DE INTERIORES (Lado Izquierdo) ================= -->
-        <!-- Sofá de diseño para Sala de Estar -->
-        <a-box position="-4 0.4 -2" width="2.6" height="0.6" depth="1.2" color="#5c4435"></a-box>
-        <!-- Respaldo del sofá -->
-        <a-box position="-4 1.1 -2.5" width="2.6" height="1.0" depth="0.2" color="#5c4435"></a-box>
-        <!-- Mesa de centro decorativa -->
-        <a-box position="-4 0.3 -0.5" width="1.4" height="0.4" depth="0.8" color="#261c14"></a-box>
+        <!-- ================= ZONA DE INTERIORES (LADO IZQUIERDO - INTERACTIVA) ================= -->
+        <a-entity position="0 0 0" onclick="mostrarDetalle('Sofá Modular de Lujo (Interior)', 'D'Vitrales Home', 'Diseño ergonómico y elegante para salas de estar. Tapizado en tela de alta resistencia con tonos cálidos y orgánicos.', 'Madera tratada y cojines de alta densidad. Uso exclusivo para interiores.', 480.00)">
+            <!-- Sofá de diseño para Sala de Estar -->
+            <a-box position="-4 0.4 -2" width="2.6" height="0.6" depth="1.2" color="#5c4435"></a-box>
+            <!-- Respaldo del sofá -->
+            <a-box position="-4 1.1 -2.5" width="2.6" height="1.0" depth="0.2" color="#5c4435"></a-box>
+        </a-entity>
 
-        <!-- ================= ZONA DE EXTERIORES / TERRAZA (Lado Derecho) ================= -->
+        <!-- Mesa de centro de interiores -->
+        <a-entity position="0 0 0" onclick="mostrarDetalle('Mesa de Centro Minimalista', 'Vances Studio', 'Mesa baja de líneas limpias en madera oscura, ideal como pieza central decorativa.', 'Madera noble pulida. Dimensiones: 140 x 80 cm.', 190.00)">
+            <a-box position="-4 0.3 -0.5" width="1.4" height="0.4" depth="0.8" color="#261c14"></a-box>
+        </a-entity>
+
+        <!-- ================= ZONA DE EXTERIORES / TERRAZA (LADO DERECHO - INTERACTIVA) ================= -->
         <!-- Tarima de madera clara para exterior -->
         <a-plane position="4 0.02 -2" rotation="-90 0 0" width="5" height="5" color="#544033"></a-plane>
-        <!-- Mesa de jardín -->
-        <a-box position="4 0.5 -2" width="1.6" height="0.8" depth="1.6" color="#2b1f17"></a-box>
-        <!-- Silla de terraza 1 -->
-        <a-box position="4 0.4 -0.8" width="0.6" height="0.8" depth="0.6" color="#423126"></a-box>
-        <!-- Silla de terraza 2 -->
-        <a-box position="4 0.4 -3.2" width="0.6" height="0.8" depth="0.6" color="#423126"></a-box>
 
-        <!-- ================= MUEBLE / MOSTRADOR CENTRAL ================= -->
-        <a-box position="0 0.5 3" width="3.2" height="1.0" depth="1.2" color="#2b1f17"></a-box>
-        <a-box position="0 1.02 3" width="3.4" height="0.04" depth="1.4" color="#d4af37"></a-box>
+        <a-entity position="0 0 0" onclick="mostrarDetalle('Set de Terraza & Jardín', 'D'Vitrales Outdoor', 'Mobiliario resistente a la intemperie diseñado para crear espacios de descanso al aire libre con total sofisticación.', 'Incluye mesa principal y dos sillones de madera teñida anti-humedad.', 650.00)">
+            <!-- Mesa de jardín -->
+            <a-box position="4 0.5 -2" width="1.6" height="0.8" depth="1.6" color="#2b1f17"></a-box>
+            <!-- Silla de terraza 1 -->
+            <a-box position="4 0.4 -0.8" width="0.6" height="0.8" depth="0.6" color="#423126"></a-box>
+            <!-- Silla de terraza 2 -->
+            <a-box position="4 0.4 -3.2" width="0.6" height="0.8" depth="0.6" color="#423126"></a-box>
+        </a-entity>
 
-        <!-- Panel / Letrero informativo de la tienda en el fondo -->
-        <a-box position="0 2.5 -7.9" width="4" height="1" depth="0.05" color="#d4af37"></a-box>
-        <a-plane position="0 2.5 -7.85" width="3.8" height="0.8" color="#f7f1e8"></a-plane>
+        <!-- ================= MOSTRADOR CENTRAL ================= -->
+        <a-entity position="0 0 0" onclick="mostrarDetalle('Escultura Decorativa de Recibidor', 'Gema', 'Pieza ornamental exclusiva para mesas de entrada o consolas principales.', 'Cerámica y detalles en pátina dorada. Altura: 40 cm.', 150.00)">
+            <a-box position="0 0.5 3" width="3.2" height="1.0" depth="1.2" color="#2b1f17"></a-box>
+            <a-box position="0 1.02 3" width="3.4" height="0.04" depth="1.4" color="#d4af37"></a-box>
+        </a-entity>
 
         <!-- Cámara de recorrido libre -->
         <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 6">
             <a-cursor color="#ead7c0"></a-cursor>
         </a-entity>
     </a-scene>
+
+    <script>
+        let muebleActual = "";
+        let precioActual = 0;
+        let carrito = [];
+
+        function mostrarDetalle(titulo, artista, bio, material, precio) {
+            muebleActual = titulo;
+            precioActual = precio;
+            document.getElementById('modal-titulo').innerText = titulo;
+            document.getElementById('modal-artista').innerText = artista;
+            document.getElementById('modal-bio').innerText = bio;
+            document.getElementById('modal-material').innerText = material;
+            document.getElementById('modal-precio').innerText = "$" + precio.toFixed(2);
+            document.getElementById('modal-producto').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-producto').style.display = 'none';
+        }
+
+        function agregarAlCarritoFromModal() {
+            carrito.push({ nombre: muebleActual, precio: precioActual });
+            document.getElementById('contador-carrito').innerText = carrito.length;
+            alert("¡La pieza \"" + muebleActual + "\" se ha añadido al carrito de decoración!");
+            cerrarModal();
+        }
+
+        function verCarrito() {
+            if (carrito.length === 0) {
+                alert("Tu carrito de compras en esta tienda de decoración está vacío.");
+            } else {
+                let resumen = "Artículos en tu carrito de Decoración:\n";
+                let total = 0;
+                carrito.forEach((item, index) => {
+                    resumen += (index + 1) + ". " + item.nombre + " - $" + item.precio.toFixed(2) + "\n";
+                    total += item.precio;
+                });
+                resumen += "\nTotal de la selección: $" + total.toFixed(2);
+                alert(resumen);
+            }
+        }
+    </script>
 
 </body>
 </html>
