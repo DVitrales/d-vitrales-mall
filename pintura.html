@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galería de Pintura 3D - D'Vitrales Mall</title>
-    <!-- Librería A-Frame para Realidad Virtual en 3D -->
+    <title>Galería de Pintura y Bellas Artes - D'Vitrales Mall</title>
+    <!-- Librería A-Frame para Realidad Virtual -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <style>
         .boton-volver {
@@ -12,64 +12,187 @@
             top: 20px;
             left: 20px;
             z-index: 999;
-            background: rgba(63, 48, 37, 0.85);
+            background: rgba(43, 31, 24, 0.85);
             color: #f7f1e8;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 10px 18px;
+            border-radius: 20px;
             text-decoration: none;
             font-family: Arial, sans-serif;
             font-weight: bold;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border: 1px solid #ead7c0;
+            border: 1px solid #d4af37;
+            font-size: 14px;
+        }
+        .boton-carrito {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: #d4af37;
+            color: #21150e;
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 14px;
+        }
+        /* Ventana Modal / Emergente de Información, Ficha y Artista */
+        #modal-producto {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 340px;
+            max-height: 85vh;
+            overflow-y: auto;
+            background: #f7f1e8;
+            color: #21150e;
+            padding: 20px;
+            border-radius: 12px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-family: Arial, sans-serif;
+            border: 2px solid #d4af37;
+        }
+        #modal-producto h3 { margin-top: 0; color: #4a2e1b; border-bottom: 1px solid #d4af37; padding-bottom: 5px; }
+        .seccion-info { font-size: 13px; margin: 8px 0; line-height: 1.4; }
+        .btn-accion {
+            background: #5c3a21;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-cerrar {
+            background: #a94442;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Botón para regresar al index sin perderse -->
-    <a href="index.html" class="boton-volver">⬅ Volver al Centro Comercial</a>
+    <!-- Botones de navegación superior -->
+    <a href="index.html" class="boton-volver">⬅ Volver al Mall</a>
+    <button class="boton-carrito" onclick="verCarrito()">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
 
-    <!-- Escenario 3D Inmersivo -->
+    <!-- VENTANA EMERGENTE (MODAL) PARA OBRA Y ARTISTA -->
+    <div id="modal-producto">
+        <h3 id="modal-titulo">Título de la Obra</h3>
+        <p class="seccion-info"><strong>Artista:</strong> <span id="modal-artista">Nombre del Artista</span></p>
+        <p class="seccion-info"><strong>Biografía:</strong> <span id="modal-bio">Hoja de vida corta del artista.</span></p>
+        <p class="seccion-info"><strong>Formato y Material:</strong> <span id="modal-material">Óleo sobre lienzo, dimensiones.</span></p>
+        <p class="seccion-info"><strong>Precio:</strong> <span id="modal-precio" style="color: #8b5a2b; font-weight: bold;">$0.00</span></p>
+        <button class="btn-accion" onclick="agregarAlCarritoDesdeModal()">Adquirir Obra 🎨</button>
+        <button class="btn-accion btn-cerrar" onclick="cerrarModal()">Cerrar</button>
+    </div>
+
+    <!-- Escenario 3D de la Galería de Pintura -->
     <a-scene>
-        <!-- Luces del espacio -->
-        <a-light type="ambient" color="#fff5ea" intensity="0.8"></a-light>
-        <a-light type="directional" color="#ffffff" intensity="0.5" position="-1 4 1"></a-light>
+        <!-- Iluminación Museográfica Cálida -->
+        <a-light type="ambient" color="#fceee9" intensity="0.7"></a-light>
+        <a-light type="directional" color="#ffffff" intensity="0.6" position="0 6 3"></a-light>
+        <a-light type="point" color="#fffaed" intensity="0.5" position="0 4 0"></a-light>
 
-        <!-- Cielo / Ambiente exterior -->
-        <a-sky color="#2c221e"></a-sky>
+        <!-- Cielo exterior -->
+        <a-sky color="#1c1614"></a-sky>
 
-        <!-- Piso de la Galería -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="12" height="12" color="#e8d5c1"></a-plane>
+        <!-- Piso de la galería (Madera fina y elegante) -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="16" height="16" color="#3d2f26"></a-plane>
 
-        <!-- Pared Frontal -->
-        <a-plane position="0 2.5 -6" width="12" height="5" color="#f7f1e8"></a-plane>
-        
-        <!-- Pared Izquierda -->
-        <a-plane position="-6 2.5 0" rotation="0 90 0" width="12" height="5" color="#f1e5d4"></a-plane>
+        <!-- PAREDES DE LA GALERÍA -->
+        <a-plane position="0 3 -8" width="16" height="6" color="#4a3b32"></a-plane>
+        <a-plane position="-8 3 0" rotation="0 90 0" width="16" height="6" color="#3d2f26"></a-plane>
+        <a-plane position="8 3 0" rotation="0 -90 0" width="16" height="6" color="#3d2f26"></a-plane>
 
-        <!-- Pared Derecha -->
-        <a-plane position="6 2.5 0" rotation="0 -90 0" width="12" height="5" color="#f1e5d4"></a-plane>
+        <!-- ================= MOBILIARIO DECORATIVO DEL SALÓN ================= -->
+        <!-- Banca central de descanso para los visitantes -->
+        <a-box position="0 0.3 -2" width="2.4" height="0.4" depth="0.9" color="#261c14"></a-box>
+        <a-box position="0 0.7 -2.35" width="2.4" height="0.6" depth="0.15" color="#261c14"></a-box>
 
-        <!-- Pared Trasera -->
-        <a-plane position="0 2.5 6" rotation="0 180 0" width="12" height="5" color="#f7f1e8"></a-plane>
+        <!-- Mesa de centro decorativa lateral -->
+        <a-box position="-5 0.3 -3" width="1.2" height="0.4" depth="1.2" color="#2b1f17"></a-box>
+        <a-cylinder position="-5 0.7 -3" radius="0.15" height="0.2" color="#d4af37"></a-cylinder>
 
-        <!-- Marco 1 (Pared Frontal - Centro) -->
-        <a-box position="0 2.5 -5.9" width="3.2" height="2.2" depth="0.05" color="#3f3025"></a-box>
-        <a-plane position="0 2.5 -5.86" width="3" height="2" color="#ffffff"></a-plane>
+        <!-- ================= OBRA 1: PARED DE FONDO (CENTRAL) ================= -->
+        <a-entity position="0 0 0" onclick="mostrarDetalle('Luz Interior', 'Yandier', 'Artista plástica independiente especializada en texturas profundas, óleo y simbolismo contemporáneo.', 'Óleo sobre lienzo con relieve en pasta texturizada. Formato rectangular de 100 x 80 cm.', 1200.00)">
+            <!-- Marco dorado y moldura -->
+            <a-box position="0 2.8 -7.9" width="3.2" height="2.4" depth="0.08" color="#d4af37"></a-box>
+            <!-- Lienzo de la pintura -->
+            <a-plane position="0 2.8 -7.84" width="2.8" height="2.0" color="#f7f1e8"></a-plane>
+        </a-entity>
 
-        <!-- Marco 2 (Pared Izquierda) -->
-        <a-box position="-5.9 2.5 -2" rotation="0 90 0" width="2.7" height="2.0" depth="0.05" color="#3f3025"></a-box>
-        <a-plane position="-5.86 2.5 -2" rotation="0 90 0" width="2.5" height="1.8" color="#ffffff"></a-plane>
+        <!-- ================= OBRA 2: PARED IZQUIERDA ================= -->
+        <a-entity position="0 0 0" onclick="mostrarDetalle('Elegancia en Bronce', 'Vances Studio', 'Estudio dedicado al diseño clásico, la estética refinada y la preservación del arte moderno.', 'Técnica mixta sobre lienzo con detalles metalizados. Formato cuadrado de 90 x 90 cm.', 950.00)">
+            <!-- Marco -->
+            <a-box position="-7.9 2.8 -2" rotation="0 90 0" width="2.2" height="2.2" depth="0.08" color="#d4af37"></a-box>
+            <!-- Lienzo -->
+            <a-plane position="-7.84 2.8 -2" rotation="0 90 0" width="1.8" height="1.8" color="#f2e6dc"></a-plane>
+        </a-entity>
 
-        <!-- Marco 3 (Pared Derecha) -->
-        <a-box position="5.9 2.5 -2" rotation="0 -90 0" width="2.7" height="2.0" depth="0.05" color="#3f3025"></a-box>
-        <a-plane position="5.86 2.5 -2" rotation="0 -90 0" width="2.5" height="1.8" color="#ffffff"></a-plane>
+        <!-- ================= OBRA 3: PARED DERECHA ================= -->
+        <a-entity position="0 0 0" onclick="mostrarDetalle('Silencios del Alma', 'Gema', 'Pintora y restauradora con trayectoria en exposiciones de arte figurativo y abstracto.', 'Óleo tradicional sobre lienzo de alta durabilidad. Formato vertical de 80 x 120 cm.', 1100.00)">
+            <!-- Marco -->
+            <a-box position="7.9 2.8 -2" rotation="0 -90 0" width="2.2" height="2.6" depth="0.08" color="#d4af37"></a-box>
+            <!-- Lienzo -->
+            <a-plane position="7.84 2.8 -2" rotation="0 -90 0" width="1.8" height="2.2" color="#e6dac8"></a-plane>
+        </a-entity>
 
-        <!-- Cámara / Visor de la persona -->
-        <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 2">
+        <!-- Cámara de recorrido libre -->
+        <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 6">
             <a-cursor color="#ead7c0"></a-cursor>
         </a-entity>
     </a-scene>
+
+    <script>
+        let obraActual = "";
+        let precioActual = 0;
+        let carrito = [];
+
+        function mostrarDetalle(titulo, artista, bio, material, precio) {
+            obraActual = titulo;
+            precioActual = precio;
+            document.getElementById('modal-titulo').innerText = titulo;
+            document.getElementById('modal-artista').innerText = artista;
+            document.getElementById('modal-bio').innerText = bio;
+            document.getElementById('modal-material').innerText = material;
+            document.getElementById('modal-precio').innerText = "$" + precio.toFixed(2);
+            document.getElementById('modal-producto').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-producto').style.display = 'none';
+        }
+
+        function agregarAlCarritoDesdeModal() {
+            carrito.push({ nombre: obraActual, precio: precioActual });
+            document.getElementById('contador-carrito').innerText = carrito.length;
+            alert("¡La obra \"" + obraActual + "\" se ha añadido al carrito de compras!");
+            cerrarModal();
+        }
+
+        function verCarrito() {
+            if (carrito.length === 0) {
+                alert("Tu carrito de compras en esta galería está vacío.");
+            } else {
+                let resumen = "Obras en tu carrito de Pintura:\n";
+                let total = 0;
+                carrito.forEach((item, index) => {
+                    resumen += (index + 1) + ". " + item.nombre + " - $" + item.precio.toFixed(2) + "\n";
+                    total += item.precio;
+                });
+                resumen += "\nTotal de la selección: $" + total.toFixed(2);
+                alert(resumen);
+            }
+        }
+    </script>
 
 </body>
 </html>
