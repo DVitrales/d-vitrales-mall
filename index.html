@@ -17,7 +17,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #070b10;
+      background: radial-gradient(circle at 50% 35%, #162638 0%, #090e16 70%, #05080d 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: #fff5dc;
       touch-action: none;
@@ -29,14 +29,68 @@
       width: 100%;
       height: 100%;
       display: block;
+      z-index: 1;
+    }
+
+    /* Respaldo visual si el 3D no alcanza a cargar en algún equipo */
+    #fallback-lobby {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 25%, rgba(255, 204, 92, 0.22), transparent 45%),
+        radial-gradient(circle at 50% 70%, rgba(26, 120, 130, 0.22), transparent 55%),
+        linear-gradient(180deg, #0b131e 0%, #070b10 100%);
+    }
+
+    .fallback-sign {
+      font-family: Georgia, serif;
+      font-size: clamp(28px, 6vw, 48px);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      background: linear-gradient(180deg, #fff1ba 0%, #e4b14b 55%, #9c6c18 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 6px 24px rgba(229, 178, 76, 0.28);
+      margin-bottom: 10px;
+    }
+
+    .fallback-note {
+      font-size: 13px;
+      color: rgba(255, 242, 204, 0.8);
+      max-width: 420px;
+    }
+
+    /* Etiqueta superior izquierda sin invadir la derecha */
+    #focused-badge {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 20;
+      max-width: 42vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 12px;
+      font-weight: 600;
+      color: #ffe8a3;
+      text-shadow: 0 0 10px rgba(255, 208, 102, 0.7), 0 1px 5px rgba(0, 0, 0, 0.98);
+      pointer-events: none;
     }
 
     /* Teclitas holográficas sin marcos ni bordes */
     .holo-top-right {
       position: fixed;
       top: 14px;
-      right: 16px;
-      z-index: 20;
+      right: 14px;
+      z-index: 22;
+      max-width: 54vw;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -48,7 +102,7 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-end;
-      gap: 14px;
+      gap: 10px;
       pointer-events: auto;
     }
 
@@ -56,14 +110,14 @@
       background: transparent;
       border: none;
       outline: none;
-      padding: 2px 4px;
+      padding: 2px 3px;
       color: #fff2cc;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       cursor: pointer;
-      text-shadow: 0 0 10px rgba(255, 214, 115, 0.75), 0 1px 4px rgba(0, 0, 0, 0.95);
+      text-shadow: 0 0 10px rgba(255, 214, 115, 0.8), 0 1px 4px rgba(0, 0, 0, 0.98);
       transition: transform 0.16s ease, color 0.16s ease, text-shadow 0.16s ease;
     }
 
@@ -71,16 +125,16 @@
     .holo-key.active {
       color: #7ef9ff;
       transform: translateY(-1px);
-      text-shadow: 0 0 14px rgba(126, 249, 255, 0.9), 0 1px 6px rgba(0, 0, 0, 0.95);
+      text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
     }
 
     /* Despliegue flotante sin marcos ni bordes */
     .holo-drawer {
       position: fixed;
-      top: 66px;
-      right: 16px;
+      top: 52px;
+      right: 14px;
       z-index: 25;
-      max-width: min(92vw, 460px);
+      max-width: min(92vw, 440px);
       display: none;
       flex-direction: column;
       align-items: flex-end;
@@ -94,16 +148,16 @@
 
     .holo-greeting {
       text-align: right;
-      font-size: 13px;
+      font-size: 12.5px;
       line-height: 1.4;
       color: #fff6dc;
-      text-shadow: 0 0 12px rgba(126, 249, 255, 0.45), 0 1px 6px rgba(0, 0, 0, 0.95);
+      text-shadow: 0 0 12px rgba(126, 249, 255, 0.45), 0 1px 6px rgba(0, 0, 0, 0.98);
     }
 
     .holo-spaces-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, auto));
-      gap: 7px 18px;
+      gap: 7px 16px;
       justify-items: end;
     }
 
@@ -113,11 +167,11 @@
       outline: none;
       padding: 2px 0;
       text-align: right;
-      font-size: 12.5px;
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 600;
       color: #ffe9ad;
       cursor: pointer;
-      text-shadow: 0 0 10px rgba(255, 204, 92, 0.6), 0 1px 5px rgba(0, 0, 0, 0.98);
+      text-shadow: 0 0 10px rgba(255, 204, 92, 0.65), 0 1px 5px rgba(0, 0, 0, 0.98);
       transition: color 0.15s ease, transform 0.15s ease;
     }
 
@@ -127,16 +181,18 @@
       text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
     }
 
-    /* Anfitriona bilingüe en pantalla completa */
+    /* Anfitriona bilingüe en pantalla completa con audio */
     #hostess-overlay {
       position: fixed;
       inset: 0;
+      width: 100vw;
+      height: 100vh;
       z-index: 30;
       display: none;
       flex-direction: column;
       justify-content: space-between;
-      padding: 20px;
-      background: radial-gradient(circle at 25% 45%, rgba(16, 68, 78, 0.55), rgba(5, 9, 15, 0.86));
+      padding: 18px;
+      background: radial-gradient(circle at 25% 45%, rgba(16, 68, 78, 0.48), rgba(5, 9, 15, 0.82));
     }
 
     #hostess-overlay.active {
@@ -146,11 +202,12 @@
     #hostess-video {
       position: fixed;
       inset: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       object-fit: cover;
       z-index: -1;
       display: none;
+      background: #05090f;
     }
 
     .hostess-top {
@@ -158,11 +215,12 @@
       justify-content: space-between;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .hostess-center {
-      max-width: 540px;
-      margin: auto 0 auto 4%;
+      max-width: 520px;
+      margin: auto 0 auto 3%;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -172,56 +230,43 @@
       font-size: clamp(22px, 4vw, 32px);
       font-weight: 700;
       color: #ffe8a3;
-      text-shadow: 0 0 16px rgba(255, 212, 102, 0.7), 0 2px 8px rgba(0, 0, 0, 0.95);
+      text-shadow: 0 0 16px rgba(255, 212, 102, 0.75), 0 2px 8px rgba(0, 0, 0, 0.98);
     }
 
     .hostess-sub {
-      font-size: 14.5px;
+      font-size: 14px;
       line-height: 1.5;
       color: #e9fcff;
-      text-shadow: 0 0 10px rgba(126, 249, 255, 0.45), 0 2px 6px rgba(0, 0, 0, 0.95);
+      text-shadow: 0 0 10px rgba(126, 249, 255, 0.5), 0 2px 6px rgba(0, 0, 0, 0.98);
     }
 
     .hostess-quick-spaces {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, max-content));
-      gap: 6px 22px;
+      gap: 6px 20px;
       margin-top: 8px;
     }
 
-    /* Etiqueta discreta del local enfocado */
-    #focused-badge {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      z-index: 18;
-      font-size: 13px;
-      font-weight: 600;
-      color: #ffe8a3;
-      text-shadow: 0 0 10px rgba(255, 208, 102, 0.7), 0 1px 5px rgba(0, 0, 0, 0.95);
-      pointer-events: none;
-    }
-
-    /* Barra inferior de desplazamiento y zoom */
+    /* Barra inferior con regreso automático al centro frente al letrero */
     .bottom-bar {
       position: fixed;
       left: 50%;
       bottom: 14px;
       transform: translateX(-50%);
-      z-index: 20;
+      z-index: 22;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
       width: min(96vw, 820px);
       padding: 6px 10px;
       pointer-events: auto;
     }
 
     .nav-btn {
-      background: rgba(10, 16, 24, 0.42);
-      border: 1px solid rgba(255, 218, 122, 0.28);
+      background: rgba(10, 16, 24, 0.52);
+      border: 1px solid rgba(255, 218, 122, 0.3);
       border-radius: 999px;
       color: #fff2cc;
       font-size: 12px;
@@ -234,8 +279,8 @@
 
     .nav-btn:hover,
     .nav-btn.active {
-      background: rgba(255, 208, 102, 0.22);
-      border-color: rgba(126, 249, 255, 0.75);
+      background: rgba(255, 208, 102, 0.24);
+      border-color: rgba(126, 249, 255, 0.8);
       color: #ffffff;
       transform: translateY(-1px);
     }
@@ -248,9 +293,14 @@
   </style>
 </head>
 <body>
+  <div id="fallback-lobby">
+    <div class="fallback-sign">D'Vitrales Mall</div>
+    <div class="fallback-note">Explora los 10 espacios del lobby o selecciona ES / EN para ver a la anfitriona.</div>
+  </div>
+
   <canvas id="scene-canvas"></canvas>
 
-  <div id="focused-badge">Lobby Central — D'Vitrales Mall</div>
+  <div id="focused-badge">Lobby Central</div>
 
   <!-- Teclitas holográficas sin marcos ni bordes -->
   <div class="holo-top-right">
@@ -265,18 +315,19 @@
   <!-- Menú desplegable transparente sin bordes -->
   <div id="holo-drawer" class="holo-drawer">
     <div id="holo-greeting" class="holo-greeting">
-      Selecciona un local para acercarte y hacer zoom.
+      Elige un espacio para viajar y hacer zoom hacia su fachada:
     </div>
     <div id="holo-spaces-grid" class="holo-spaces-grid"></div>
   </div>
 
-  <!-- Anfitriona bilingüe en pantalla completa -->
+  <!-- Anfitriona bilingüe en pantalla completa con audio -->
   <div id="hostess-overlay">
-    <video id="hostess-video" playsinline autoplay loop muted></video>
+    <video id="hostess-video" playsinline webkit-playsinline autoplay></video>
     <div class="hostess-top">
       <div class="holo-row">
         <button id="hostess-es" class="holo-key" type="button">ES</button>
         <button id="hostess-en" class="holo-key" type="button">EN</button>
+        <button id="hostess-audio" class="holo-key" type="button">Audio ON</button>
       </div>
       <button id="hostess-enter" class="holo-key" type="button">Recorrer Lobby ↗</button>
     </div>
@@ -284,7 +335,7 @@
     <div class="hostess-center">
       <div id="hostess-title" class="hostess-title">Bienvenida a D'Vitrales Mall</div>
       <div id="hostess-sub" class="hostess-sub">
-        Recorre el lobby libremente o toca cualquiera de nuestros 10 espacios para viajar y hacer zoom.
+        Explora el lobby en 360° o elige cualquiera de los 10 locales para acercarte y hacer zoom.
       </div>
       <div id="hostess-spaces" class="hostess-quick-spaces"></div>
     </div>
@@ -305,13 +356,15 @@
     </div>
   </div>
 
-  <script type="module">
-    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js";
-
-    // Coloca aquí las rutas de tus videos cuando los tengas listos
-    const HOSTESS_VIDEOS = {
-      es: "",
-      en: ""
+  <script>
+    // Videos de la anfitriona por idioma en tu repositorio (español e inglés)
+    const HOSTESS_MEDIA = {
+      es: {
+        video: "anfitrionamp4.mp4"
+      },
+      en: {
+        video: "anfitriona-en.mp4"
+      }
     };
 
     const SPACES = [
@@ -333,7 +386,9 @@
         spaces: "Locales",
         centerBtn: "Centro / Letrero",
         enterLobby: "Recorrer Lobby ↗",
-        lobbyTitle: "Lobby Central — D'Vitrales Mall",
+        audioOn: "Audio ON",
+        audioOff: "Audio OFF",
+        lobbyTitle: "Lobby Central",
         hostessTitle: "Bienvenida a D'Vitrales Mall",
         hostessSub: "Explora el lobby en 360° o elige cualquiera de los 10 locales para acercarte y hacer zoom.",
         drawerHint: "Elige un espacio para viajar y hacer zoom hacia su fachada:"
@@ -343,7 +398,9 @@
         spaces: "Spaces",
         centerBtn: "Center / Sign",
         enterLobby: "Explore Lobby ↗",
-        lobbyTitle: "Central Lobby — D'Vitrales Mall",
+        audioOn: "Audio ON",
+        audioOff: "Audio OFF",
+        lobbyTitle: "Central Lobby",
         hostessTitle: "Welcome to D'Vitrales Mall",
         hostessSub: "Explore the lobby in 360° or pick any of the 10 spaces to travel and zoom in.",
         drawerHint: "Pick a space to travel and zoom toward its storefront:"
@@ -352,20 +409,6 @@
 
     let lang = "es";
     let activeSpace = null;
-
-    const canvas = document.getElementById("scene-canvas");
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x090e16);
-    scene.fog = new THREE.FogExp2(0x090e16, 0.012);
-
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 180);
-
-    // Entrada ubicada en +Z mirando hacia -Z donde están las letras doradas de presentación
-    const ENTRANCE_POS = new THREE.Vector3(0, 2.2, 16.5);
-    const SIGN_LOOK_TARGET = new THREE.Vector3(0, 2.5, -13.5);
-
-    const WAYPOINTS
+    let onFocusSpaceCallback = null;
+    let onWaypointCallback = null;
+    let onZoomChange
