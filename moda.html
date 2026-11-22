@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>D'Vitrales Mall — Tienda Boutique 3D</title>
+  <title>D'Vitrales Mall — Boutique 3D</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <style>
     * {
@@ -17,7 +17,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #0b1914;
+      background: #0c1b15;
       font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
       color: #f7f4eb;
     }
@@ -30,238 +30,347 @@
       z-index: 1;
     }
 
-    /* HUD ligero y despejado para no cubrir el espacio 3D */
-    .hud {
+    /* Cuando se oculta el HUD, solo queda el botón pequeño flotante arriba */
+    body.clean-view .hud-panel {
+      display: none !important;
+    }
+
+    .hud-root {
       position: fixed;
       inset: 0;
-      z-index: 10;
+      z-index: 20;
       pointer-events: none;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 10px;
+      padding: 6px;
     }
 
-    body.hud-clean .hud-collapsible {
-      display: none !important;
-    }
-
-    .glass-bar {
-      pointer-events: auto;
-      background: rgba(8, 34, 25, 0.52);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(230, 190, 106, 0.48);
-      border-radius: 12px;
-      padding: 8px 10px;
+    .top-strip {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .title-wrap .tag {
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #e6be6a;
-      font-weight: 700;
-      display: block;
-    }
-
-    .title-wrap h1 {
-      margin: 2px 0 0;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
       align-items: center;
+      gap: 6px;
     }
 
-    button, a.link-btn {
+    .mini-bar {
       pointer-events: auto;
-      background: rgba(11, 79, 58, 0.65);
-      color: #f7f4eb;
-      border: 1px solid rgba(230, 190, 106, 0.48);
-      border-radius: 8px;
-      padding: 6px 10px;
+      background: rgba(7, 28, 21, 0.42);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(230, 190, 106, 0.45);
+      border-radius: 9px;
+      padding: 4px 7px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .title-txt {
       font-size: 11px;
+      font-weight: 700;
+      color: #f7f4eb;
+      margin-right: 4px;
+    }
+
+    button, a.nav-a {
+      pointer-events: auto;
+      background: rgba(10, 68, 49, 0.58);
+      color: #f7f4eb;
+      border: 1px solid rgba(230, 190, 106, 0.45);
+      border-radius: 7px;
+      padding: 4px 6px;
+      font-size: 9.5px;
       font-weight: 700;
       cursor: pointer;
       text-decoration: none;
+      line-height: 1.15;
     }
 
-    button.active, a.link-btn.active {
+    button.active {
       background: #e6be6a;
       color: #082219;
-      border-color: #e6be6a;
     }
 
-    /* Tarjeta inferior compacta de la pieza seleccionada en tienda */
-    .item-card {
+    #btnToggleHud {
       pointer-events: auto;
-      background: rgba(8, 34, 25, 0.62);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(230, 190, 106, 0.52);
-      border-radius: 12px;
-      padding: 9px 12px;
+      background: rgba(7, 28, 21, 0.72);
+      border: 1px solid #e6be6a;
+      color: #e6be6a;
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Franjas laterales bien angostas para dejar libre el centro */
+    .mid-zone {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex: 1;
+      min-height: 0;
+      margin: 4px 0;
+      pointer-events: none;
+    }
+
+    .side-slim {
+      pointer-events: auto;
+      width: 82px;
+      max-height: 58vh;
+      overflow-y: auto;
+      background: rgba(7, 28, 21, 0.34);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border: 1px solid rgba(230, 190, 106, 0.35);
+      border-radius: 10px;
+      padding: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .slim-label {
+      font-size: 8.5px;
+      font-weight: 700;
+      color: #e6be6a;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .slim-thumb {
+      width: 100%;
+      height: 46px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(230, 190, 106, 0.3);
       display: flex;
       align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 8.5px;
+      text-align: center;
+      color: #ddd6c7;
+    }
+
+    .slim-thumb img, .slim-thumb video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .bottom-slim {
+      pointer-events: auto;
+      background: rgba(7, 28, 21, 0.44);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(230, 190, 106, 0.42);
+      border-radius: 10px;
+      padding: 5px 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .status-row {
+      display: flex;
       justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
+      font-size: 9.5px;
+      color: #e6dfd1;
+      gap: 6px;
     }
 
-    .item-meta strong {
+    .status-row strong {
       color: #e6be6a;
-      font-size: 13px;
-      display: block;
     }
 
-    .item-meta span {
-      font-size: 11px;
-      color: #e2dcd0;
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+    }
+
+    input[type="file"] {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <a-scene id="boutiqueStoreScene" vr-mode-ui="enabled: true" renderer="antialias: true; colorManagement: true">
+  <input type="file" id="photoInput" accept="image/*" />
+  <input type="file" id="videoInput" accept="video/*" />
+
+  <a-scene id="scene" vr-mode-ui="enabled: true" renderer="antialias: true; colorManagement: true">
     <a-assets>
-      <canvas id="storeMarble" width="512" height="512"></canvas>
-      <canvas id="storeEmerald" width="512" height="512"></canvas>
+      <canvas id="marbleCanvas" width="512" height="512"></canvas>
+      <canvas id="emeraldCanvas" width="512" height="512"></canvas>
     </a-assets>
 
-    <!-- Iluminación del salón de tienda -->
     <a-light type="ambient" color="#fff8eb" intensity="0.95"></a-light>
-    <a-light type="directional" color="#fff3d9" intensity="1.1" position="4 7 5"></a-light>
-    <a-light type="point" color="#ffe09e" intensity="1.0" distance="12" position="0 3.2 -1"></a-light>
+    <a-light type="directional" color="#fff2d6" intensity="1.1" position="4 7 5"></a-light>
+    <a-light type="point" color="#ffe09e" intensity="1.15" distance="12" position="0 3.2 0"></a-light>
 
     <a-sky color="#13221c"></a-sky>
+    <a-circle radius="16" rotation="-90 0 0" position="0 0 0"
+              material="src: #marbleCanvas; repeat: 6 6; roughness: 0.25"></a-circle>
 
-    <!-- Piso de mármol claro -->
-    <a-circle radius="15" rotation="-90 0 0" position="0 0 0"
-              material="src: #storeMarble; repeat: 6 6; roughness: 0.25"></a-circle>
-
-    <!-- Muro posterior esmeralda con molduras doradas -->
-    <a-entity position="0 0 -6.2">
-      <a-box width="15" height="5" depth="0.25" position="0 2.5 0"
-             material="src: #storeEmerald; roughness: 0.35"></a-box>
-      <a-box width="3.4" height="0.07" depth="0.34" position="0 4.0 0.05"
+    <!-- Muro posterior esmeralda y dorado -->
+    <a-entity position="0 0 -6.8">
+      <a-box width="16" height="5.2" depth="0.25" position="0 2.6 0"
+             material="src: #emeraldCanvas; roughness: 0.35"></a-box>
+      <a-box width="3.6" height="0.07" depth="0.34" position="0 4.05 0.05"
              material="color: #e6be6a; metalness: 0.7; roughness: 0.25"></a-box>
-      <a-box width="3.4" height="0.07" depth="0.34" position="0 0.3 0.05"
+      <a-box width="3.6" height="0.07" depth="0.34" position="0 0.3 0.05"
              material="color: #e6be6a; metalness: 0.7; roughness: 0.25"></a-box>
     </a-entity>
 
-    <!-- Pedestal 1 (Izquierda): Pieza de exhibición -->
-    <a-entity id="stand-1" position="-2.6 0 -2.6">
-      <a-cylinder radius="0.85" height="0.16" position="0 0.08 0" color="#073829"></a-cylinder>
-      <a-torus radius="0.85" radius-tubular="0.02" rotation="90 0 0" position="0 0.16 0" color="#e6be6a"></a-torus>
-      <a-cylinder radius="0.03" height="1.45" position="0 0.88 0" color="#e6be6a"></a-cylinder>
-      <a-cone id="piece-1" radius-bottom="0.46" radius-top="0.15" height="0.85" position="0 1.25 0"
-              material="color: #f4be38; roughness: 0.45"></a-cone>
+    <!-- 1. INVENTARIO -->
+    <a-entity id="sec-inventory" position="-4.2 0 -2.4">
+      <a-cylinder radius="1.2" height="0.14" position="0 0.07 0" color="#093b2c"></a-cylinder>
+      <a-torus radius="1.2" radius-tubular="0.02" rotation="90 0 0" position="0 0.14 0" color="#e6be6a"></a-torus>
+      <a-box width="0.4" height="1.1" depth="0.2" position="-0.48 0.69 0" color="#f4be38"></a-box>
+      <a-box width="0.4" height="1.25" depth="0.2" position="0 0.76 0" color="#0f6e50"></a-box>
+      <a-box width="0.4" height="1.08" depth="0.2" position="0.48 0.68 0" color="#d8c394"></a-box>
     </a-entity>
 
-    <!-- Pedestal 2 (Centro): Pieza principal en exhibición -->
-    <a-entity id="stand-2" position="0 0 -3.2">
-      <a-cylinder radius="1.0" height="0.18" position="0 0.09 0" color="#073829"></a-cylinder>
-      <a-torus radius="1.0" radius-tubular="0.025" rotation="90 0 0" position="0 0.18 0" color="#e6be6a"></a-torus>
-      <a-cylinder radius="0.03" height="1.5" position="0 0.93 0" color="#e6be6a"></a-cylinder>
-      <a-cone id="piece-2" radius-bottom="0.52" radius-top="0.17" height="0.92" position="0 1.32 0"
-              material="color: #0e6b4e; roughness: 0.42"></a-cone>
+    <!-- 2. VESTIDOR CILÍNDRICO TRANSPARENTE -->
+    <a-entity id="sec-booths" position="0 0 -2.2">
+      <a-cylinder radius="1.4" height="0.22" position="0 0.11 0"
+                  material="color: #073829; roughness: 0.25; metalness: 0.35"></a-cylinder>
+      <a-torus radius="1.4" radius-tubular="0.03" rotation="90 0 0" position="0 0.22 0"
+               material="color: #e6be6a; emissive: #e6be6a; emissiveIntensity: 0.45"></a-torus>
+      <a-torus radius="1.22" radius-tubular="0.02" rotation="90 0 0" position="0 0.24 0"
+               material="color: #18a979; emissive: #18a979; emissiveIntensity: 0.6"></a-torus>
+      <a-cylinder radius="1.28" height="2.6" position="0 1.52 0" open-ended="true" side="double"
+                  material="color: #c7fff0; opacity: 0.16; transparent: true; roughness: 0.08"></a-cylinder>
+      <a-torus radius="1.28" radius-tubular="0.02" rotation="90 0 0" position="0 2.82 0"
+               material="color: #e6be6a; metalness: 0.75"></a-torus>
+
+      <a-entity id="mannequin" position="0 0.22 0">
+        <a-cylinder radius="0.19" height="0.06" position="0 0.03 0" color="#e6be6a"></a-cylinder>
+        <a-cylinder radius="0.035" height="0.78" position="0 0.42 0" color="#c9a255"></a-cylinder>
+        <a-cone id="skirt" radius-bottom="0.6" radius-top="0.19" height="1.0" position="0 1.1 0"
+                material="color: #f4be38; roughness: 0.42"></a-cone>
+        <a-cylinder id="bodice" radius-bottom="0.19" radius-top="0.23" height="0.38" position="0 1.77 0"
+                    material="color: #f4be38; roughness: 0.4"></a-cylinder>
+        <a-sphere radius="0.155" position="0 2.22 0" material="color: #f2d2b6; roughness: 0.55"></a-sphere>
+      </a-entity>
     </a-entity>
 
-    <!-- Pedestal 3 (Derecha): Pieza de exhibición -->
-    <a-entity id="stand-3" position="2.6 0 -2.6">
-      <a-cylinder radius="0.85" height="0.16" position="0 0.08 0" color="#073829"></a-cylinder>
-      <a-torus radius="0.85" radius-tubular="0.02" rotation="90 0 0" position="0 0.16 0" color="#e6be6a"></a-torus>
-      <a-cylinder radius="0.03" height="1.45" position="0 0.88 0" color="#e6be6a"></a-cylinder>
-      <a-cone id="piece-3" radius-bottom="0.46" radius-top="0.15" height="0.85" position="0 1.25 0"
-              material="color: #e8dec8; roughness: 0.45"></a-cone>
+    <!-- 3. PASARELA -->
+    <a-entity id="sec-runway" position="4.2 0 -2.4">
+      <a-box width="1.85" height="0.16" depth="4.2" position="0 0.08 0.4"
+             material="color: #083829; roughness: 0.25"></a-box>
+      <a-box width="1.9" height="0.035" depth="4.26" position="0 0.17 0.4"
+             material="color: #e6be6a; emissive: #e6be6a; emissiveIntensity: 0.35"></a-box>
+      <a-cylinder radius="0.17" height="1.15" position="0 0.74 0.4" color="#e6be6a"></a-cylinder>
+      <a-sphere radius="0.15" position="0 1.47 0.4" color="#f2d2b6"></a-sphere>
     </a-entity>
 
-    <!-- Cámara navegable -->
-    <a-entity id="cameraRig" position="0 1.6 2.8">
+    <a-entity id="cameraRig" position="0 1.55 2.4">
       <a-camera look-controls wasd-controls="enabled: false"></a-camera>
     </a-entity>
   </a-scene>
 
-  <div class="hud">
-    <div class="glass-bar">
-      <div class="title-wrap">
-        <span class="tag">D'Vitrales Mall · Boutique</span>
-        <h1>Tienda — Exhibición & Venta</h1>
+  <div class="hud-root">
+    <div class="top-strip">
+      <div class="mini-bar hud-panel">
+        <span class="title-txt">D'Vitrales Boutique</span>
+        <a class="nav-a" href="moda.html">Moda</a>
+        <a class="nav-a" href="index.html">Mall</a>
       </div>
-      <div class="btn-row">
-        <button id="btnToggleHud">Ocultar HUD</button>
-        <a class="link-btn hud-collapsible" href="pasarela.html">Pasarela</a>
-        <a class="link-btn hud-collapsible" href="vestidor.html">Vestidor</a>
-        <a class="link-btn hud-collapsible" href="index.html">Inicio</a>
+      <button id="btnToggleHud">Ocultar</button>
+    </div>
+
+    <div class="mid-zone hud-panel">
+      <!-- Izquierda bien angosta -->
+      <div class="side-slim">
+        <div class="slim-label">Vestidor</div>
+        <div class="slim-thumb" id="photoBox">
+          <span id="photoTxt">Foto</span>
+          <img id="photoImg" style="display:none;" alt="Foto" />
+        </div>
+        <button id="btnPhoto">Foto</button>
+        <button id="btnFit">Ajuste</button>
+        <button id="btnSave">Guardar</button>
+      </div>
+
+      <!-- Derecha bien angosta -->
+      <div class="side-slim">
+        <div class="slim-label">Pasarela</div>
+        <div class="slim-thumb" id="videoBox">
+          <span id="videoTxt">Video</span>
+        </div>
+        <button id="btnVideo">Subir</button>
+        <button data-v="1">Video 1</button>
+        <button data-v="2">Video 2</button>
       </div>
     </div>
 
-    <div class="item-card hud-collapsible">
-      <div class="item-meta">
-        <strong id="selectedTitle">Pieza Central · Colección Esmeralda</strong>
-        <span id="selectedDesc">Toca un pedestal o cambia de pieza para revisar detalles.</span>
+    <div class="bottom-slim hud-panel">
+      <div class="status-row">
+        <span>Zona: <strong id="lblZone">Vestidor</strong></span>
+        <span>Look: <strong id="lblLook">Girasol</strong></span>
       </div>
-      <div class="btn-row">
-        <button data-piece="1">Pieza 1</button>
-        <button class="active" data-piece="2">Pieza 2</button>
-        <button data-piece="3">Pieza 3</button>
-        <button id="btnApartar">Apartar</button>
+      <div class="grid-3">
+        <button data-sec="inventory">Inventario</button>
+        <button class="active" data-sec="booths">Vestidor</button>
+        <button data-sec="runway">Pasarela</button>
+      </div>
+      <div class="grid-4">
+        <button id="btnIn">Entrar</button>
+        <button id="btnOut">Salón</button>
+        <button id="btnLook">Look</button>
+        <button id="btnCita">Cita</button>
       </div>
     </div>
   </div>
 
   <script>
-    const PIECES = {
-      1: {
-        title: "Pieza 1 · Gala Girasol",
-        desc: "Exhibición lateral izquierda · Disponible para consulta",
-        cam: "-2.2 1.6 0.4"
-      },
-      2: {
-        title: "Pieza 2 · Colección Esmeralda",
-        desc: "Exhibición central · Tono esmeralda y detalles dorados",
-        cam: "0 1.6 0.2"
-      },
-      3: {
-        title: "Pieza 3 · Brisa Marfil",
-        desc: "Exhibición lateral derecha · Diseño luminoso",
-        cam: "2.2 1.6 0.4"
-      }
+    const LOOKS = [
+      { name: "Girasol", color: "#f4be38" },
+      { name: "Esmeralda", color: "#0e6b4e" },
+      { name: "Champán", color: "#efe2c2" },
+      { name: "Gema", color: "#8f3d5e" }
+    ];
+    const FITS = [0.6, 0.76, 0.52];
+    const ZONES = {
+      inventory: { x: -4.2, y: 1.55, z: 0.4, label: "Inventario" },
+      booths:    { x: 0,    y: 1.55, z: 2.2, label: "Vestidor" },
+      runway:    { x: 4.2,  y: 1.55, z: 1.2, label: "Pasarela" }
     };
 
-    let currentPiece = 2;
+    let lookI = 0, fitI = 0;
 
     function paintMarble() {
-      const c = document.getElementById("storeMarble");
+      const c = document.getElementById("marbleCanvas");
       const ctx = c.getContext("2d");
       ctx.fillStyle = "#f2ede2";
       ctx.fillRect(0, 0, 512, 512);
-      for (let i = 0; i < 22; i++) {
+      for (let i = 0; i < 20; i++) {
         ctx.beginPath();
-        let x = (i * 39) % 512, y = 0;
+        let x = (i * 41) % 512, y = 0;
         ctx.moveTo(x, y);
         while (y < 512) {
           y += 32;
-          x += Math.sin((y + i * 20) * 0.03) * 14;
+          x += Math.sin((y + i * 18) * 0.03) * 14;
           ctx.lineTo(x, y);
         }
         ctx.strokeStyle = "rgba(180, 170, 152, 0.24)";
-        ctx.lineWidth = 1.6;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       }
     }
 
     function paintEmerald() {
-      const c = document.getElementById("storeEmerald");
+      const c = document.getElementById("emeraldCanvas");
       const ctx = c.getContext("2d");
       const g = ctx.createLinearGradient(0, 0, 512, 512);
       g.addColorStop(0, "#062b20");
@@ -271,35 +380,85 @@
       ctx.fillRect(0, 0, 512, 512);
     }
 
-    function selectPiece(num) {
-      currentPiece = Number(num);
-      const info = PIECES[currentPiece];
-      if (!info) return;
-      document.getElementById("selectedTitle").textContent = info.title;
-      document.getElementById("selectedDesc").textContent = info.desc;
-      document.getElementById("cameraRig").setAttribute("position", info.cam);
-      document.querySelectorAll("[data-piece]").forEach((btn) => {
-        btn.classList.toggle("active", Number(btn.dataset.piece) === currentPiece);
-      });
+    function updateLook() {
+      const l = LOOKS[lookI];
+      document.getElementById("skirt").setAttribute("material", "color", l.color);
+      document.getElementById("bodice").setAttribute("material", "color", l.color);
+      document.getElementById("skirt").setAttribute("radius-bottom", String(FITS[fitI]));
+      document.getElementById("lblLook").textContent = l.name;
+    }
+
+    function goZone(k) {
+      const z = ZONES[k];
+      if (!z) return;
+      document.getElementById("cameraRig").setAttribute("position", `${z.x} ${z.y} ${z.z}`);
+      document.getElementById("lblZone").textContent = z.label;
+      document.querySelectorAll("[data-sec]").forEach((b) => b.classList.toggle("active", b.dataset.sec === k));
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       paintMarble();
       paintEmerald();
+      updateLook();
 
       document.getElementById("btnToggleHud").addEventListener("click", (e) => {
-        document.body.classList.toggle("hud-clean");
-        const clean = document.body.classList.contains("hud-clean");
-        e.target.textContent = clean ? "Mostrar HUD" : "Ocultar HUD";
+        document.body.classList.toggle("clean-view");
+        const clean = document.body.classList.contains("clean-view");
+        e.target.textContent = clean ? "Ver menú" : "Ocultar";
         e.target.classList.toggle("active", clean);
       });
 
-      document.querySelectorAll("[data-piece]").forEach((btn) => {
-        btn.addEventListener("click", () => selectPiece(btn.dataset.piece));
+      document.querySelectorAll("[data-sec]").forEach((b) => {
+        b.addEventListener("click", () => goZone(b.dataset.sec));
       });
 
-      document.getElementById("btnApartar").addEventListener("click", () => {
-        alert(`${PIECES[currentPiece].title} marcada para apartar/consultar.`);
+      document.getElementById("btnIn").addEventListener("click", () => {
+        goZone("booths");
+        document.getElementById("cameraRig").setAttribute("position", "0 1.55 0.65");
+        document.getElementById("lblZone").textContent = "Dentro";
+      });
+
+      document.getElementById("btnOut").addEventListener("click", () => {
+        document.getElementById("cameraRig").setAttribute("position", "0 1.65 4.2");
+        document.getElementById("lblZone").textContent = "Salón";
+      });
+
+      document.getElementById("btnLook").addEventListener("click", () => {
+        lookI = (lookI + 1) % LOOKS.length;
+        updateLook();
+      });
+
+      document.getElementById("btnFit").addEventListener("click", () => {
+        fitI = (fitI + 1) % FITS.length;
+        updateLook();
+      });
+
+      document.getElementById("btnSave").addEventListener("click", () => {
+        alert(`Guardado: ${LOOKS[lookI].name}`);
+      });
+
+      document.getElementById("btnCita").addEventListener("click", () => {
+        alert(`Cita lista para ${LOOKS[lookI].name}`);
+      });
+
+      const pIn = document.getElementById("photoInput");
+      document.getElementById("btnPhoto").addEventListener("click", () => pIn.click());
+      pIn.addEventListener("change", (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const img = document.getElementById("photoImg");
+        img.src = URL.createObjectURL(f);
+        img.style.display = "block";
+        document.getElementById("photoTxt").style.display = "none";
+      });
+
+      const vIn = document.getElementById("videoInput");
+      document.getElementById("btnVideo").addEventListener("click", () => vIn.click());
+      vIn.addEventListener("change", (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        document.getElementById("videoBox").innerHTML = `<video src="${URL.createObjectURL(f)}" autoplay loop muted playsinline></video>`;
+        goZone("runway");
       });
     });
   </script>
