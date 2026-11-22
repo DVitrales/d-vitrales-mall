@@ -3,23 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>D'Vitrales Mall — Boutique 3D (Inventario, Vestidores & Pasarela)</title>
+  <title>D'Vitrales Mall — Boutique 3D</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <style>
-    :root {
-      --emerald-dark: #06281e;
-      --emerald: #0b4f3a;
-      --emerald-glow: #18a979;
-      --gold: #e6be6a;
-      --glass-bg: rgba(7, 28, 22, 0.54);
-      --glass-border: rgba(230, 190, 106, 0.52);
-      --text-main: #f7f4eb;
-      --text-muted: #d5cfc0;
-    }
-
     * {
       box-sizing: border-box;
-      user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -29,9 +17,9 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #051611;
-      font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-      color: var(--text-main);
+      background: #0b1914;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: #f7f4eb;
     }
 
     a-scene {
@@ -42,7 +30,7 @@
       z-index: 1;
     }
 
-    .hud-layer {
+    .hud {
       position: fixed;
       inset: 0;
       z-index: 10;
@@ -50,386 +38,176 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 10px;
+      padding: 8px;
     }
 
-    .glass-panel {
+    body.hud-hidden .hud-collapsible {
+      display: none !important;
+    }
+
+    .glass {
       pointer-events: auto;
-      background: var(--glass-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--glass-border);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), inset 0 0 18px rgba(24, 169, 121, 0.14);
-      border-radius: 16px;
+      background: rgba(8, 34, 25, 0.48);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(230, 190, 106, 0.48);
+      border-radius: 12px;
+      padding: 6px 8px;
     }
 
     .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      padding: 9px 12px;
-      flex-wrap: wrap;
-    }
-
-    .brand-title .eyebrow {
-      font-size: 9.5px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 700;
-      display: block;
-    }
-
-    .brand-title h1 {
-      margin: 2px 0 0;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
       gap: 6px;
       flex-wrap: wrap;
     }
 
-    .hud-btn {
+    .brand-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f7f4eb;
+      margin: 0;
+    }
+
+    .brand-sub {
+      font-size: 9px;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: #e6be6a;
+      display: block;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button, a.nav-btn {
       pointer-events: auto;
       background: rgba(11, 79, 58, 0.55);
-      border: 1px solid var(--glass-border);
-      color: var(--text-main);
-      border-radius: 999px;
-      padding: 6px 11px;
-      font-size: 10.5px;
-      font-weight: 600;
+      color: #f7f4eb;
+      border: 1px solid rgba(230, 190, 106, 0.45);
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 10px;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
       text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
     }
 
-    .hud-btn:hover, .hud-btn.active {
-      background: linear-gradient(135deg, rgba(24, 169, 121, 0.48), rgba(230, 190, 106, 0.35));
-      border-color: var(--gold);
+    button.active {
+      background: #e6be6a;
+      color: #082219;
+      border-color: #e6be6a;
     }
 
-    .middle-stage {
+    .middle-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      align-items: center;
       flex: 1;
-      margin: 8px 0;
+      margin: 6px 0;
       min-height: 0;
+      pointer-events: none;
     }
 
-    .side-column {
-      width: 154px;
-      max-width: 34vw;
+    .side-hud {
+      pointer-events: auto;
+      width: 104px;
+      max-width: 26vw;
+      max-height: 68vh;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 7px;
-      max-height: 100%;
-      overflow-y: auto;
-      scrollbar-width: none;
-      padding: 9px;
-    }
-
-    .side-column::-webkit-scrollbar {
-      display: none;
-    }
-
-    .panel-tag {
-      font-size: 9.5px;
-      text-transform: uppercase;
-      letter-spacing: 1.3px;
-      color: var(--gold);
-      font-weight: 700;
-      text-align: center;
-      border-bottom: 1px solid rgba(230, 190, 106, 0.22);
-      padding-bottom: 4px;
-    }
-
-    .preview-mini {
-      width: 100%;
-      height: 76px;
-      border-radius: 10px;
+      gap: 5px;
+      background: rgba(8, 34, 25, 0.42);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(230, 190, 106, 0.45);
+      border-radius: 12px;
+      padding: 6px;
+    }
+
+    .hud-tag {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #e6be6a;
+      text-align: center;
+      letter-spacing: 0.6px;
+    }
+
+    .photo-box {
+      width: 100%;
+      height: 64px;
+      border-radius: 8px;
+      border: 1px solid rgba(230, 190, 106, 0.4);
       background: rgba(255, 255, 255, 0.06);
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      font-size: 9px;
+      text-align: center;
+      color: #d8d2c5;
     }
 
-    .preview-mini img {
+    .photo-box img, .photo-box video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .preview-placeholder {
-      font-size: 10.5px;
-      color: var(--text-muted);
-      text-align: center;
-      padding: 5px;
-      line-height: 1.25;
-    }
-
-    .cmd-btn {
-      width: 100%;
-      background: rgba(8, 36, 28, 0.65);
-      border: 1px solid rgba(230, 190, 106, 0.42);
-      color: var(--text-main);
-      border-radius: 9px;
-      padding: 7px 7px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .cmd-btn:hover, .cmd-btn.active {
-      background: linear-gradient(135deg, rgba(24, 169, 121, 0.5), rgba(230, 190, 106, 0.34));
-      border-color: var(--gold);
-    }
-
-    .runway-selector-item {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(230, 190, 106, 0.34);
-      border-radius: 10px;
-      padding: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .vid-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(230, 190, 106, 0.35);
+      color: #f7f4eb;
+      border-radius: 7px;
+      padding: 5px 6px;
+      font-size: 9.5px;
       text-align: left;
+      cursor: pointer;
     }
 
-    .runway-selector-item:hover, .runway-selector-item.active {
-      border-color: var(--gold);
-      background: rgba(230, 190, 106, 0.2);
-    }
-
-    .runway-item-top {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10px;
+    .vid-btn.active {
+      background: #e6be6a;
+      color: #082219;
       font-weight: 700;
     }
 
-    .runway-item-sub {
-      font-size: 8.8px;
-      color: var(--gold);
-      margin-top: 2px;
-    }
-
-    .bottom-dock {
+    .bottom-hud {
       display: flex;
       flex-direction: column;
-      gap: 7px;
-      padding: 9px 11px;
+      gap: 5px;
     }
 
-    .dock-status {
+    .status-bar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      font-size: 10.5px;
-      color: var(--text-muted);
+      align-items: center;
+      font-size: 10px;
+      color: #e6dfd1;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
-    .dock-status strong {
-      color: var(--gold);
+    .status-bar strong {
+      color: #e6be6a;
     }
 
-    .sections-tabs {
+    .sections-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
+      gap: 5px;
     }
 
-    .sec-btn {
-      pointer-events: auto;
-      background: rgba(8, 36, 28, 0.68);
-      border: 1px solid var(--glass-border);
-      color: var(--text-main);
-      border-radius: 10px;
-      padding: 8px 6px;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .sec-btn.active {
-      background: var(--gold);
-      color: #071b14;
-      border-color: var(--gold);
-    }
-
-    .dock-actions {
+    .actions-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
-    }
-
-    .dock-btn {
-      pointer-events: auto;
-      background: rgba(11, 79, 58, 0.58);
-      border: 1px solid var(--glass-border);
-      color: var(--text-main);
-      border-radius: 10px;
-      padding: 8px 5px;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .dock-btn:hover, .dock-btn.active {
-      background: linear-gradient(135deg, rgba(24, 169, 121, 0.52), rgba(230, 190, 106, 0.36));
-      border-color: var(--gold);
-    }
-
-    /* Modal para Inventario de Venta, Ficha, Ajuste IA, Guardados y Cita */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 30;
-      background: rgba(3, 12, 9, 0.74);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-card {
-      width: 100%;
-      max-width: 470px;
-      max-height: 86vh;
-      overflow-y: auto;
-      padding: 16px;
-      border-radius: 18px;
-      background: rgba(8, 34, 26, 0.94);
-      border: 1px solid var(--gold);
-      box-shadow: 0 16px 44px rgba(0, 0, 0, 0.58);
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      border-bottom: 1px solid rgba(230, 190, 106, 0.25);
-      padding-bottom: 8px;
-    }
-
-    .modal-header h2 {
-      margin: 0;
-      font-size: 15px;
-      color: var(--gold);
-    }
-
-    .close-btn {
-      background: transparent;
-      border: 1px solid rgba(230, 190, 106, 0.45);
-      color: var(--text-main);
-      border-radius: 8px;
-      padding: 4px 10px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .inv-item {
-      border: 1px solid rgba(230, 190, 106, 0.32);
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-
-    .inv-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .inv-meta {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin: 4px 0 8px;
-    }
-
-    .inv-btn-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 6px;
-    }
-
-    .pill-opt {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(230, 190, 106, 0.35);
-      color: var(--text-main);
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 11px;
-      cursor: pointer;
-    }
-
-    .pill-opt.selected {
-      background: var(--gold);
-      color: #061d15;
-      font-weight: 700;
-    }
-
-    .toast {
-      position: fixed;
-      top: 72px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-10px);
-      z-index: 40;
-      background: rgba(7, 36, 27, 0.95);
-      border: 1px solid var(--gold);
-      color: var(--text-main);
-      padding: 7px 15px;
-      border-radius: 999px;
-      font-size: 11.5px;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.25s ease;
-      white-space: nowrap;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      gap: 5px;
     }
 
     input[type="file"] {
@@ -438,563 +216,346 @@
   </style>
 </head>
 <body>
-  <input type="file" id="photoInput" accept="image/*" />
-  <div class="toast" id="toast"></div>
+  <input type="file" id="photoFileInput" accept="image/*" />
+  <input type="file" id="videoFileInput" accept="video/*" />
 
-  <!-- Escena 3D con 3 secciones: Inventario/Exhibición, Vestidores Digitales y Pasarela -->
-  <a-scene id="scene" renderer="antialias: true; colorManagement: true; physicallyCorrectLights: true">
+  <a-scene id="scene" renderer="antialias: true; colorManagement: true">
     <a-assets>
-      <canvas id="marbleCanvas" width="512" height="512"></canvas>
-      <canvas id="emeraldCanvas" width="512" height="512"></canvas>
+      <canvas id="marbleTex" width="512" height="512"></canvas>
+      <canvas id="emeraldTex" width="512" height="512"></canvas>
     </a-assets>
 
-    <!-- Luces del salón -->
-    <a-light type="ambient" color="#f5efe2" intensity="0.95"></a-light>
-    <a-light type="directional" color="#fff6e0" intensity="1.15" position="4 8 5"></a-light>
-    <a-light type="point" color="#ffd98e" intensity="1.1" distance="14" position="0 3.5 0"></a-light>
-    <a-light type="point" color="#2bd99f" intensity="0.95" distance="12" position="-4.5 2.6 -2"></a-light>
-    <a-light type="point" color="#2bd99f" intensity="0.95" distance="12" position="4.5 2.6 -2"></a-light>
+    <!-- Iluminación del salón -->
+    <a-light type="ambient" color="#fff8eb" intensity="0.95"></a-light>
+    <a-light type="directional" color="#fff2d6" intensity="1.1" position="4 7 5"></a-light>
+    <a-light type="point" color="#ffe09e" intensity="1.15" distance="12" position="0 3.2 0"></a-light>
+    <a-light type="point" color="#22b886" intensity="0.85" distance="10" position="0 2.2 -2.5"></a-light>
 
-    <a-sky color="#12211c"></a-sky>
+    <a-sky color="#13221c"></a-sky>
 
     <!-- Piso de mármol claro -->
     <a-circle radius="16" rotation="-90 0 0" position="0 0 0"
-              material="roughness: 0.25; metalness: 0.05; src: #marbleCanvas; repeat: 7 7"></a-circle>
+              material="src: #marbleTex; repeat: 6 6; roughness: 0.25"></a-circle>
 
-    <!-- Muro posterior esmeralda con molduras doradas -->
-    <a-entity position="0 0 -7.2">
-      <a-box width="17" height="5.4" depth="0.25" position="0 2.7 0"
-             material="src: #emeraldCanvas; roughness: 0.35; metalness: 0.1"></a-box>
-      <a-box width="4.2" height="4.0" depth="0.32" position="0 2.3 0.05"
-             material="src: #emeraldCanvas; roughness: 0.25"></a-box>
-      <a-box width="4.35" height="0.08" depth="0.36" position="0 4.32 0.05"
-             material="color: #e6be6a; metalness: 0.75; roughness: 0.2"></a-box>
-      <a-box width="4.35" height="0.08" depth="0.36" position="0 0.28 0.05"
-             material="color: #e6be6a; metalness: 0.75; roughness: 0.2"></a-box>
+    <!-- Pared de fondo esmeralda veteado con molduras doradas -->
+    <a-entity position="0 0 -6.8">
+      <a-box width="16" height="5.2" depth="0.25" position="0 2.6 0"
+             material="src: #emeraldTex; roughness: 0.35"></a-box>
+      <a-box width="3.6" height="3.8" depth="0.32" position="0 2.2 0.05"
+             material="src: #emeraldTex; roughness: 0.25"></a-box>
+      <a-box width="3.74" height="0.07" depth="0.36" position="0 4.12 0.05"
+             material="color: #e6be6a; metalness: 0.7; roughness: 0.25"></a-box>
+      <a-box width="3.74" height="0.07" depth="0.36" position="0 0.28 0.05"
+             material="color: #e6be6a; metalness: 0.7; roughness: 0.25"></a-box>
     </a-entity>
 
-    <!-- SECCIÓN 1: ÁREA DE EXHIBICIÓN / INVENTARIO EN VENTA (Izquierda) -->
-    <a-entity id="secInventory3D" position="-4.5 0 -2.4">
-      <a-ring radius-inner="1.8" radius-outer="1.9" rotation="-90 0 0" position="0 0.01 0"
-              material="color: #e6be6a; metalness: 0.7"></a-ring>
-      <!-- Perchero / Vitrina de piezas en venta -->
-      <a-cylinder radius="0.025" height="1.85" position="-0.85 0.92 0" material="color: #e6be6a; metalness: 0.7"></a-cylinder>
-      <a-cylinder radius="0.025" height="1.85" position="0.85 0.92 0" material="color: #e6be6a; metalness: 0.7"></a-cylinder>
-      <a-cylinder radius="0.02" height="1.75" rotation="0 0 90" position="0 1.84 0" material="color: #e6be6a; metalness: 0.7"></a-cylinder>
-      <a-box width="0.3" height="0.88" depth="0.14" position="-0.45 1.28 0" material="color: #f4be38"></a-box>
-      <a-box width="0.3" height="0.94" depth="0.14" position="0 1.25 0" material="color: #0e6b4e"></a-box>
-      <a-box width="0.3" height="0.84" depth="0.14" position="0.45 1.3 0" material="color: #8f3d5e"></a-box>
+    <!-- SECCIÓN 1: INVENTARIO / EXHIBICIÓN (Izquierda) -->
+    <a-entity id="section-inventory" position="-4.2 0 -2.4">
+      <a-cylinder radius="1.25" height="0.14" position="0 0.07 0" color="#093b2c"></a-cylinder>
+      <a-torus radius="1.25" radius-tubular="0.02" rotation="90 0 0" position="0 0.14 0" color="#e6be6a"></a-torus>
+      <a-box width="0.42" height="1.15" depth="0.22" position="-0.52 0.72 0" color="#f4be38"></a-box>
+      <a-box width="0.42" height="1.28" depth="0.22" position="0 0.78 0" color="#0f6e50"></a-box>
+      <a-box width="0.42" height="1.1" depth="0.22" position="0.52 0.69 0" color="#d8c394"></a-box>
     </a-entity>
 
-    <!-- SECCIÓN 2: VESTIDORES DIGITALES CILÍNDRICOS TRANSPARENTES (Centro-Izquierda) -->
-    <a-entity id="secBooths3D" position="-0.8 0 -1.2">
-      <!-- Vestidor digital principal -->
-      <a-cylinder radius="1.38" height="0.22" position="0 0.11 0"
-                  material="color: #083b2c; metalness: 0.4; roughness: 0.25"></a-cylinder>
-      <a-torus radius="1.38" radius-tubular="0.032" rotation="90 0 0" position="0 0.22 0"
-               material="color: #e6be6a; emissive: #e6be6a; emissiveIntensity: 0.4"></a-torus>
-      <a-cylinder radius="1.28" height="2.7" position="0 1.56 0" open-ended="true" side="double"
-                  material="color: #b8fff0; opacity: 0.16; transparent: true; roughness: 0.08"></a-cylinder>
-      <a-torus radius="1.28" radius-tubular="0.02" rotation="90 0 0" position="0 2.9 0"
-               material="color: #e6be6a; metalness: 0.75"></a-torus>
+    <!-- SECCIÓN 2: VESTIDOR CILÍNDRICO TRANSPARENTE ESTILO D'VITRALES (Centro) -->
+    <a-entity id="section-booths" position="0 0 -2.2">
+      <!-- Base circular esmeralda + anillo dorado + luz esmeralda -->
+      <a-cylinder radius="1.42" height="0.22" position="0 0.11 0"
+                  material="color: #073829; roughness: 0.25; metalness: 0.35"></a-cylinder>
+      <a-torus radius="1.42" radius-tubular="0.032" rotation="90 0 0" position="0 0.22 0"
+               material="color: #e6be6a; emissive: #e6be6a; emissiveIntensity: 0.45"></a-torus>
+      <a-torus radius="1.24" radius-tubular="0.022" rotation="90 0 0" position="0 0.24 0"
+               material="color: #18a979; emissive: #18a979; emissiveIntensity: 0.6"></a-torus>
 
-      <!-- Maniquí dentro del vestidor -->
-      <a-entity id="boothAvatar" position="0 0.22 0">
+      <!-- Cilindro transparente -->
+      <a-cylinder radius="1.3" height="2.65" position="0 1.56 0" open-ended="true" side="double"
+                  material="color: #c7fff0; opacity: 0.17; transparent: true; roughness: 0.08"></a-cylinder>
+      <a-torus radius="1.3" radius-tubular="0.022" rotation="90 0 0" position="0 2.88 0"
+               material="color: #e6be6a; metalness: 0.75; roughness: 0.2"></a-torus>
+
+      <!-- Maniquí y vestido central -->
+      <a-entity id="boothMannequin" position="0 0.22 0">
         <a-cylinder radius="0.2" height="0.06" position="0 0.03 0" material="color: #e6be6a; metalness: 0.7"></a-cylinder>
-        <a-cylinder radius="0.035" height="0.82" position="0 0.44 0" material="color: #c9a255"></a-cylinder>
-        <a-cone id="boothSkirt" radius-bottom="0.58" radius-top="0.19" height="1.0" position="0 1.12 0"
-                material="color: #f4be38; roughness: 0.45"></a-cone>
-        <a-cylinder id="boothBodice" radius-bottom="0.19" radius-top="0.23" height="0.4" position="0 1.8 0"
-                    material="color: #f4be38; roughness: 0.4"></a-cylinder>
-        <a-sphere radius="0.16" position="0 2.26 0" material="color: #f1cfb3; roughness: 0.55"></a-sphere>
-      </a-entity>
-    </a-entity>
-
-    <!-- SECCIÓN 3: ÁREA DE PASARELA + PANTALLA TRANSPARENTE A UN COSTADO (Derecha) -->
-    <a-entity id="secRunway3D" position="3.6 0 -1.5">
-      <!-- Plataforma / pasarela iluminada -->
-      <a-box width="2.2" height="0.16" depth="4.8" position="0 0.08 0.4"
-             material="color: #083427; roughness: 0.25; metalness: 0.35"></a-box>
-      <a-box width="2.26" height="0.04" depth="4.86" position="0 0.17 0.4"
-             material="color: #e6be6a; emissive: #e6be6a; emissiveIntensity: 0.35"></a-box>
-
-      <!-- Modelo en pasarela (cambia según vestido elegido) -->
-      <a-entity id="runwayModel" position="0 0.18 0.2">
-        <a-cone id="runwaySkirt" radius-bottom="0.62" radius-top="0.2" height="1.04" position="0 1.14 0"
+        <a-cylinder radius="0.035" height="0.8" position="0 0.43 0" material="color: #c9a255"></a-cylinder>
+        <a-cone id="dressSkirt" radius-bottom="0.62" radius-top="0.2" height="1.02" position="0 1.12 0"
                 material="color: #f4be38; roughness: 0.42"></a-cone>
-        <a-cylinder id="runwayBodice" radius-bottom="0.2" radius-top="0.24" height="0.42" position="0 1.83 0"
+        <a-cylinder id="dressBodice" radius-bottom="0.2" radius-top="0.24" height="0.4" position="0 1.8 0"
                     material="color: #f4be38; roughness: 0.4"></a-cylinder>
-        <a-sphere radius="0.16" position="0 2.3 0" material="color: #f1cfb3; roughness: 0.55"></a-sphere>
-        <a-torus id="runwayAccent" radius="0.35" radius-tubular="0.025" rotation="90 0 0" position="0 1.62 0"
-                 material="color: #2e7d32; emissive: #18a979; emissiveIntensity: 0.25"></a-torus>
-      </a-entity>
-
-      <!-- Pantalla transparente lateral física en 3D junto a la pasarela -->
-      <a-entity position="1.45 1.45 0.6" rotation="0 -28 0">
-        <a-plane width="1.15" height="1.75"
-                 material="color: #7df9d0; opacity: 0.18; transparent: true; side: double"></a-plane>
-        <a-box width="1.18" height="0.03" depth="0.04" position="0 0.89 0" material="color: #e6be6a"></a-box>
-        <a-box width="1.18" height="0.03" depth="0.04" position="0 -0.89 0" material="color: #e6be6a"></a-box>
+        <a-sphere radius="0.16" position="0 2.26 0" material="color: #f2d2b6; roughness: 0.55"></a-sphere>
       </a-entity>
     </a-entity>
 
-    <!-- Cámara -->
-    <a-entity id="cameraRig" position="0 1.65 4.6">
+    <!-- SECCIÓN 3: PASARELA + PANTALLA TRANSPARENTE A UN COSTADO (Derecha) -->
+    <a-entity id="section-runway" position="4.2 0 -2.4">
+      <a-box width="1.9" height="0.16" depth="4.2" position="0 0.08 0.4"
+             material="color: #083829; roughness: 0.25"></a-box>
+      <a-box width="1.96" height="0.035" depth="4.26" position="0 0.17 0.4"
+             material="color: #e6be6a; emissive: #e6be6a; emissiveIntensity: 0.35"></a-box>
+      <a-cylinder radius="0.18" height="1.15" position="0 0.74 0.4" color="#e6be6a"></a-cylinder>
+      <a-sphere radius="0.15" position="0 1.47 0.4" color="#f2d2b6"></a-sphere>
+
+      <!-- Pantalla transparente lateral en 3D -->
+      <a-entity position="1.32 1.32 0.6" rotation="0 -25 0">
+        <a-plane width="1.08" height="1.52"
+                 material="color: #b7f5e3; opacity: 0.22; transparent: true; side: double"></a-plane>
+      </a-entity>
+    </a-entity>
+
+    <!-- Cámara: inicia ligeramente retirada para ver vestidor y salón completo -->
+    <a-entity id="cameraRig" position="0 1.55 2.4">
       <a-camera look-controls wasd-controls="enabled: false"></a-camera>
     </a-entity>
   </a-scene>
 
-  <!-- HUD Transparente con Controles de Inventario, Vestidor y Pantalla de Pasarela -->
-  <div class="hud-layer">
-    <div class="glass-panel top-bar">
-      <div class="brand-title">
-        <span class="eyebrow">D'Vitrales Mall · Boutique 3D</span>
-        <h1>Inventario · Vestidores · Pasarela</h1>
+  <!-- HUD Transparente Compacto -->
+  <div class="hud">
+    <div class="glass top-bar">
+      <div>
+        <span class="brand-sub">D'Vitrales Mall · Boutique</span>
+        <h1 class="brand-label">TU LOOK D'VITRALES</h1>
       </div>
-      <div class="top-actions">
-        <button class="hud-btn" id="btnOpenInventory">Catálogo Venta</button>
-        <button class="hud-btn" id="btnDesignInfo">Ficha</button>
-        <a class="hud-btn" href="moda.html">Moda</a>
-        <a class="hud-btn" href="index.html">Mall</a>
+      <div class="btn-row">
+        <button id="btnToggleHud">Ocultar HUD</button>
+        <a class="nav-btn hud-collapsible" href="moda.html">Moda</a>
+        <a class="nav-btn hud-collapsible" href="index.html">Mall</a>
       </div>
     </div>
 
-    <div class="middle-stage">
-      <!-- Panel Izquierdo: Vestidor Digital IA -->
-      <div class="glass-panel side-column">
-        <div class="panel-tag">Vestidor Digital</div>
-        <div class="preview-mini">
-          <div class="preview-placeholder" id="photoPlaceholder">Sin foto<br/>(Maniquí IA)</div>
-          <img id="uploadedPhotoImg" style="display:none;" alt="Foto probador" />
+    <div class="middle-row hud-collapsible">
+      <!-- Izquierda: Probador Virtual IA -->
+      <div class="side-hud">
+        <div class="hud-tag">Probador IA</div>
+        <div class="photo-box" id="photoBox">
+          <span id="photoHint">Tu Foto</span>
+          <img id="photoPreview" style="display:none;" alt="Foto" />
         </div>
-        <button class="cmd-btn" id="btnUploadPhoto">Sube tu foto</button>
-        <button class="cmd-btn" id="btnAdjustAI">Ajuste IA</button>
-        <button class="cmd-btn" id="btnSaveStyle">Guardar estilo</button>
+        <button id="btnUploadPhoto">Sube tu foto</button>
+        <button id="btnAdjustFit">Ajuste IA</button>
+        <button id="btnSaveLook">Guardar estilo</button>
       </div>
 
-      <!-- Panel Derecho: Pantalla Transparente de Pasarela (Elegir vestido) -->
-      <div class="glass-panel side-column">
-        <div class="panel-tag">Pantalla Pasarela</div>
-        <div style="font-size:9.5px; color:var(--text-muted); text-align:center;">Elige vestido en pasarela:</div>
-        <div id="runwaySelectorList" style="display:flex; flex-direction:column; gap:6px;"></div>
-        <button class="cmd-btn active" id="btnToggleWalk">Pasarela: Activa</button>
+      <!-- Derecha: Mis Diseños & Pasarela -->
+      <div class="side-hud">
+        <div class="hud-tag">Mis Diseños</div>
+        <div class="photo-box" id="videoBox">
+          <span id="videoHint">Video Pasarela</span>
+        </div>
+        <button id="btnUploadVideo">Subir video</button>
+        <div id="videoList" style="display:flex; flex-direction:column; gap:4px;"></div>
       </div>
     </div>
 
-    <!-- Barra Inferior: Selector de las 3 Secciones y Comandos -->
-    <div class="glass-panel bottom-dock">
-      <div class="dock-status">
-        <span>Vestido en pasarela: <strong id="activeDesignLabel">Gala Girasol Imperial</strong></span>
-        <span>Sección: <strong id="activeSectionLabel">Vista General</strong></span>
+    <div class="glass bottom-hud hud-collapsible">
+      <div class="status-bar">
+        <span>Zona: <strong id="zoneLabel">Vestidor Central</strong></span>
+        <span>Estilo: <strong id="lookLabel">Girasol · Entallado</strong></span>
       </div>
 
-      <div class="sections-tabs">
-        <button class="sec-btn" data-sec="inventory">1. Piezas en Venta</button>
-        <button class="sec-btn" data-sec="booths">2. Vestidores IA</button>
+      <div class="sections-grid">
+        <button class="sec-btn" data-sec="inventory">1. Inventario</button>
+        <button class="sec-btn active" data-sec="booths">2. Vestidor</button>
         <button class="sec-btn" data-sec="runway">3. Pasarela</button>
       </div>
 
-      <div class="dock-actions">
-        <button class="dock-btn" id="btnOverview">Vista Salón</button>
-        <button class="dock-btn" id="btnOpenInventoryBottom">Ver Inventario</button>
-        <button class="dock-btn" id="btnBookAppointment">Reservar Cita</button>
-        <button class="dock-btn" id="btnSavedLooks">Guardados</button>
+      <div class="actions-grid">
+        <button id="btnZoomIn">Entrar Vestidor</button>
+        <button id="btnZoomOut">Ver Salón</button>
+        <button id="btnCycleLook">Cambiar Look</button>
+        <button id="btnBookCita">Reservar Cita</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h2 id="modalTitle">Boutique</h2>
-        <button class="close-btn" id="closeModal">Cerrar</button>
-      </div>
-      <div id="modalBody"></div>
     </div>
   </div>
 
   <script>
-    const INVENTORY_ITEMS = [
-      {
-        id: "girasol-imperial",
-        name: "Gala Girasol Imperial",
-        line: "D'Vitrales Alta Costura",
-        price: "$240",
-        status: "Disponible en inventario",
-        sizes: ["XS", "S", "M", "L"],
-        color: "#f4be38",
-        accent: "#2e7d32",
-        emoji: "🌻",
-        notes: "Vestido de gala luminoso con movimiento fluido en pasarela."
-      },
-      {
-        id: "esmeralda-seda",
-        name: "Sastrería Esmeralda",
-        line: "Vances Studio",
-        price: "$165",
-        status: "Disponible en inventario",
-        sizes: ["S", "M", "L", "XL"],
-        color: "#0e6b4e",
-        accent: "#e6be6a",
-        emoji: "💎",
-        notes: "Conjunto estructurado con detalles dorados y caída elegante."
-      },
-      {
-        id: "gema-nocturna",
-        name: "Noche de Gema",
-        line: "Gema",
-        price: "$190",
-        status: "Últimas piezas",
-        sizes: ["XS", "S", "M"],
-        color: "#8f3d5e",
-        accent: "#e6be6a",
-        emoji: "✨",
-        notes: "Pieza de noche de corte favorecedor y acabado satinado."
-      },
-      {
-        id: "brisa-marfil",
-        name: "Brisa Marfil & Bronce",
-        line: "D'Vitrales",
-        price: "$150",
-        status: "Disponible en inventario",
-        sizes: ["S", "M", "L"],
-        color: "#e8dec8",
-        accent: "#9e7b3e",
-        emoji: "🌿",
-        notes: "Diseño fresco en tonos marfil con acentos bronce."
-      }
+    const LOOKS = [
+      { name: "Girasol", color: "#f4be38" },
+      { name: "Esmeralda", color: "#0e6b4e" },
+      { name: "Champán", color: "#efe2c2" },
+      { name: "Gema", color: "#8f3d5e" }
     ];
 
-    const CAMERA_VIEWS = {
-      overview: { label: "Vista Salón", pos: { x: 0, y: 1.65, z: 4.6 } },
-      inventory: { label: "1. Piezas en Venta", pos: { x: -4.2, y: 1.6, z: 0.6 } },
-      booths: { label: "2. Vestidores IA", pos: { x: -0.8, y: 1.65, z: 1.9 } },
-      runway: { label: "3. Pasarela", pos: { x: 3.6, y: 1.65, z: 2.8 } }
+    const FITS = ["Entallado", "Fluido", "Estructurado"];
+
+    const RUNWAY_VIDEOS = [
+      { id: "v1", title: "Pasarela 1", src: "" },
+      { id: "v2", title: "Pasarela 2", src: "" },
+      { id: "v3", title: "Pasarela 3", src: "" }
+    ];
+
+    const ZONES = {
+      inventory: { x: -4.2, y: 1.55, z: 0.4, label: "1. Inventario" },
+      booths:    { x: 0,    y: 1.55, z: 2.2, label: "2. Vestidor Central" },
+      runway:    { x: 4.2,  y: 1.55, z: 1.2, label: "3. Pasarela" }
     };
 
-    const state = {
-      selectedItem: INVENTORY_ITEMS[0],
-      fitStyle: "Entallado",
-      paletteMode: "Original",
-      runwayWalk: true,
-      currentView: "overview",
-      savedLooks: [],
-      bag: []
-    };
+    let lookIdx = 0;
+    let fitIdx = 0;
+    let selectedVideo = RUNWAY_VIDEOS[0];
+    let savedLooks = [];
 
-    function paintMarbleTexture() {
-      const canvas = document.getElementById("marbleCanvas");
-      const ctx = canvas.getContext("2d");
+    function paintMarble() {
+      const c = document.getElementById("marbleTex");
+      const ctx = c.getContext("2d");
       ctx.fillStyle = "#f2ede2";
       ctx.fillRect(0, 0, 512, 512);
-      for (let i = 0; i < 28; i++) {
+      for (let i = 0; i < 24; i++) {
         ctx.beginPath();
-        let x = (i * 37) % 512;
-        let y = 0;
+        let x = (i * 41) % 512, y = 0;
         ctx.moveTo(x, y);
         while (y < 512) {
           y += 32;
-          x += Math.sin((y + i * 20) * 0.03) * 14;
+          x += Math.sin((y + i * 18) * 0.03) * 14;
           ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = "rgba(185, 176, 160, 0.25)";
+        ctx.strokeStyle = "rgba(180, 170, 152, 0.25)";
         ctx.lineWidth = 1.6;
         ctx.stroke();
       }
     }
 
-    function paintEmeraldTexture() {
-      const canvas = document.getElementById("emeraldCanvas");
-      const ctx = canvas.getContext("2d");
-      const grad = ctx.createLinearGradient(0, 0, 512, 512);
-      grad.addColorStop(0, "#062b20");
-      grad.addColorStop(0.5, "#0d523c");
-      grad.addColorStop(1, "#052219");
-      ctx.fillStyle = grad;
+    function paintEmerald() {
+      const c = document.getElementById("emeraldTex");
+      const ctx = c.getContext("2d");
+      const g = ctx.createLinearGradient(0, 0, 512, 512);
+      g.addColorStop(0, "#062b20");
+      g.addColorStop(0.5, "#0d523c");
+      g.addColorStop(1, "#052219");
+      ctx.fillStyle = g;
       ctx.fillRect(0, 0, 512, 512);
-      for (let i = 0; i < 22; i++) {
+      for (let i = 0; i < 20; i++) {
         ctx.beginPath();
-        let x = (i * 43) % 512;
-        let y = 0;
+        let x = (i * 47) % 512, y = 0;
         ctx.moveTo(x, y);
         while (y < 512) {
           y += 28;
-          x += Math.cos((y + i * 15) * 0.025) * 16;
+          x += Math.cos((y + i * 14) * 0.025) * 16;
           ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = "rgba(145, 235, 198, 0.15)";
+        ctx.strokeStyle = "rgba(145, 235, 198, 0.16)";
         ctx.lineWidth = 2;
         ctx.stroke();
       }
     }
 
-    function showToast(msg) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      clearTimeout(showToast._timer);
-      showToast._timer = setTimeout(() => t.classList.remove("show"), 2300);
+    function applyLook() {
+      const look = LOOKS[lookIdx];
+      const fit = FITS[fitIdx];
+      const skirt = document.getElementById("dressSkirt");
+      const bodice = document.getElementById("dressBodice");
+
+      skirt.setAttribute("material", "color", look.color);
+      bodice.setAttribute("material", "color", look.color);
+
+      let rad = 0.62;
+      if (fit === "Fluido") rad = 0.78;
+      if (fit === "Estructurado") rad = 0.52;
+      skirt.setAttribute("radius-bottom", String(rad));
+
+      document.getElementById("lookLabel").textContent = `${look.name} · ${fit}`;
     }
 
-    function applyDressTo3D() {
-      const item = state.selectedItem;
-      let color = item.color;
-      if (state.paletteMode === "Esmeralda & Oro") color = "#117a59";
-      if (state.paletteMode === "Champán") color = "#f1dfb8";
+    function goZone(key) {
+      const z = ZONES[key];
+      if (!z) return;
+      document.getElementById("cameraRig").setAttribute("position", `${z.x} ${z.y} ${z.z}`);
+      document.getElementById("zoneLabel").textContent = z.label;
+      document.querySelectorAll(".sec-btn").forEach((b) => b.classList.toggle("active", b.dataset.sec === key));
+    }
 
-      let radiusBottom = 0.62;
-      if (state.fitStyle === "Fluido") radiusBottom = 0.78;
-      if (state.fitStyle === "Estructurado") radiusBottom = 0.52;
-
-      ["boothSkirt", "boothBodice", "runwaySkirt", "runwayBodice"].forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) el.setAttribute("material", "color", color);
-      });
-
-      ["boothSkirt", "runwaySkirt"].forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) el.setAttribute("radius-bottom", String(radiusBottom));
-      });
-
-      const accentEl = document.getElementById("runwayAccent");
-      if (accentEl) {
-        accentEl.setAttribute("material", "color", item.accent);
-        accentEl.setAttribute("material", "emissive", item.accent);
+    function loadVideo(src, title) {
+      const box = document.getElementById("videoBox");
+      if (!src) {
+        box.innerHTML = `<span style="font-size:9px; padding:4px;">${title}</span>`;
+        return;
       }
-
-      document.getElementById("activeDesignLabel").textContent = `${item.name} (${item.price})`;
-      renderRunwaySelector();
+      box.innerHTML = `<video src="${src}" controls autoplay loop muted playsinline></video>`;
     }
 
-    function renderRunwaySelector() {
-      const box = document.getElementById("runwaySelectorList");
-      box.innerHTML = "";
-      INVENTORY_ITEMS.forEach((item) => {
-        const div = document.createElement("div");
-        div.className = "runway-selector-item" + (item.id === state.selectedItem.id ? " active" : "");
-        div.innerHTML = `
-          <div class="runway-item-top">
-            <span>${item.emoji}</span>
-            <span>${item.name}</span>
-          </div>
-          <div class="runway-item-sub">${item.line} · ${item.price}</div>
-        `;
-        div.addEventListener("click", () => {
-          state.selectedItem = item;
-          state.paletteMode = "Original";
-          applyDressTo3D();
-          showToast(`Pasarela: ${item.name}`);
+    function renderVideos() {
+      const list = document.getElementById("videoList");
+      list.innerHTML = "";
+      RUNWAY_VIDEOS.forEach((v) => {
+        const b = document.createElement("button");
+        b.className = "vid-btn" + (v.id === selectedVideo.id ? " active" : "");
+        b.textContent = v.title;
+        b.addEventListener("click", () => {
+          selectedVideo = v;
+          renderVideos();
+          loadVideo(v.src, v.title);
+          goZone("runway");
         });
-        box.appendChild(div);
+        list.appendChild(b);
       });
     }
-
-    function moveToView(viewKey) {
-      const v = CAMERA_VIEWS[viewKey] || CAMERA_VIEWS.overview;
-      state.currentView = viewKey;
-      const rig = document.getElementById("cameraRig");
-      rig.setAttribute("animation__cam", {
-        property: "position",
-        to: `${v.pos.x} ${v.pos.y} ${v.pos.z}`,
-        dur: 650,
-        easing: "easeInOutQuad"
-      });
-      document.getElementById("activeSectionLabel").textContent = v.label;
-      document.querySelectorAll(".sec-btn").forEach((b) => {
-        b.classList.toggle("active", b.dataset.sec === viewKey);
-      });
-      showToast(v.label);
-    }
-
-    function openModal(title, html) {
-      document.getElementById("modalTitle").textContent = title;
-      document.getElementById("modalBody").innerHTML = html;
-      document.getElementById("modalBackdrop").classList.add("open");
-    }
-
-    function closeModal() {
-      document.getElementById("modalBackdrop").classList.remove("open");
-    }
-
-    function openInventoryModal() {
-      const rows = INVENTORY_ITEMS.map((item) => `
-        <div class="inv-item">
-          <div class="inv-title-row">
-            <span>${item.emoji} ${item.name}</span>
-            <span style="color:#e6be6a;">${item.price}</span>
-          </div>
-          <div class="inv-meta">${item.line} · Tallas: ${item.sizes.join(", ")} · ${item.status}</div>
-          <div class="inv-meta" style="color:#f7f4eb;">${item.notes}</div>
-          <div class="inv-btn-row">
-            <button class="pill-opt" data-send-runway="${item.id}">Ver en pasarela</button>
-            <button class="pill-opt" data-add-bag="${item.id}">Apartar / Comprar</button>
-          </div>
-        </div>
-      `).join("");
-
-      openModal("Inventario en Venta · Boutique", `
-        <p style="margin:0 0 10px; font-size:12px; color:#d5cfc0;">
-          Piezas seleccionadas en selección (${state.bag.length} apartadas):
-        </p>
-        ${rows}
-      `);
-
-      document.querySelectorAll("[data-send-runway]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const found = INVENTORY_ITEMS.find((x) => x.id === btn.dataset.sendRunway);
-          if (!found) return;
-          state.selectedItem = found;
-          applyDressTo3D();
-          closeModal();
-          moveToView("runway");
-        });
-      });
-
-      document.querySelectorAll("[data-add-bag]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const found = INVENTORY_ITEMS.find((x) => x.id === btn.dataset.addBag);
-          if (!found) return;
-          state.bag.push(found);
-          showToast(`Apartado: ${found.name}`);
-          openInventoryModal();
-        });
-      });
-    }
-
-    AFRAME.registerComponent("boutique-motion", {
-      tick: function (time) {
-        const boothAvatar = document.getElementById("boothAvatar");
-        if (boothAvatar) {
-          boothAvatar.object3D.rotation.y = Math.sin(time * 0.0008) * 0.4;
-        }
-        const runwayModel = document.getElementById("runwayModel");
-        if (runwayModel && state.runwayWalk) {
-          const t = time * 0.0011;
-          runwayModel.object3D.position.z = Math.sin(t) * 1.45 + 0.2;
-          runwayModel.object3D.rotation.y = Math.cos(t) > 0 ? 0.15 : -0.15;
-        }
-      }
-    });
 
     document.addEventListener("DOMContentLoaded", () => {
-      paintMarbleTexture();
-      paintEmeraldTexture();
-      document.getElementById("scene").setAttribute("boutique-motion", "");
-      applyDressTo3D();
+      paintMarble();
+      paintEmerald();
+      applyLook();
+      renderVideos();
 
-      // Secciones
-      document.querySelectorAll(".sec-btn").forEach((btn) => {
-        btn.addEventListener("click", () => moveToView(btn.dataset.sec));
-      });
-      document.getElementById("btnOverview").addEventListener("click", () => moveToView("overview"));
-
-      // Inventario
-      document.getElementById("btnOpenInventory").addEventListener("click", openInventoryModal);
-      document.getElementById("btnOpenInventoryBottom").addEventListener("click", openInventoryModal);
-
-      // Pasarela walk toggle
-      document.getElementById("btnToggleWalk").addEventListener("click", (e) => {
-        state.runwayWalk = !state.runwayWalk;
-        e.target.classList.toggle("active", state.runwayWalk);
-        e.target.textContent = state.runwayWalk ? "Pasarela: Activa" : "Pasarela: Pausa";
-        showToast(state.runwayWalk ? "Recorrido de pasarela activo" : "Modelo en pose");
+      document.getElementById("btnToggleHud").addEventListener("click", (e) => {
+        document.body.classList.toggle("hud-hidden");
+        const hidden = document.body.classList.contains("hud-hidden");
+        e.target.textContent = hidden ? "Mostrar HUD" : "Ocultar HUD";
+        e.target.classList.toggle("active", hidden);
       });
 
-      // Foto en vestidor
-      const photoInput = document.getElementById("photoInput");
+      document.querySelectorAll(".sec-btn").forEach((b) => {
+        b.addEventListener("click", () => goZone(b.dataset.sec));
+      });
+
+      document.getElementById("btnZoomIn").addEventListener("click", () => {
+        goZone("booths");
+        document.getElementById("cameraRig").setAttribute("position", "0 1.55 0.65");
+        document.getElementById("zoneLabel").textContent = "Dentro del Vestidor";
+      });
+
+      document.getElementById("btnZoomOut").addEventListener("click", () => {
+        document.getElementById("cameraRig").setAttribute("position", "0 1.65 4.2");
+        document.getElementById("zoneLabel").textContent = "Salón Completo";
+      });
+
+      document.getElementById("btnCycleLook").addEventListener("click", () => {
+        lookIdx = (lookIdx + 1) % LOOKS.length;
+        applyLook();
+      });
+
+      document.getElementById("btnAdjustFit").addEventListener("click", () => {
+        fitIdx = (fitIdx + 1) % FITS.length;
+        applyLook();
+      });
+
+      document.getElementById("btnSaveLook").addEventListener("click", () => {
+        savedLooks.push(`${LOOKS[lookIdx].name} (${FITS[fitIdx]})`);
+        alert(`Estilo guardado: ${LOOKS[lookIdx].name} · ${FITS[fitIdx]}`);
+      });
+
+      document.getElementById("btnBookCita").addEventListener("click", () => {
+        alert(`Cita preparada para el look ${LOOKS[lookIdx].name} (${FITS[fitIdx]}) en D'Vitrales Boutique.`);
+      });
+
+      const photoInput = document.getElementById("photoFileInput");
       document.getElementById("btnUploadPhoto").addEventListener("click", () => photoInput.click());
       photoInput.addEventListener("change", (e) => {
         const f = e.target.files && e.target.files[0];
         if (!f) return;
-        const img = document.getElementById("uploadedPhotoImg");
+        const img = document.getElementById("photoPreview");
         img.src = URL.createObjectURL(f);
         img.style.display = "block";
-        document.getElementById("photoPlaceholder").style.display = "none";
-        showToast("Foto cargada en el vestidor");
+        document.getElementById("photoHint").style.display = "none";
       });
 
-      // Ajuste IA
-      document.getElementById("btnAdjustAI").addEventListener("click", () => {
-        const fits = ["Entallado", "Fluido", "Estructurado"];
-        const pals = ["Original", "Esmeralda & Oro", "Champán"];
-        openModal("Ajuste IA del Vestidor", `
-          <div style="margin-bottom:12px;">
-            <div style="font-size:11px; color:#d5cfc0; text-transform:uppercase;">Silueta</div>
-            <div class="pill-row">
-              ${fits.map((f) => `<button class="pill-opt ${state.fitStyle === f ? "selected" : ""}" data-fit="${f}">${f}</button>`).join("")}
-            </div>
-          </div>
-          <div>
-            <div style="font-size:11px; color:#d5cfc0; text-transform:uppercase;">Tono</div>
-            <div class="pill-row">
-              ${pals.map((p) => `<button class="pill-opt ${state.paletteMode === p ? "selected" : ""}" data-pal="${p}">${p}</button>`).join("")}
-            </div>
-          </div>
-        `);
-        document.querySelectorAll("[data-fit]").forEach((b) => {
-          b.addEventListener("click", () => {
-            state.fitStyle = b.dataset.fit;
-            applyDressTo3D();
-            document.querySelectorAll("[data-fit]").forEach((x) => x.classList.toggle("selected", x.dataset.fit === state.fitStyle));
-          });
-        });
-        document.querySelectorAll("[data-pal]").forEach((b) => {
-          b.addEventListener("click", () => {
-            state.paletteMode = b.dataset.pal;
-            applyDressTo3D();
-            document.querySelectorAll("[data-pal]").forEach((x) => x.classList.toggle("selected", x.dataset.pal === state.paletteMode));
-          });
-        });
-      });
-
-      // Ficha
-      document.getElementById("btnDesignInfo").addEventListener("click", () => {
-        const d = state.selectedItem;
-        openModal(d.name, `
-          <p style="font-size:12px; color:#d5cfc0;"><strong>Línea:</strong> ${d.line}</p>
-          <p style="font-size:12px; color:#d5cfc0;"><strong>Precio:</strong> ${d.price} · ${d.status}</p>
-          <p style="font-size:12px; color:#d5cfc0;"><strong>Tallas:</strong> ${d.sizes.join(" · ")}</p>
-          <p style="font-size:13px; line-height:1.45;">${d.notes}</p>
-        `);
-      });
-
-      // Guardar estilo
-      document.getElementById("btnSaveStyle").addEventListener("click", () => {
-        state.savedLooks.unshift({
-          name: state.selectedItem.name,
-          fit: state.fitStyle,
-          pal: state.paletteMode
-        });
-        showToast("Estilo guardado");
-      });
-
-      document.getElementById("btnSavedLooks").addEventListener("click", () => {
-        openModal("Estilos Guardados", state.savedLooks.length
-          ? state.savedLooks.map((s) => `<div class="inv-item"><strong>${s.name}</strong> — ${s.fit} · ${s.pal}</div>`).join("")
-          : `<p style="font-size:12px; color:#d5cfc0;">Aún no has guardado estilos en esta sesión.</p>`
-        );
-      });
-
-      // Cita
-      document.getElementById("btnBookAppointment").addEventListener("click", () => {
-        const d = state.selectedItem;
-        openModal("Reservar Cita", `
-          <p style="font-size:13px; line-height:1.45;">
-            Solicita prueba o consulta para <strong>${d.name}</strong> (${d.line}) con ajuste <strong>${state.fitStyle}</strong>.
-          </p>
-          <button class="cmd-btn" id="btnConfirmAppt">Confirmar solicitud</button>
-          <p id="apptDone" style="display:none; color:#2bd99f; font-size:12px; margin-top:10px;">Solicitud lista para coordinar.</p>
-        `);
-        document.getElementById("btnConfirmAppt").addEventListener("click", () => {
-          document.getElementById("apptDone").style.display = "block";
-          showToast("Cita registrada");
-        });
-      });
-
-      document.getElementById("closeModal").addEventListener("click", closeModal);
-      document.getElementById("modalBackdrop").addEventListener("click", (e) => {
-        if (e.target.id === "modalBackdrop") closeModal();
+      const vidInput = document.getElementById("videoFileInput");
+      document.getElementById("btnUploadVideo").addEventListener("click", () => vidInput.click());
+      vidInput.addEventListener("change", (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const url = URL.createObjectURL(f);
+        selectedVideo = { id: "custom", title: f.name, src: url };
+        loadVideo(url, f.name);
+        goZone("runway");
       });
     });
   </script>
