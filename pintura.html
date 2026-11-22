@@ -1,198 +1,1171 @@
-<!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galería de Pintura y Bellas Artes - D'Vitrales Mall</title>
-    <!-- Librería A-Frame para Realidad Virtual -->
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <style>
-        .boton-volver {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 999;
-            background: rgba(43, 31, 24, 0.85);
-            color: #f7f1e8;
-            padding: 10px 18px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-family: Arial, sans-serif;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            border: 1px solid #d4af37;
-            font-size: 14px;
-        }
-        .boton-carrito {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 999;
-            background: #d4af37;
-            color: #21150e;
-            padding: 10px 18px;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            font-family: Arial, sans-serif;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            font-size: 14px;
-        }
-        /* Ventana Modal / Emergente de Información, Ficha y Artista */
-        #modal-producto {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 340px;
-            max-height: 85vh;
-            overflow-y: auto;
-            background: #f7f1e8;
-            color: #21150e;
-            padding: 20px;
-            border-radius: 12px;
-            z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            font-family: Arial, sans-serif;
-            border: 2px solid #d4af37;
-        }
-        #modal-producto h3 { margin-top: 0; color: #4a2e1b; border-bottom: 1px solid #d4af37; padding-bottom: 5px; }
-        .seccion-info { font-size: 13px; margin: 8px 0; line-height: 1.4; }
-        .btn-accion {
-            background: #5c3a21;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 10px;
-        }
-        .btn-cerrar {
-            background: #a94442;
-            margin-top: 5px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>D'Vitrales Gallery — Galería de Pintura 3D</title>
+  <style>
+    :root {
+      --bg-glass: rgba(255, 250, 240, 0.72);
+      --bg-glass-dark: rgba(24, 34, 30, 0.78);
+      --border-gold: rgba(212, 175, 55, 0.45);
+      --emerald: #0f5132;
+      --emerald-light: #198754;
+      --gold: #c99b2e;
+      --gold-bright: #f2cf7e;
+      --ink: #1e2421;
+      --ink-muted: #55605a;
+      --shadow: 0 12px 32px rgba(15, 25, 20, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+      background: #f5efe2;
+      color: var(--ink);
+      user-select: none;
+    }
+
+    #canvas-container {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      touch-action: none;
+    }
+
+    /* Barra superior discreta glassmorphism */
+    .top-bar {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .glass-pill {
+      pointer-events: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-gold);
+      border-radius: 999px;
+      padding: 8px 14px;
+      box-shadow: var(--shadow);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease;
+      text-decoration: none;
+    }
+
+    .glass-pill:hover {
+      background: rgba(255, 253, 247, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .glass-pill.active {
+      background: linear-gradient(135deg, var(--emerald), #166534);
+      color: #fffdf7;
+      border-color: var(--gold-bright);
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 16px;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      box-shadow: 0 0 10px rgba(201, 155, 46, 0.7);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    /* Barra inferior discreta de zonas */
+    .bottom-dock {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      max-width: calc(100vw - 24px);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-gold);
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .bottom-dock::-webkit-scrollbar {
+      display: none;
+    }
+
+    .zone-btn {
+      border: none;
+      background: transparent;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .zone-btn:hover {
+      background: rgba(201, 155, 46, 0.16);
+    }
+
+    .zone-btn.active {
+      background: linear-gradient(135deg, var(--emerald), #157347);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(15, 81, 50, 0.25);
+    }
+
+    /* Aviso sutil de ayuda temporal */
+    .hint-toast {
+      position: fixed;
+      bottom: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      background: rgba(24, 34, 30, 0.72);
+      color: #fffaf0;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(242, 207, 126, 0.35);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+
+    .hint-toast.hidden {
+      opacity: 0;
+    }
+
+    /* Panel lateral / modal de catálogo de 40 obras */
+    .drawer-panel {
+      position: fixed;
+      top: 64px;
+      right: 14px;
+      bottom: 68px;
+      width: min(370px, calc(100vw - 28px));
+      z-index: 30;
+      background: var(--bg-glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-gold);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .drawer-panel.open {
+      display: flex;
+    }
+
+    .drawer-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(201, 155, 46, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .drawer-header h3 {
+      font-size: 15px;
+      color: var(--emerald);
+    }
+
+    .close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1px solid rgba(30, 36, 33, 0.15);
+      background: rgba(255, 255, 255, 0.7);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 6px;
+      padding: 10px 14px;
+      overflow-x: auto;
+      border-bottom: 1px solid rgba(201, 155, 46, 0.18);
+    }
+
+    .filter-chip {
+      border: 1px solid rgba(201, 155, 46, 0.35);
+      background: rgba(255, 255, 255, 0.55);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .filter-chip.active {
+      background: var(--emerald);
+      color: #fff;
+      border-color: var(--emerald);
+    }
+
+    .artwork-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .art-item {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(201, 155, 46, 0.3);
+      border-radius: 14px;
+      padding: 9px;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .art-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+    }
+
+    .art-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .art-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 2px 0;
+      line-height: 1.25;
+    }
+
+    .art-zone {
+      font-size: 10px;
+      color: var(--ink-muted);
+    }
+
+    /* Ficha de obra seleccionada (glassmorphism) */
+    .artwork-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      background: rgba(15, 22, 18, 0.42);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .artwork-modal.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(500px, 100%);
+      max-height: 88vh;
+      overflow-y: auto;
+      background: rgba(255, 251, 243, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid var(--gold);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+    }
+
+    .modal-preview {
+      width: 100%;
+      height: 220px;
+      border-radius: 16px;
+      border: 3px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s ease;
+    }
+
+    .modal-preview.zoomed {
+      transform: scale(1.18);
+      cursor: zoom-out;
+    }
+
+    .modal-code-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(24, 34, 30, 0.82);
+      color: var(--gold-bright);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .modal-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0 16px;
+      font-size: 13px;
+    }
+
+    .meta-box {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(201, 155, 46, 0.28);
+      border-radius: 12px;
+      padding: 9px 11px;
+    }
+
+    .meta-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ink-muted);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border-gold);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, var(--emerald), #157347);
+      color: #fff;
+    }
+
+    .action-btn.secondary {
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--ink);
+    }
+
+    .process-box {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(15, 81, 50, 0.08);
+      border: 1px dashed rgba(15, 81, 50, 0.35);
+      font-size: 12px;
+      line-height: 1.45;
+      display: none;
+    }
+
+    .process-box.show {
+      display: block;
+    }
+
+    @media (max-width: 640px) {
+      .glass-pill {
+        padding: 7px 11px;
+        font-size: 12px;
+      }
+      .brand-title {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div id="canvas-container"></div>
 
-    <!-- Botones de navegación superior -->
-    <a href="index.html" class="boton-volver">⬅ Volver al Mall</a>
-    <button class="boton-carrito" onclick="verCarrito()">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
-
-    <!-- VENTANA EMERGENTE (MODAL) PARA OBRA Y ARTISTA -->
-    <div id="modal-producto">
-        <h3 id="modal-titulo">Título de la Obra</h3>
-        <p class="seccion-info"><strong>Artista:</strong> <span id="modal-artista">Nombre del Artista</span></p>
-        <p class="seccion-info"><strong>Biografía:</strong> <span id="modal-bio">Hoja de vida corta del artista.</span></p>
-        <p class="seccion-info"><strong>Formato y Material:</strong> <span id="modal-material">Óleo sobre lienzo, dimensiones.</span></p>
-        <p class="seccion-info"><strong>Precio:</strong> <span id="modal-precio" style="color: #8b5a2b; font-weight: bold;">$0.00</span></p>
-        <button class="btn-accion" onclick="agregarAlCarritoDesdeModal()">Adquirir Obra 🎨</button>
-        <button class="btn-accion btn-cerrar" onclick="cerrarModal()">Cerrar</button>
+  <!-- Barra superior discreta -->
+  <header class="top-bar">
+    <div style="display:flex; gap:8px; align-items:center;">
+      <a href="index.html" class="glass-pill brand-badge" title="Volver a D'Vitrales Mall">
+        <span class="brand-dot"></span>
+        <span>Mall</span>
+        <span class="brand-title">· D'Vitrales Gallery</span>
+      </a>
     </div>
 
-    <!-- Escenario 3D de la Galería de Pintura -->
-    <a-scene>
-        <!-- Iluminación Museográfica Cálida -->
-        <a-light type="ambient" color="#fceee9" intensity="0.7"></a-light>
-        <a-light type="directional" color="#ffffff" intensity="0.6" position="0 6 3"></a-light>
-        <a-light type="point" color="#fffaed" intensity="0.5" position="0 4 0"></a-light>
+    <div class="top-actions">
+      <button id="btn-overview" class="glass-pill" type="button">Vista Amplia</button>
+      <button id="btn-catalog" class="glass-pill" type="button">40 Obras</button>
+      <button id="btn-lang" class="glass-pill" type="button">ES / EN</button>
+    </div>
+  </header>
 
-        <!-- Cielo exterior -->
-        <a-sky color="#1c1614"></a-sky>
+  <!-- Aviso sutil al entrar -->
+  <div id="hint-toast" class="hint-toast">
+    Toca el piso para caminar · Arrastra para mirar · Toca un cuadro para ver su ficha
+  </div>
 
-        <!-- Piso de la galería (Madera fina y elegante) -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="16" height="16" color="#3d2f26"></a-plane>
+  <!-- Dock inferior de zonas -->
+  <nav class="bottom-dock" aria-label="Zonas de la galería">
+    <button class="zone-btn active" data-zone="entrada" type="button">Entrada</button>
+    <button class="zone-btn" data-zone="esmeralda" type="button">Ala Esmeralda</button>
+    <button class="zone-btn" data-zone="vitral" type="button">Ala Vitral</button>
+    <button class="zone-btn" data-zone="tabiques" type="button">Tabiques T1–T6</button>
+    <button class="zone-btn" data-zone="fondo" type="button">Muro de Fondo</button>
+  </nav>
 
-        <!-- PAREDES DE LA GALERÍA -->
-        <a-plane position="0 3 -8" width="16" height="6" color="#4a3b32"></a-plane>
-        <a-plane position="-8 3 0" rotation="0 90 0" width="16" height="6" color="#3d2f26"></a-plane>
-        <a-plane position="8 3 0" rotation="0 -90 0" width="16" height="6" color="#3d2f26"></a-plane>
+  <!-- Catálogo rápido de 40 pinturas -->
+  <aside id="catalog-drawer" class="drawer-panel" aria-label="Catálogo de 40 pinturas">
+    <div class="drawer-header">
+      <h3 id="drawer-heading">Colección de Pintura (40 Obras)</h3>
+      <button id="close-drawer" class="close-btn" type="button">✕</button>
+    </div>
+    <div class="filter-row">
+      <button class="filter-chip active" data-filter="all" type="button">Todas (40)</button>
+      <button class="filter-chip" data-filter="Ala Esmeralda" type="button">Esmeralda (8)</button>
+      <button class="filter-chip" data-filter="Ala Vitral" type="button">Vitral (8)</button>
+      <button class="filter-chip" data-filter="Tabiques T1–T6" type="button">Tabiques (20)</button>
+      <button class="filter-chip" data-filter="Muro de Fondo" type="button">Fondo (4)</button>
+    </div>
+    <div id="artwork-list" class="artwork-list"></div>
+  </aside>
 
-        <!-- ================= MOBILIARIO DECORATIVO DEL SALÓN ================= -->
-        <!-- Banca central de descanso para los visitantes -->
-        <a-box position="0 0.3 -2" width="2.4" height="0.4" depth="0.9" color="#261c14"></a-box>
-        <a-box position="0 0.7 -2.35" width="2.4" height="0.6" depth="0.15" color="#261c14"></a-box>
+  <!-- Modal de ficha de obra -->
+  <div id="artwork-modal" class="artwork-modal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span id="modal-location" style="font-size:12px; font-weight:700; color:var(--emerald);"></span>
+        <button id="close-modal" class="close-btn" type="button">✕</button>
+      </div>
+      <div id="modal-preview" class="modal-preview">
+        <span id="modal-code" class="modal-code-tag">#01</span>
+        <div id="modal-inner-art" style="text-align:center; padding:16px;"></div>
+      </div>
+      <h2 id="modal-title" style="font-size:19px; margin-bottom:4px;"></h2>
+      <p id="modal-author" style="font-size:13px; color:var(--ink-muted);"></p>
 
-        <!-- Mesa de centro decorativa lateral -->
-        <a-box position="-5 0.3 -3" width="1.2" height="0.4" depth="1.2" color="#2b1f17"></a-box>
-        <a-cylinder position="-5 0.7 -3" radius="0.15" height="0.2" color="#d4af37"></a-cylinder>
+      <div class="modal-meta">
+        <div class="meta-box">
+          <span class="meta-label" id="lbl-size">Dimensiones</span>
+          <strong id="modal-size">100 × 80 cm</strong>
+        </div>
+        <div class="meta-box">
+          <span class="meta-label" id="lbl-price">Precio</span>
+          <strong id="modal-price">$1,250 USD</strong>
+        </div>
+      </div>
 
-        <!-- ================= OBRA 1: PARED DE FONDO (CENTRAL) ================= -->
-        <a-entity position="0 0 0" onclick="mostrarDetalle('Luz Interior', 'Yandier', 'Artista plástica independiente especializada en texturas profundas, óleo y simbolismo contemporáneo.', 'Óleo sobre lienzo con relieve en pasta texturizada. Formato rectangular de 100 x 80 cm.', 1200.00)">
-            <!-- Marco dorado y moldura -->
-            <a-box position="0 2.8 -7.9" width="3.2" height="2.4" depth="0.08" color="#d4af37"></a-box>
-            <!-- Lienzo de la pintura -->
-            <a-plane position="0 2.8 -7.84" width="2.8" height="2.0" color="#f7f1e8"></a-plane>
-        </a-entity>
+      <div class="btn-row">
+        <button id="btn-zoom" class="action-btn secondary" type="button">Zoom HD</button>
+        <button id="btn-process" class="action-btn primary" type="button">Proceso Real</button>
+      </div>
 
-        <!-- ================= OBRA 2: PARED IZQUIERDA ================= -->
-        <a-entity position="0 0 0" onclick="mostrarDetalle('Elegancia en Bronce', 'Vances Studio', 'Estudio dedicado al diseño clásico, la estética refinada y la preservación del arte moderno.', 'Técnica mixta sobre lienzo con detalles metalizados. Formato cuadrado de 90 x 90 cm.', 950.00)">
-            <!-- Marco -->
-            <a-box position="-7.9 2.8 -2" rotation="0 90 0" width="2.2" height="2.2" depth="0.08" color="#d4af37"></a-box>
-            <!-- Lienzo -->
-            <a-plane position="-7.84 2.8 -2" rotation="0 90 0" width="1.8" height="1.8" color="#f2e6dc"></a-plane>
-        </a-entity>
+      <div id="process-box" class="process-box"></div>
+    </div>
+  </div>
 
-        <!-- ================= OBRA 3: PARED DERECHA ================= -->
-        <a-entity position="0 0 0" onclick="mostrarDetalle('Silencios del Alma', 'Gema', 'Pintora y restauradora con trayectoria en exposiciones de arte figurativo y abstracto.', 'Óleo tradicional sobre lienzo de alta durabilidad. Formato vertical de 80 x 120 cm.', 1100.00)">
-            <!-- Marco -->
-            <a-box position="7.9 2.8 -2" rotation="0 -90 0" width="2.2" height="2.6" depth="0.08" color="#d4af37"></a-box>
-            <!-- Lienzo -->
-            <a-plane position="7.84 2.8 -2" rotation="0 -90 0" width="1.8" height="2.2" color="#e6dac8"></a-plane>
-        </a-entity>
+  <!-- Three.js desde CDN -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+      }
+    }
+  </script>
 
-        <!-- Cámara de recorrido libre -->
-        <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 6">
-            <a-cursor color="#ead7c0"></a-cursor>
-        </a-entity>
-    </a-scene>
+  <script type="module">
+    import * as THREE from 'three';
 
-    <script>
-        let obraActual = "";
-        let precioActual = 0;
-        let carrito = [];
+    // Idioma activo
+    let lang = 'es';
+    const i18n = {
+      es: {
+        overview: 'Vista Amplia',
+        catalog: '40 Obras',
+        hint: 'Toca el piso para caminar · Arrastra para mirar · Toca un cuadro para ver su ficha',
+        drawerTitle: 'Colección de Pintura (40 Obras)',
+        sizeLabel: 'Dimensiones',
+        priceLabel: 'Precio',
+        zoomBtn: 'Zoom HD',
+        processBtn: 'Proceso Real',
+        processText: 'Respaldo de autoría humana: boceto digital previo en lienzo con márgenes vírgenes, trabajo manual al óleo y registro paso a paso del proceso real.'
+      },
+      en: {
+        overview: 'Wide View',
+        catalog: '40 Works',
+        hint: 'Tap floor to walk · Drag to look around · Tap any painting to inspect details',
+        drawerTitle: 'Painting Collection (40 Works)',
+        sizeLabel: 'Dimensions',
+        priceLabel: 'Price',
+        zoomBtn: 'HD Zoom',
+        processBtn: 'Real Process',
+        processText: 'Human authorship record: preparatory composition on canvas with wide margins, hand-painted oil work, and step-by-step creation log.'
+      }
+    };
 
-        function mostrarDetalle(titulo, artista, bio, material, precio) {
-            obraActual = titulo;
-            precioActual = precio;
-            document.getElementById('modal-titulo').innerText = titulo;
-            document.getElementById('modal-artista').innerText = artista;
-            document.getElementById('modal-bio').innerText = bio;
-            document.getElementById('modal-material').innerText = material;
-            document.getElementById('modal-precio').innerText = "$" + precio.toFixed(2);
-            document.getElementById('modal-producto').style.display = 'block';
+    // Generar las 40 obras exactas distribuidas según la arquitectura aprobada:
+    // 8 Ala Esmeralda, 8 Ala Vitral, 20 Tabiques T1-T6 (frente y reverso), 4 Muro de Fondo
+    const palettePairs = [
+      ['#1b4332', '#d8f3dc'], ['#7f4f24', '#ffedd8'], ['#1d3557', '#e0fbfc'],
+      ['#590d22', '#fff0f3'], ['#2b2d42', '#edf2f4'], ['#3a5a40', '#dad7cd'],
+      ['#6b4423', '#faedcd'], ['#264653', '#e9c46a']
+    ];
+
+    const artworks = [];
+    for (let i = 1; i <= 40; i++) {
+      const code = `#${String(i).padStart(2, '0')}`;
+      let zone = '';
+      let surface = '';
+      let pos = { x: 0, y: 2.1, z: 0, rotY: 0 };
+
+      if (i <= 8) {
+        // Muro lateral izquierdo: Ala Esmeralda (x = -9.85, mirando hacia +X)
+        zone = 'Ala Esmeralda';
+        surface = `Muro Esmeralda · Obra ${i}/8`;
+        const zSlot = -11 + (i - 1) * 3.15;
+        pos = { x: -9.82, y: 2.15, z: zSlot, rotY: Math.PI / 2 };
+      } else if (i <= 16) {
+        // Muro lateral derecho: Ala Vitral (x = +9.85, mirando hacia -X)
+        const idx = i - 8;
+        zone = 'Ala Vitral';
+        surface = `Muro Vitral · Obra ${idx}/8`;
+        const zSlot = -11 + (idx - 1) * 3.15;
+        pos = { x: 9.82, y: 2.15, z: zSlot, rotY: -Math.PI / 2 };
+      } else if (i <= 36) {
+        // 20 obras en 6 tabiques exentos (T1-T3 izquierda, T4-T6 derecha), frente y reverso
+        const tIdx = i - 16; // 1..20
+        zone = 'Tabiques T1–T6';
+        const tabiqueMap = [
+          // T1 (izq frente): #17, #18 | T1 (izq reverso): #19, #20
+          { x: -4.2, z: -7.5, side: 'Frente', slot: 0, rot: 0 },
+          { x: -4.2, z: -7.5, side: 'Frente', slot: 1, rot: 0 },
+          { x: -4.2, z: -7.5, side: 'Reverso', slot: 0, rot: Math.PI },
+          { x: -4.2, z: -7.5, side: 'Reverso', slot: 1, rot: Math.PI },
+          // T2 (izq medio frente): #21, #22 | reverso: #23
+          { x: -4.2, z: -1.5, side: 'Frente', slot: 0, rot: 0 },
+          { x: -4.2, z: -1.5, side: 'Frente', slot: 1, rot: 0 },
+          { x: -4.2, z: -1.5, side: 'Reverso', slot: 0.5, rot: Math.PI },
+          // T3 (izq entrada frente): #24, #25 | reverso: #26
+          { x: -4.2, z: 4.5, side: 'Frente', slot: 0, rot: 0 },
+          { x: -4.2, z: -7.5, side: 'Frente', slot: 1, rot: 0 },
+          { x: -4.2, z: 4.5, side: 'Reverso', slot: 0.5, rot: Math.PI },
+          // T4 (der fondo frente): #27, #28 | reverso: #29, #30
+          { x: 4.2, z: -7.5, side: 'Frente', slot: 0, rot: 0 },
+          { x: 4.2, z: -7.5, side: 'Frente', slot: 1, rot: 0 },
+          { x: 4.2, z: -7.5, side: 'Reverso', slot: 0, rot: Math.PI },
+          { x: 4.2, z: -7.5, side: 'Reverso', slot: 1, rot: Math.PI },
+          // T5 (der medio frente): #31, #32 | reverso: #33
+          { x: 4.2, z: -1.5, side: 'Frente', slot: 0, rot: 0 },
+          { x: 4.2, z: -1.5, side: 'Frente', slot: 1, rot: 0 },
+          { x: 4.2, z: -1.5, side: 'Reverso', slot: 0.5, rot: Math.PI },
+          // T6 (der entrada frente): #34, #35 | reverso: #36
+          { x: 4.2, z: 4.5, side: 'Frente', slot: 0, rot: 0 },
+          { x: 4.2, z: 4.5, side: 'Frente', slot: 1, rot: 0 },
+          { x: 4.2, z: 4.5, side: 'Reverso', slot: 0.5, rot: Math.PI }
+        ];
+        const cfg = tabiqueMap[tIdx - 1];
+        const tabNum = Math.ceil(tIdx / 3.34);
+        surface = `Tabique T${Math.min(6, tabNum)} · ${cfg.side}`;
+        const offsetX = cfg.slot === 0.5 ? 0 : (cfg.slot === 0 ? -0.78 : 0.78);
+        const dirSign = cfg.rot === 0 ? 1 : -1;
+        pos = {
+          x: cfg.x + offsetX * dirSign,
+          y: 2.1,
+          z: cfg.z + 0.24 * dirSign,
+          rotY: cfg.rot
+        };
+      } else {
+        // Muro de Fondo: 4 pinturas centrales de gran protagonismo (z = -14.82, mirando hacia +Z)
+        const idx = i - 36; // 1..4
+        zone = 'Muro de Fondo';
+        surface = `Muro de Fondo · Gran Formato ${idx}/4`;
+        const xSlots = [-5.4, -1.8, 1.8, 5.4];
+        pos = { x: xSlots[idx - 1], y: 2.25, z: -14.82, rotY: 0 };
+      }
+
+      const pair = palettePairs[(i - 1) % palettePairs.length];
+      artworks.push({
+        id: i,
+        code,
+        title: `Obra ${code} · Luz y Materia`,
+        titleEn: `Work ${code} · Light & Matter`,
+        author: 'Yandier Vincent / D’Vitrales',
+        size: i > 36 ? '160 × 120 cm' : '110 × 85 cm',
+        price: `$${(950 + i * 65).toLocaleString()} USD`,
+        zone,
+        surface,
+        bgColor: pair[0],
+        accentColor: pair[1],
+        pos
+      });
+    }
+
+    // Configurar escena Three.js luminosa y elegante
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf7f1e3);
+    scene.fog = new THREE.Fog(0xf7f1e3, 24, 52);
+
+    const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 1.75, 11.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    container.appendChild(renderer.domElement);
+
+    // Iluminación cálida museográfica
+    const hemiLight = new THREE.HemisphereLight(0xfffaf0, 0xd8c9ae, 1.35);
+    hemiLight.position.set(0, 12, 0);
+    scene.add(hemiLight);
+
+    const dirLight = new THREE.DirectionalLight(0xfff1d0, 1.4);
+    dirLight.position.set(6, 12, 8);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.set(1024, 1024);
+    scene.add(dirLight);
+
+    const warmFill = new THREE.PointLight(0xffdf9e, 1.2, 26);
+    warmFill.position.set(0, 5.2, -3);
+    scene.add(warmFill);
+
+    // Textura de mármol crema claro con vetas suaves y detalles esmeralda/dorado (sin flechas)
+    function createMarbleTexture() {
+      const c = document.createElement('canvas');
+      c.width = 1024;
+      c.height = 1024;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#f5efe2';
+      ctx.fillRect(0, 0, 1024, 1024);
+
+      // Vetas suaves de mármol
+      for (let i = 0; i < 42; i++) {
+        ctx.strokeStyle = i % 2 === 0 ? 'rgba(205, 190, 165, 0.25)' : 'rgba(255, 255, 255, 0.45)';
+        ctx.lineWidth = 1 + (i % 3);
+        ctx.beginPath();
+        let y = (i * 25) % 1024;
+        ctx.moveTo(0, y);
+        for (let x = 0; x <= 1024; x += 128) {
+          y += Math.sin((x + i * 37) * 0.01) * 14;
+          ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+
+      // Incrustación geométrica elegante en verde esmeralda y dorado
+      ctx.strokeStyle = '#0f5132';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(48, 48, 928, 928);
+
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(60, 60, 904, 904);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(2, 3);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    const marbleTex = createMarbleTexture();
+    const floorMat = new THREE.MeshStandardMaterial({
+      map: marbleTex,
+      roughness: 0.22,
+      metalness: 0.08
+    });
+
+    const floorMesh = new THREE.Mesh(new THREE.PlaneGeometry(21, 31), floorMat);
+    floorMesh.rotation.x = -Math.PI / 2;
+    floorMesh.receiveShadow = true;
+    floorMesh.name = 'walkable_floor';
+    scene.add(floorMesh);
+
+    // Materiales arquitectónicos crema, dorado y verde esmeralda
+    const creamWallMat = new THREE.MeshStandardMaterial({ color: 0xf6efe0, roughness: 0.65 });
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.28, metalness: 0.78 });
+    const emeraldMat = new THREE.MeshStandardMaterial({ color: 0x0f5132, roughness: 0.35, metalness: 0.15 });
+    const ceilingMat = new THREE.MeshStandardMaterial({ color: 0xfbf7ee, roughness: 0.7 });
+
+    // Techo
+    const ceilingMesh = new THREE.Mesh(new THREE.PlaneGeometry(21, 31), ceilingMat);
+    ceilingMesh.rotation.x = Math.PI / 2;
+    ceilingMesh.position.y = 6.2;
+    scene.add(ceilingMesh);
+
+    // Aros luminosos dorados en el techo
+    [-7, 0, 7].forEach((zPos) => {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(1.45, 0.055, 16, 48), goldMat);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(0, 5.45, zPos);
+      scene.add(ring);
+
+      const ringInner = new THREE.Mesh(new THREE.TorusGeometry(0.9, 0.04, 16, 48), goldMat);
+      ringInner.rotation.x = Math.PI / 2;
+      ringInner.position.set(0, 5.15, zPos);
+      scene.add(ringInner);
+    });
+
+    // Muros perimetrales (Izquierdo: Ala Esmeralda, Derecho: Ala Vitral, Fondo: Gran Formato, Trasero)
+    const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 6.2, 31), creamWallMat);
+    leftWall.position.set(-10.1, 3.1, 0);
+    leftWall.receiveShadow = true;
+    scene.add(leftWall);
+
+    const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 6.2, 31), creamWallMat);
+    rightWall.position.set(10.1, 3.1, 0);
+    rightWall.receiveShadow = true;
+    scene.add(rightWall);
+
+    const backWall = new THREE.Mesh(new THREE.BoxGeometry(20.6, 6.2, 0.4), creamWallMat);
+    backWall.position.set(0, 3.1, -15.1);
+    backWall.receiveShadow = true;
+    scene.add(backWall);
+
+    const frontWall = new THREE.Mesh(new THREE.BoxGeometry(20.6, 6.2, 0.4), creamWallMat);
+    frontWall.position.set(0, 3.1, 15.1);
+    scene.add(frontWall);
+
+    // Molduras esmeralda y doradas a lo largo de los muros laterales
+    const leftTrim = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 30.4), emeraldMat);
+    leftTrim.position.set(-9.88, 4.45, 0);
+    scene.add(leftTrim);
+
+    const leftGold = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 30.4), goldMat);
+    leftGold.position.set(-9.87, 4.32, 0);
+    scene.add(leftGold);
+
+    const rightTrim = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.22, 30.4), emeraldMat);
+    rightTrim.position.set(9.88, 4.45, 0);
+    scene.add(rightTrim);
+
+    const rightGold = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 30.4), goldMat);
+    rightGold.position.set(9.87, 4.32, 0);
+    scene.add(rightGold);
+
+    // Vitrales decorativos superiores/laterales con luz multicolor
+    const stainedColors = [0x1d4ed8, 0x059669, 0xd97706, 0xdb2777, 0x7c3aed];
+    [-11, -3, 5].forEach((zPos, idx) => {
+      const glassMat = new THREE.MeshStandardMaterial({
+        color: stainedColors[idx % stainedColors.length],
+        emissive: stainedColors[(idx + 1) % stainedColors.length],
+        emissiveIntensity: 0.35,
+        roughness: 0.2
+      });
+      const glassL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.9, 2.2), glassMat);
+      glassL.position.set(-9.88, 5.15, zPos);
+      scene.add(glassL);
+
+      const glassR = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.9, 2.2), glassMat);
+      glassR.position.set(9.88, 5.15, zPos);
+      scene.add(glassR);
+    });
+
+    // Placa distintiva en muro de fondo: D'Vitrales Gallery
+    function createPlaqueTexture(text) {
+      const c = document.createElement('canvas');
+      c.width = 1024;
+      c.height = 180;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#0f5132';
+      ctx.fillRect(0, 0, 1024, 180);
+      ctx.strokeStyle = '#f2cf7e';
+      ctx.lineWidth = 8;
+      ctx.strokeRect(10, 10, 1004, 160);
+      ctx.fillStyle = '#f9e29c';
+      ctx.font = 'bold 56px Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 512, 94);
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    const plaqueMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(5.6, 0.95),
+      new THREE.MeshStandardMaterial({ map: createPlaqueTexture("D'Vitrales Gallery"), roughness: 0.35 })
+    );
+    plaqueMesh.position.set(0, 4.55, -14.86);
+    scene.add(plaqueMesh);
+
+    // 6 Tabiques exentos (3 izquierda, 3 derecha) con remate dorado y base esmeralda
+    const partitionCoords = [
+      { x: -4.2, z: -7.5 },
+      { x: -4.2, z: -1.5 },
+      { x: -4.2, z: 4.5 },
+      { x: 4.2, z: -7.5 },
+      { x: 4.2, z: -1.5 },
+      { x: 4.2, z: 4.5 }
+    ];
+
+    partitionCoords.forEach((p) => {
+      const group = new THREE.Group();
+      group.position.set(p.x, 0, p.z);
+
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.8, 0.36), creamWallMat);
+      panel.position.y = 1.9;
+      panel.castShadow = true;
+      panel.receiveShadow = true;
+      group.add(panel);
+
+      const topGold = new THREE.Mesh(new THREE.BoxGeometry(3.26, 0.1, 0.42), goldMat);
+      topGold.position.y = 3.82;
+      group.add(topGold);
+
+      const plinth = new THREE.Mesh(new THREE.BoxGeometry(3.28, 0.16, 0.44), emeraldMat);
+      plinth.position.y = 0.08;
+      group.add(plinth);
+
+      scene.add(group);
+    });
+
+    // Crear las 40 pinturas interactivas
+    const artworkMeshes = [];
+
+    function createArtTexture(art) {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 384;
+      const ctx = c.getContext('2d');
+
+      ctx.fillStyle = art.bgColor;
+      ctx.fillRect(0, 0, 512, 384);
+
+      // Composición pictórica abstracta/orgánica elegante
+      ctx.fillStyle = art.accentColor;
+      ctx.beginPath();
+      ctx.arc(256 + ((art.id * 29) % 80 - 40), 185, 78, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#f2cf7e';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(24, 24, 464, 336);
+
+      ctx.fillStyle = '#fffdf7';
+      ctx.font = 'bold 28px Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(art.code, 256, 326);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    artworks.forEach((art) => {
+      const artGroup = new THREE.Group();
+      artGroup.position.set(art.pos.x, art.pos.y, art.pos.z);
+      artGroup.rotation.y = art.pos.rotY;
+
+      const w = art.id > 36 ? 2.15 : 1.32;
+      const h = art.id > 36 ? 1.55 : 1.02;
+
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(w + 0.14, h + 0.14, 0.08), goldMat);
+      frame.castShadow = true;
+      artGroup.add(frame);
+
+      const canvasPlane = new THREE.Mesh(
+        new THREE.PlaneGeometry(w, h),
+        new THREE.MeshStandardMaterial({ map: createArtTexture(art), roughness: 0.45 })
+      );
+      canvasPlane.position.z = 0.046;
+      canvasPlane.userData = { artworkId: art.id };
+      artGroup.add(canvasPlane);
+
+      artworkMeshes.push(canvasPlane);
+      scene.add(artGroup);
+    });
+
+    // Movimiento suave al tocar el piso + arrastre para mirar alrededor
+    let targetCamPos = new THREE.Vector3(0, 1.75, 11.5);
+    let lookYaw = 0;
+    let lookPitch = 0;
+    let targetYaw = 0;
+    let targetPitch = 0;
+
+    let isPointerDown = false;
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let dragDistance = 0;
+
+    const raycaster = new THREE.Raycaster();
+    const pointerNDC = new THREE.Vector2();
+
+    function clampPosition(v) {
+      return new THREE.Vector3(
+        THREE.MathUtils.clamp(v.x, -8.3, 8.3),
+        1.75,
+        THREE.MathUtils.clamp(v.z, -12.8, 13.2)
+      );
+    }
+
+    container.addEventListener('pointerdown', (e) => {
+      isPointerDown = true;
+      pointerStartX = e.clientX;
+      pointerStartY = e.clientY;
+      dragDistance = 0;
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isPointerDown) return;
+      const dx = e.clientX - pointerStartX;
+      const dy = e.clientY - pointerStartY;
+      dragDistance += Math.hypot(dx, dy);
+      pointerStartX = e.clientX;
+      pointerStartY = e.clientY;
+
+      targetYaw -= dx * 0.0055;
+      targetPitch = THREE.MathUtils.clamp(targetPitch - dy * 0.004, -0.45, 0.45);
+    });
+
+    window.addEventListener('pointerup', (e) => {
+      if (!isPointerDown) return;
+      isPointerDown = false;
+
+      // Si fue toque/clic (sin arrastrar mucho), detectar obra o punto en el piso
+      if (dragDistance < 8) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        pointerNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        pointerNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(pointerNDC, camera);
+
+        const artHits = raycaster.intersectObjects(artworkMeshes, false);
+        if (artHits.length > 0) {
+          const id = artHits[0].object.userData.artworkId;
+          const found = artworks.find((a) => a.id === id);
+          if (found) openArtworkModal(found);
+          return;
         }
 
-        function cerrarModal() {
-            document.getElementById('modal-producto').style.display = 'none';
+        const floorHits = raycaster.intersectObject(floorMesh, false);
+        if (floorHits.length > 0) {
+          const hitPt = floorHits[0].point;
+          targetCamPos = clampPosition(new THREE.Vector3(hitPt.x, 1.75, hitPt.z));
         }
+      }
+    });
 
-        function agregarAlCarritoDesdeModal() {
-            carrito.push({ nombre: obraActual, precio: precioActual });
-            document.getElementById('contador-carrito').innerText = carrito.length;
-            alert("¡La obra \"" + obraActual + "\" se ha añadido al carrito de compras!");
-            cerrarModal();
+    // Zonas de navegación rápida
+    const zoneViews = {
+      entrada: { pos: new THREE.Vector3(0, 1.75, 11.5), yaw: 0 },
+      esmeralda: { pos: new THREE.Vector3(-7.2, 1.75, 1.5), yaw: Math.PI / 2 },
+      vitral: { pos: new THREE.Vector3(7.2, 1.75, 1.5), yaw: -Math.PI / 2 },
+      tabiques: { pos: new THREE.Vector3(0, 1.75, 1.2), yaw: 0 },
+      fondo: { pos: new THREE.Vector3(0, 1.75, -10.6), yaw: 0 }
+    };
+
+    document.querySelectorAll('.zone-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.zone-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        const z = zoneViews[btn.dataset.zone];
+        if (z) {
+          targetCamPos = clampPosition(z.pos);
+          targetYaw = z.yaw;
+          targetPitch = 0;
         }
+      });
+    });
 
-        function verCarrito() {
-            if (carrito.length === 0) {
-                alert("Tu carrito de compras en esta galería está vacío.");
-            } else {
-                let resumen = "Obras en tu carrito de Pintura:\n";
-                let total = 0;
-                carrito.forEach((item, index) => {
-                    resumen += (index + 1) + ". " + item.nombre + " - $" + item.precio.toFixed(2) + "\n";
-                    total += item.precio;
-                });
-                resumen += "\nTotal de la selección: $" + total.toFixed(2);
-                alert(resumen);
-            }
-        }
-    </script>
+    document.getElementById('btn-overview').addEventListener('click', () => {
+      targetCamPos = new THREE.Vector3(0, 4.1, 13.2);
+      targetYaw = 0;
+      targetPitch = -0.18;
+    });
 
+    // Catálogo de 40 obras
+    const drawer = document.getElementById('catalog-drawer');
+    const artworkListEl = document.getElementById('artwork-list');
+    let activeFilter = 'all';
+
+    function renderCatalog() {
+      artworkListEl.innerHTML = '';
+      const list = activeFilter === 'all' ? artworks : artworks.filter((a) => a.zone === activeFilter);
+      list.forEach((art) => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'art-item';
+        item.innerHTML = `
+          <div class="art-num">${art.code}</div>
+          <div class="art-title">${lang === 'es' ? art.title : art.titleEn}</div>
+          <div class="art-zone">${art.surface}</div>
+        `;
+        item.addEventListener('click', () => {
+          drawer.classList.remove('open');
+          openArtworkModal(art);
+        });
+        artworkListEl.appendChild(item);
+      });
+    }
+
+    document.getElementById('btn-catalog').addEventListener('click', () => {
+      renderCatalog();
+      drawer.classList.toggle('open');
+    });
+    document.getElementById('close-drawer').addEventListener('click', () => drawer.classList.remove('open'));
+
+    document.querySelectorAll('.filter-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach((c) => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilter = chip.dataset.filter;
+        renderCatalog();
+      });
+    });
+
+    // Modal de obra
+    const modal = document.getElementById('artwork-modal');
+    const modalPreview = document.getElementById('modal-preview');
+    const processBox = document.getElementById('process-box');
+
+    function openArtworkModal(art) {
+      modalPreview.style.background = art.bgColor;
+      modalPreview.classList.remove('zoomed');
+      processBox.classList.remove('show');
+      document.getElementById('modal-code').textContent = art.code;
+      document.getElementById('modal-location').textContent = `${art.zone} · ${art.surface}`;
+      document.getElementById('modal-title').textContent = lang === 'es' ? art.title : art.titleEn;
+      document.getElementById('modal-author').textContent = art.author;
+      document.getElementById('modal-size').textContent = art.size;
+      document.getElementById('modal-price').textContent = art.price;
+      document.getElementById('modal-inner-art').innerHTML = `
+        <div style="width:76px;height:76px;border-radius:50%;background:${art.accentColor};margin:0 auto 8px;border:2px solid #f2cf7e;"></div>
+        <div style="color:#fffdf7;font-weight:700;font-size:14px;">${art.code}</div>
+      `;
+      modal.classList.add('open');
+    }
+
+    document.getElementById('close-modal').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('open');
+    });
+
+    document.getElementById('btn-zoom').addEventListener('click', () => {
+      modalPreview.classList.toggle('zoomed');
+    });
+    modalPreview.addEventListener('click', () => {
+      modalPreview.classList.toggle('zoomed');
+    });
+
+    document.getElementById('btn-process').addEventListener('click', () => {
+      processBox.textContent = i18n[lang].processText;
+      processBox.classList.toggle('show');
+    });
+
+    // Cambio ES / EN
+    document.getElementById('btn-lang').addEventListener('click', () => {
+      lang = lang === 'es' ? 'en' : 'es';
+      document.documentElement.lang = lang;
+      const t = i18n[lang];
+      document.getElementById('btn-overview').textContent = t.overview;
+      document.getElementById('btn-catalog').textContent = t.catalog;
+      document.getElementById('hint-toast').textContent = t.hint;
+      document.getElementById('drawer-heading').textContent = t.drawerTitle;
+      document.getElementById('lbl-size').textContent = t.sizeLabel;
+      document.getElementById('lbl-price').textContent = t.priceLabel;
+      document.getElementById('btn-zoom').textContent = t.zoomBtn;
+      document.getElementById('btn-process').textContent = t.processBtn;
+      renderCatalog();
+    });
+
+    // Ocultar aviso inicial suavemente tras unos segundos
+    setTimeout(() => {
+      const toast = document.getElementById('hint-toast');
+      if (toast) toast.classList.add('hidden');
+    }, 5500);
+
+    // Loop de animación 3D
+    const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+    function animate() {
+      requestAnimationFrame(animate);
+
+      camera.position.lerp(targetCamPos, 0.085);
+      lookYaw = THREE.MathUtils.lerp(lookYaw, targetYaw, 0.12);
+      lookPitch = THREE.MathUtils.lerp(lookPitch, targetPitch, 0.12);
+
+      euler.set(lookPitch, lookYaw, 0);
+      camera.quaternion.setFromEuler(euler);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 </body>
 </html>
+    
