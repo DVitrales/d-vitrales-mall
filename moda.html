@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>D'Vitrales Mall — Boutique 3D</title>
+  <title>D'Vitrales Mall — Tienda Boutique 3D</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <style>
     * {
@@ -30,6 +30,7 @@
       z-index: 1;
     }
 
+    /* HUD ligero y despejado para no cubrir el espacio 3D */
     .hud {
       position: fixed;
       inset: 0;
@@ -38,384 +39,229 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 8px;
+      padding: 10px;
     }
 
-    body.hud-hidden .hud-collapsible {
+    body.hud-clean .hud-collapsible {
       display: none !important;
     }
 
-    .glass {
+    .glass-bar {
       pointer-events: auto;
-      background: rgba(8, 34, 25, 0.48);
+      background: rgba(8, 34, 25, 0.52);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(230, 190, 106, 0.48);
       border-radius: 12px;
-      padding: 6px 8px;
-    }
-
-    .top-bar {
+      padding: 8px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
-    .brand-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: #f7f4eb;
-      margin: 0;
-    }
-
-    .brand-sub {
+    .title-wrap .tag {
       font-size: 9px;
-      letter-spacing: 1.4px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
       color: #e6be6a;
+      font-weight: 700;
       display: block;
+    }
+
+    .title-wrap h1 {
+      margin: 2px 0 0;
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .btn-row {
       display: flex;
-      gap: 5px;
+      gap: 6px;
       flex-wrap: wrap;
       align-items: center;
     }
 
-    button, a.nav-btn {
+    button, a.link-btn {
       pointer-events: auto;
-      background: rgba(11, 79, 58, 0.55);
+      background: rgba(11, 79, 58, 0.65);
       color: #f7f4eb;
-      border: 1px solid rgba(230, 190, 106, 0.45);
+      border: 1px solid rgba(230, 190, 106, 0.48);
       border-radius: 8px;
-      padding: 5px 8px;
-      font-size: 10px;
+      padding: 6px 10px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       text-decoration: none;
     }
 
-    button.active {
+    button.active, a.link-btn.active {
       background: #e6be6a;
       color: #082219;
       border-color: #e6be6a;
     }
 
-    .middle-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex: 1;
-      margin: 6px 0;
-      min-height: 0;
-      pointer-events: none;
-    }
-
-    .side-hud {
+    /* Tarjeta inferior compacta de la pieza seleccionada en tienda */
+    .item-card {
       pointer-events: auto;
-      width: 104px;
-      max-width: 26vw;
-      max-height: 68vh;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      background: rgba(8, 34, 25, 0.42);
+      background: rgba(8, 34, 25, 0.62);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(230, 190, 106, 0.45);
+      border: 1px solid rgba(230, 190, 106, 0.52);
       border-radius: 12px;
-      padding: 6px;
-    }
-
-    .hud-tag {
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: #e6be6a;
-      text-align: center;
-      letter-spacing: 0.6px;
-    }
-
-    .photo-box {
-      width: 100%;
-      height: 64px;
-      border-radius: 8px;
-      border: 1px solid rgba(230, 190, 106, 0.4);
-      background: rgba(255, 255, 255, 0.06);
+      padding: 9px 12px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      font-size: 9px;
-      text-align: center;
-      color: #d8d2c5;
-    }
-
-    .photo-box img, .photo-box video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .vid-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(230, 190, 106, 0.35);
-      color: #f7f4eb;
-      border-radius: 7px;
-      padding: 5px 6px;
-      font-size: 9.5px;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .vid-btn.active {
-      background: #e6be6a;
-      color: #082219;
-      font-weight: 700;
-    }
-
-    .bottom-hud {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .status-bar {
-      display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-size: 10px;
-      color: #e6dfd1;
-      gap: 6px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .status-bar strong {
+    .item-meta strong {
       color: #e6be6a;
+      font-size: 13px;
+      display: block;
     }
 
-    .sections-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 5px;
-    }
-
-    .actions-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
-    }
-
-    input[type="file"] {
-      display: none;
+    .item-meta span {
+      font-size: 11px;
+      color: #e2dcd0;
     }
   </style>
 </head>
 <body>
-  <input type="file" id="photoFileInput" accept="image/*" />
-  <input type="file" id="videoFileInput" accept="video/*" />
-
-  <a-scene id="scene" renderer="antialias: true; colorManagement: true">
+  <a-scene id="boutiqueStoreScene" vr-mode-ui="enabled: true" renderer="antialias: true; colorManagement: true">
     <a-assets>
-      <canvas id="marbleTex" width="512" height="512"></canvas>
-      <canvas id="emeraldTex" width="512" height="512"></canvas>
+      <canvas id="storeMarble" width="512" height="512"></canvas>
+      <canvas id="storeEmerald" width="512" height="512"></canvas>
     </a-assets>
 
-    <!-- Iluminación del salón -->
+    <!-- Iluminación del salón de tienda -->
     <a-light type="ambient" color="#fff8eb" intensity="0.95"></a-light>
-    <a-light type="directional" color="#fff2d6" intensity="1.1" position="4 7 5"></a-light>
-    <a-light type="point" color="#ffe09e" intensity="1.15" distance="12" position="0 3.2 0"></a-light>
-    <a-light type="point" color="#22b886" intensity="0.85" distance="10" position="0 2.2 -2.5"></a-light>
+    <a-light type="directional" color="#fff3d9" intensity="1.1" position="4 7 5"></a-light>
+    <a-light type="point" color="#ffe09e" intensity="1.0" distance="12" position="0 3.2 -1"></a-light>
 
     <a-sky color="#13221c"></a-sky>
 
     <!-- Piso de mármol claro -->
-    <a-circle radius="16" rotation="-90 0 0" position="0 0 0"
-              material="src: #marbleTex; repeat: 6 6; roughness: 0.25"></a-circle>
+    <a-circle radius="15" rotation="-90 0 0" position="0 0 0"
+              material="src: #storeMarble; repeat: 6 6; roughness: 0.25"></a-circle>
 
-    <!-- Pared de fondo esmeralda veteado con molduras doradas -->
-    <a-entity position="0 0 -6.8">
-      <a-box width="16" height="5.2" depth="0.25" position="0 2.6 0"
-             material="src: #emeraldTex; roughness: 0.35"></a-box>
-      <a-box width="3.6" height="3.8" depth="0.32" position="0 2.2 0.05"
-             material="src: #emeraldTex; roughness: 0.25"></a-box>
-      <a-box width="3.74" height="0.07" depth="0.36" position="0 4.12 0.05"
+    <!-- Muro posterior esmeralda con molduras doradas -->
+    <a-entity position="0 0 -6.2">
+      <a-box width="15" height="5" depth="0.25" position="0 2.5 0"
+             material="src: #storeEmerald; roughness: 0.35"></a-box>
+      <a-box width="3.4" height="0.07" depth="0.34" position="0 4.0 0.05"
              material="color: #e6be6a; metalness: 0.7; roughness: 0.25"></a-box>
-      <a-box width="3.74" height="0.07" depth="0.36" position="0 0.28 0.05"
+      <a-box width="3.4" height="0.07" depth="0.34" position="0 0.3 0.05"
              material="color: #e6be6a; metalness: 0.7; roughness: 0.25"></a-box>
     </a-entity>
 
-    <!-- SECCIÓN 1: INVENTARIO / EXHIBICIÓN (Izquierda) -->
-    <a-entity id="section-inventory" position="-4.2 0 -2.4">
-      <a-cylinder radius="1.25" height="0.14" position="0 0.07 0" color="#093b2c"></a-cylinder>
-      <a-torus radius="1.25" radius-tubular="0.02" rotation="90 0 0" position="0 0.14 0" color="#e6be6a"></a-torus>
-      <a-box width="0.42" height="1.15" depth="0.22" position="-0.52 0.72 0" color="#f4be38"></a-box>
-      <a-box width="0.42" height="1.28" depth="0.22" position="0 0.78 0" color="#0f6e50"></a-box>
-      <a-box width="0.42" height="1.1" depth="0.22" position="0.52 0.69 0" color="#d8c394"></a-box>
+    <!-- Pedestal 1 (Izquierda): Pieza de exhibición -->
+    <a-entity id="stand-1" position="-2.6 0 -2.6">
+      <a-cylinder radius="0.85" height="0.16" position="0 0.08 0" color="#073829"></a-cylinder>
+      <a-torus radius="0.85" radius-tubular="0.02" rotation="90 0 0" position="0 0.16 0" color="#e6be6a"></a-torus>
+      <a-cylinder radius="0.03" height="1.45" position="0 0.88 0" color="#e6be6a"></a-cylinder>
+      <a-cone id="piece-1" radius-bottom="0.46" radius-top="0.15" height="0.85" position="0 1.25 0"
+              material="color: #f4be38; roughness: 0.45"></a-cone>
     </a-entity>
 
-    <!-- SECCIÓN 2: VESTIDOR CILÍNDRICO TRANSPARENTE ESTILO D'VITRALES (Centro) -->
-    <a-entity id="section-booths" position="0 0 -2.2">
-      <!-- Base circular esmeralda + anillo dorado + luz esmeralda -->
-      <a-cylinder radius="1.42" height="0.22" position="0 0.11 0"
-                  material="color: #073829; roughness: 0.25; metalness: 0.35"></a-cylinder>
-      <a-torus radius="1.42" radius-tubular="0.032" rotation="90 0 0" position="0 0.22 0"
-               material="color: #e6be6a; emissive: #e6be6a; emissiveIntensity: 0.45"></a-torus>
-      <a-torus radius="1.24" radius-tubular="0.022" rotation="90 0 0" position="0 0.24 0"
-               material="color: #18a979; emissive: #18a979; emissiveIntensity: 0.6"></a-torus>
-
-      <!-- Cilindro transparente -->
-      <a-cylinder radius="1.3" height="2.65" position="0 1.56 0" open-ended="true" side="double"
-                  material="color: #c7fff0; opacity: 0.17; transparent: true; roughness: 0.08"></a-cylinder>
-      <a-torus radius="1.3" radius-tubular="0.022" rotation="90 0 0" position="0 2.88 0"
-               material="color: #e6be6a; metalness: 0.75; roughness: 0.2"></a-torus>
-
-      <!-- Maniquí y vestido central -->
-      <a-entity id="boothMannequin" position="0 0.22 0">
-        <a-cylinder radius="0.2" height="0.06" position="0 0.03 0" material="color: #e6be6a; metalness: 0.7"></a-cylinder>
-        <a-cylinder radius="0.035" height="0.8" position="0 0.43 0" material="color: #c9a255"></a-cylinder>
-        <a-cone id="dressSkirt" radius-bottom="0.62" radius-top="0.2" height="1.02" position="0 1.12 0"
-                material="color: #f4be38; roughness: 0.42"></a-cone>
-        <a-cylinder id="dressBodice" radius-bottom="0.2" radius-top="0.24" height="0.4" position="0 1.8 0"
-                    material="color: #f4be38; roughness: 0.4"></a-cylinder>
-        <a-sphere radius="0.16" position="0 2.26 0" material="color: #f2d2b6; roughness: 0.55"></a-sphere>
-      </a-entity>
+    <!-- Pedestal 2 (Centro): Pieza principal en exhibición -->
+    <a-entity id="stand-2" position="0 0 -3.2">
+      <a-cylinder radius="1.0" height="0.18" position="0 0.09 0" color="#073829"></a-cylinder>
+      <a-torus radius="1.0" radius-tubular="0.025" rotation="90 0 0" position="0 0.18 0" color="#e6be6a"></a-torus>
+      <a-cylinder radius="0.03" height="1.5" position="0 0.93 0" color="#e6be6a"></a-cylinder>
+      <a-cone id="piece-2" radius-bottom="0.52" radius-top="0.17" height="0.92" position="0 1.32 0"
+              material="color: #0e6b4e; roughness: 0.42"></a-cone>
     </a-entity>
 
-    <!-- SECCIÓN 3: PASARELA + PANTALLA TRANSPARENTE A UN COSTADO (Derecha) -->
-    <a-entity id="section-runway" position="4.2 0 -2.4">
-      <a-box width="1.9" height="0.16" depth="4.2" position="0 0.08 0.4"
-             material="color: #083829; roughness: 0.25"></a-box>
-      <a-box width="1.96" height="0.035" depth="4.26" position="0 0.17 0.4"
-             material="color: #e6be6a; emissive: #e6be6a; emissiveIntensity: 0.35"></a-box>
-      <a-cylinder radius="0.18" height="1.15" position="0 0.74 0.4" color="#e6be6a"></a-cylinder>
-      <a-sphere radius="0.15" position="0 1.47 0.4" color="#f2d2b6"></a-sphere>
-
-      <!-- Pantalla transparente lateral en 3D -->
-      <a-entity position="1.32 1.32 0.6" rotation="0 -25 0">
-        <a-plane width="1.08" height="1.52"
-                 material="color: #b7f5e3; opacity: 0.22; transparent: true; side: double"></a-plane>
-      </a-entity>
+    <!-- Pedestal 3 (Derecha): Pieza de exhibición -->
+    <a-entity id="stand-3" position="2.6 0 -2.6">
+      <a-cylinder radius="0.85" height="0.16" position="0 0.08 0" color="#073829"></a-cylinder>
+      <a-torus radius="0.85" radius-tubular="0.02" rotation="90 0 0" position="0 0.16 0" color="#e6be6a"></a-torus>
+      <a-cylinder radius="0.03" height="1.45" position="0 0.88 0" color="#e6be6a"></a-cylinder>
+      <a-cone id="piece-3" radius-bottom="0.46" radius-top="0.15" height="0.85" position="0 1.25 0"
+              material="color: #e8dec8; roughness: 0.45"></a-cone>
     </a-entity>
 
-    <!-- Cámara: inicia ligeramente retirada para ver vestidor y salón completo -->
-    <a-entity id="cameraRig" position="0 1.55 2.4">
+    <!-- Cámara navegable -->
+    <a-entity id="cameraRig" position="0 1.6 2.8">
       <a-camera look-controls wasd-controls="enabled: false"></a-camera>
     </a-entity>
   </a-scene>
 
-  <!-- HUD Transparente Compacto -->
   <div class="hud">
-    <div class="glass top-bar">
-      <div>
-        <span class="brand-sub">D'Vitrales Mall · Boutique</span>
-        <h1 class="brand-label">TU LOOK D'VITRALES</h1>
+    <div class="glass-bar">
+      <div class="title-wrap">
+        <span class="tag">D'Vitrales Mall · Boutique</span>
+        <h1>Tienda — Exhibición & Venta</h1>
       </div>
       <div class="btn-row">
         <button id="btnToggleHud">Ocultar HUD</button>
-        <a class="nav-btn hud-collapsible" href="moda.html">Moda</a>
-        <a class="nav-btn hud-collapsible" href="index.html">Mall</a>
+        <a class="link-btn hud-collapsible" href="pasarela.html">Pasarela</a>
+        <a class="link-btn hud-collapsible" href="vestidor.html">Vestidor</a>
+        <a class="link-btn hud-collapsible" href="index.html">Inicio</a>
       </div>
     </div>
 
-    <div class="middle-row hud-collapsible">
-      <!-- Izquierda: Probador Virtual IA -->
-      <div class="side-hud">
-        <div class="hud-tag">Probador IA</div>
-        <div class="photo-box" id="photoBox">
-          <span id="photoHint">Tu Foto</span>
-          <img id="photoPreview" style="display:none;" alt="Foto" />
-        </div>
-        <button id="btnUploadPhoto">Sube tu foto</button>
-        <button id="btnAdjustFit">Ajuste IA</button>
-        <button id="btnSaveLook">Guardar estilo</button>
+    <div class="item-card hud-collapsible">
+      <div class="item-meta">
+        <strong id="selectedTitle">Pieza Central · Colección Esmeralda</strong>
+        <span id="selectedDesc">Toca un pedestal o cambia de pieza para revisar detalles.</span>
       </div>
-
-      <!-- Derecha: Mis Diseños & Pasarela -->
-      <div class="side-hud">
-        <div class="hud-tag">Mis Diseños</div>
-        <div class="photo-box" id="videoBox">
-          <span id="videoHint">Video Pasarela</span>
-        </div>
-        <button id="btnUploadVideo">Subir video</button>
-        <div id="videoList" style="display:flex; flex-direction:column; gap:4px;"></div>
-      </div>
-    </div>
-
-    <div class="glass bottom-hud hud-collapsible">
-      <div class="status-bar">
-        <span>Zona: <strong id="zoneLabel">Vestidor Central</strong></span>
-        <span>Estilo: <strong id="lookLabel">Girasol · Entallado</strong></span>
-      </div>
-
-      <div class="sections-grid">
-        <button class="sec-btn" data-sec="inventory">1. Inventario</button>
-        <button class="sec-btn active" data-sec="booths">2. Vestidor</button>
-        <button class="sec-btn" data-sec="runway">3. Pasarela</button>
-      </div>
-
-      <div class="actions-grid">
-        <button id="btnZoomIn">Entrar Vestidor</button>
-        <button id="btnZoomOut">Ver Salón</button>
-        <button id="btnCycleLook">Cambiar Look</button>
-        <button id="btnBookCita">Reservar Cita</button>
+      <div class="btn-row">
+        <button data-piece="1">Pieza 1</button>
+        <button class="active" data-piece="2">Pieza 2</button>
+        <button data-piece="3">Pieza 3</button>
+        <button id="btnApartar">Apartar</button>
       </div>
     </div>
   </div>
 
   <script>
-    const LOOKS = [
-      { name: "Girasol", color: "#f4be38" },
-      { name: "Esmeralda", color: "#0e6b4e" },
-      { name: "Champán", color: "#efe2c2" },
-      { name: "Gema", color: "#8f3d5e" }
-    ];
-
-    const FITS = ["Entallado", "Fluido", "Estructurado"];
-
-    const RUNWAY_VIDEOS = [
-      { id: "v1", title: "Pasarela 1", src: "" },
-      { id: "v2", title: "Pasarela 2", src: "" },
-      { id: "v3", title: "Pasarela 3", src: "" }
-    ];
-
-    const ZONES = {
-      inventory: { x: -4.2, y: 1.55, z: 0.4, label: "1. Inventario" },
-      booths:    { x: 0,    y: 1.55, z: 2.2, label: "2. Vestidor Central" },
-      runway:    { x: 4.2,  y: 1.55, z: 1.2, label: "3. Pasarela" }
+    const PIECES = {
+      1: {
+        title: "Pieza 1 · Gala Girasol",
+        desc: "Exhibición lateral izquierda · Disponible para consulta",
+        cam: "-2.2 1.6 0.4"
+      },
+      2: {
+        title: "Pieza 2 · Colección Esmeralda",
+        desc: "Exhibición central · Tono esmeralda y detalles dorados",
+        cam: "0 1.6 0.2"
+      },
+      3: {
+        title: "Pieza 3 · Brisa Marfil",
+        desc: "Exhibición lateral derecha · Diseño luminoso",
+        cam: "2.2 1.6 0.4"
+      }
     };
 
-    let lookIdx = 0;
-    let fitIdx = 0;
-    let selectedVideo = RUNWAY_VIDEOS[0];
-    let savedLooks = [];
+    let currentPiece = 2;
 
     function paintMarble() {
-      const c = document.getElementById("marbleTex");
+      const c = document.getElementById("storeMarble");
       const ctx = c.getContext("2d");
       ctx.fillStyle = "#f2ede2";
       ctx.fillRect(0, 0, 512, 512);
-      for (let i = 0; i < 24; i++) {
+      for (let i = 0; i < 22; i++) {
         ctx.beginPath();
-        let x = (i * 41) % 512, y = 0;
+        let x = (i * 39) % 512, y = 0;
         ctx.moveTo(x, y);
         while (y < 512) {
           y += 32;
-          x += Math.sin((y + i * 18) * 0.03) * 14;
+          x += Math.sin((y + i * 20) * 0.03) * 14;
           ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = "rgba(180, 170, 152, 0.25)";
+        ctx.strokeStyle = "rgba(180, 170, 152, 0.24)";
         ctx.lineWidth = 1.6;
         ctx.stroke();
       }
     }
 
     function paintEmerald() {
-      const c = document.getElementById("emeraldTex");
+      const c = document.getElementById("storeEmerald");
       const ctx = c.getContext("2d");
       const g = ctx.createLinearGradient(0, 0, 512, 512);
       g.addColorStop(0, "#062b20");
@@ -423,139 +269,37 @@
       g.addColorStop(1, "#052219");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, 512, 512);
-      for (let i = 0; i < 20; i++) {
-        ctx.beginPath();
-        let x = (i * 47) % 512, y = 0;
-        ctx.moveTo(x, y);
-        while (y < 512) {
-          y += 28;
-          x += Math.cos((y + i * 14) * 0.025) * 16;
-          ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = "rgba(145, 235, 198, 0.16)";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
     }
 
-    function applyLook() {
-      const look = LOOKS[lookIdx];
-      const fit = FITS[fitIdx];
-      const skirt = document.getElementById("dressSkirt");
-      const bodice = document.getElementById("dressBodice");
-
-      skirt.setAttribute("material", "color", look.color);
-      bodice.setAttribute("material", "color", look.color);
-
-      let rad = 0.62;
-      if (fit === "Fluido") rad = 0.78;
-      if (fit === "Estructurado") rad = 0.52;
-      skirt.setAttribute("radius-bottom", String(rad));
-
-      document.getElementById("lookLabel").textContent = `${look.name} · ${fit}`;
-    }
-
-    function goZone(key) {
-      const z = ZONES[key];
-      if (!z) return;
-      document.getElementById("cameraRig").setAttribute("position", `${z.x} ${z.y} ${z.z}`);
-      document.getElementById("zoneLabel").textContent = z.label;
-      document.querySelectorAll(".sec-btn").forEach((b) => b.classList.toggle("active", b.dataset.sec === key));
-    }
-
-    function loadVideo(src, title) {
-      const box = document.getElementById("videoBox");
-      if (!src) {
-        box.innerHTML = `<span style="font-size:9px; padding:4px;">${title}</span>`;
-        return;
-      }
-      box.innerHTML = `<video src="${src}" controls autoplay loop muted playsinline></video>`;
-    }
-
-    function renderVideos() {
-      const list = document.getElementById("videoList");
-      list.innerHTML = "";
-      RUNWAY_VIDEOS.forEach((v) => {
-        const b = document.createElement("button");
-        b.className = "vid-btn" + (v.id === selectedVideo.id ? " active" : "");
-        b.textContent = v.title;
-        b.addEventListener("click", () => {
-          selectedVideo = v;
-          renderVideos();
-          loadVideo(v.src, v.title);
-          goZone("runway");
-        });
-        list.appendChild(b);
+    function selectPiece(num) {
+      currentPiece = Number(num);
+      const info = PIECES[currentPiece];
+      if (!info) return;
+      document.getElementById("selectedTitle").textContent = info.title;
+      document.getElementById("selectedDesc").textContent = info.desc;
+      document.getElementById("cameraRig").setAttribute("position", info.cam);
+      document.querySelectorAll("[data-piece]").forEach((btn) => {
+        btn.classList.toggle("active", Number(btn.dataset.piece) === currentPiece);
       });
     }
 
     document.addEventListener("DOMContentLoaded", () => {
       paintMarble();
       paintEmerald();
-      applyLook();
-      renderVideos();
 
       document.getElementById("btnToggleHud").addEventListener("click", (e) => {
-        document.body.classList.toggle("hud-hidden");
-        const hidden = document.body.classList.contains("hud-hidden");
-        e.target.textContent = hidden ? "Mostrar HUD" : "Ocultar HUD";
-        e.target.classList.toggle("active", hidden);
+        document.body.classList.toggle("hud-clean");
+        const clean = document.body.classList.contains("hud-clean");
+        e.target.textContent = clean ? "Mostrar HUD" : "Ocultar HUD";
+        e.target.classList.toggle("active", clean);
       });
 
-      document.querySelectorAll(".sec-btn").forEach((b) => {
-        b.addEventListener("click", () => goZone(b.dataset.sec));
+      document.querySelectorAll("[data-piece]").forEach((btn) => {
+        btn.addEventListener("click", () => selectPiece(btn.dataset.piece));
       });
 
-      document.getElementById("btnZoomIn").addEventListener("click", () => {
-        goZone("booths");
-        document.getElementById("cameraRig").setAttribute("position", "0 1.55 0.65");
-        document.getElementById("zoneLabel").textContent = "Dentro del Vestidor";
-      });
-
-      document.getElementById("btnZoomOut").addEventListener("click", () => {
-        document.getElementById("cameraRig").setAttribute("position", "0 1.65 4.2");
-        document.getElementById("zoneLabel").textContent = "Salón Completo";
-      });
-
-      document.getElementById("btnCycleLook").addEventListener("click", () => {
-        lookIdx = (lookIdx + 1) % LOOKS.length;
-        applyLook();
-      });
-
-      document.getElementById("btnAdjustFit").addEventListener("click", () => {
-        fitIdx = (fitIdx + 1) % FITS.length;
-        applyLook();
-      });
-
-      document.getElementById("btnSaveLook").addEventListener("click", () => {
-        savedLooks.push(`${LOOKS[lookIdx].name} (${FITS[fitIdx]})`);
-        alert(`Estilo guardado: ${LOOKS[lookIdx].name} · ${FITS[fitIdx]}`);
-      });
-
-      document.getElementById("btnBookCita").addEventListener("click", () => {
-        alert(`Cita preparada para el look ${LOOKS[lookIdx].name} (${FITS[fitIdx]}) en D'Vitrales Boutique.`);
-      });
-
-      const photoInput = document.getElementById("photoFileInput");
-      document.getElementById("btnUploadPhoto").addEventListener("click", () => photoInput.click());
-      photoInput.addEventListener("change", (e) => {
-        const f = e.target.files && e.target.files[0];
-        if (!f) return;
-        const img = document.getElementById("photoPreview");
-        img.src = URL.createObjectURL(f);
-        img.style.display = "block";
-        document.getElementById("photoHint").style.display = "none";
-      });
-
-      const vidInput = document.getElementById("videoFileInput");
-      document.getElementById("btnUploadVideo").addEventListener("click", () => vidInput.click());
-      vidInput.addEventListener("change", (e) => {
-        const f = e.target.files && e.target.files[0];
-        if (!f) return;
-        const url = URL.createObjectURL(f);
-        selectedVideo = { id: "custom", title: f.name, src: url };
-        loadVideo(url, f.name);
-        goZone("runway");
+      document.getElementById("btnApartar").addEventListener("click", () => {
+        alert(`${PIECES[currentPiece].title} marcada para apartar/consultar.`);
       });
     });
   </script>
