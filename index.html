@@ -1,180 +1,371 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D'Vitrales Mall - Centro Comercial Virtual & Galerías de Arte</title>
-    <!-- Librería A-Frame para Realidad Virtual -->
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
-        /* Pantalla de Bienvenida / Anfitriona de la Portada */
-        #modal-bienvenida {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(26, 18, 14, 0.92);
-            z-index: 2000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .tarjeta-bienvenida {
-            background: #f7f1e8;
-            color: #21150e;
-            width: 380px;
-            max-width: 90%;
-            padding: 25px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            border: 2px solid #d4af37;
-        }
-        .avatar-anfitriona {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #d4af37;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .tarjeta-bienvenida h2 {
-            margin-top: 0;
-            color: #4a2e1b;
-            font-size: 22px;
-        }
-        .tarjeta-bienvenida p {
-            font-size: 14px;
-            line-height: 1.5;
-            color: #3d2c21;
-        }
-        .btn-ingresar {
-            background: #5c3a21;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 15px;
-            margin-top: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            border: 1px solid #d4af37;
-            width: 100%;
-        }
-        .btn-ingresar:hover {
-            background: #7a4f30;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>D'Vitrales Mall — Lobby 3D</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
 
-        /* Menú flotante de acceso rápido a departamentos dentro del Mall */
-        #menu-departamentos {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 999;
-            background: rgba(43, 31, 24, 0.85);
-            padding: 10px 15px;
-            border-radius: 25px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            border: 1px solid #d4af37;
-            max-width: 95%;
-        }
-        .btn-depto {
-            background: #d4af37;
-            color: #21150e;
-            padding: 8px 14px;
-            border-radius: 15px;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-        .btn-depto:hover {
-            background: #f3c653;
-        }
-    </style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #070b10;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #fff5dc;
+      touch-action: none;
+    }
+
+    #scene-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Teclitas holográficas sin marcos ni bordes */
+    .holo-top-right {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    .holo-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 14px;
+      pointer-events: auto;
+    }
+
+    .holo-key {
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 2px 4px;
+      color: #fff2cc;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-shadow: 0 0 10px rgba(255, 214, 115, 0.75), 0 1px 4px rgba(0, 0, 0, 0.95);
+      transition: transform 0.16s ease, color 0.16s ease, text-shadow 0.16s ease;
+    }
+
+    .holo-key:hover,
+    .holo-key.active {
+      color: #7ef9ff;
+      transform: translateY(-1px);
+      text-shadow: 0 0 14px rgba(126, 249, 255, 0.9), 0 1px 6px rgba(0, 0, 0, 0.95);
+    }
+
+    /* Despliegue flotante sin marcos ni bordes */
+    .holo-drawer {
+      position: fixed;
+      top: 66px;
+      right: 16px;
+      z-index: 25;
+      max-width: min(92vw, 460px);
+      display: none;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    .holo-drawer.open {
+      display: flex;
+    }
+
+    .holo-greeting {
+      text-align: right;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #fff6dc;
+      text-shadow: 0 0 12px rgba(126, 249, 255, 0.45), 0 1px 6px rgba(0, 0, 0, 0.95);
+    }
+
+    .holo-spaces-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, auto));
+      gap: 7px 18px;
+      justify-items: end;
+    }
+
+    .holo-space-btn {
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 2px 0;
+      text-align: right;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: #ffe9ad;
+      cursor: pointer;
+      text-shadow: 0 0 10px rgba(255, 204, 92, 0.6), 0 1px 5px rgba(0, 0, 0, 0.98);
+      transition: color 0.15s ease, transform 0.15s ease;
+    }
+
+    .holo-space-btn:hover {
+      color: #7ef9ff;
+      transform: translateX(-2px);
+      text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
+    }
+
+    /* Anfitriona bilingüe en pantalla completa */
+    #hostess-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      background: radial-gradient(circle at 25% 45%, rgba(16, 68, 78, 0.55), rgba(5, 9, 15, 0.86));
+    }
+
+    #hostess-overlay.active {
+      display: flex;
+    }
+
+    #hostess-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      display: none;
+    }
+
+    .hostess-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hostess-center {
+      max-width: 540px;
+      margin: auto 0 auto 4%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hostess-title {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 700;
+      color: #ffe8a3;
+      text-shadow: 0 0 16px rgba(255, 212, 102, 0.7), 0 2px 8px rgba(0, 0, 0, 0.95);
+    }
+
+    .hostess-sub {
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: #e9fcff;
+      text-shadow: 0 0 10px rgba(126, 249, 255, 0.45), 0 2px 6px rgba(0, 0, 0, 0.95);
+    }
+
+    .hostess-quick-spaces {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, max-content));
+      gap: 6px 22px;
+      margin-top: 8px;
+    }
+
+    /* Etiqueta discreta del local enfocado */
+    #focused-badge {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 18;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffe8a3;
+      text-shadow: 0 0 10px rgba(255, 208, 102, 0.7), 0 1px 5px rgba(0, 0, 0, 0.95);
+      pointer-events: none;
+    }
+
+    /* Barra inferior de desplazamiento y zoom */
+    .bottom-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: min(96vw, 820px);
+      padding: 6px 10px;
+      pointer-events: auto;
+    }
+
+    .nav-btn {
+      background: rgba(10, 16, 24, 0.42);
+      border: 1px solid rgba(255, 218, 122, 0.28);
+      border-radius: 999px;
+      color: #fff2cc;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 12px;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: rgba(255, 208, 102, 0.22);
+      border-color: rgba(126, 249, 255, 0.75);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .zoom-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
 </head>
 <body>
+  <canvas id="scene-canvas"></canvas>
 
-    <!-- VENTANA DE BIENVENIDA CON LA ANFITRIONA D'VITRALES -->
-    <div id="modal-bienvenida">
-        <div class="tarjeta-bienvenida">
-            <!-- Aquí puedes usar tu imagen de la anfitriona en el repositorio (ej. el nombre de tu archivo de imagen) -->
-            <video class="avatar-anfitriona" autoplay loop muted playsinline>
-    <source src="anfitrionamp4.mp4" type="video/mp4">
-    Tu navegador no soporta video HTML5.
-</video>
+  <div id="focused-badge">Lobby Central — D'Vitrales Mall</div>
 
-            <h2>¡Bienvenido a D'Vitrales Mall!</h2>
-            <p>Hola, soy tu anfitriona virtual. Es un placer recibirte en nuestro exclusivo centro comercial de arte, alta costura, literatura y diseño. Permíteme guiarte a través de nuestras galerías y experiencias únicas.</p>
-            <button class="btn-ingresar" onclick="entrarAlMall()">Explorar el Mall 🏛️✨</button>
-        </div>
+  <!-- Teclitas holográficas sin marcos ni bordes -->
+  <div class="holo-top-right">
+    <div class="holo-row">
+      <button id="btn-lang-es" class="holo-key" type="button">ES</button>
+      <button id="btn-lang-en" class="holo-key" type="button">EN</button>
+      <button id="btn-guide" class="holo-key" type="button">Guía</button>
+      <button id="btn-spaces" class="holo-key" type="button">Locales</button>
+    </div>
+  </div>
+
+  <!-- Menú desplegable transparente sin bordes -->
+  <div id="holo-drawer" class="holo-drawer">
+    <div id="holo-greeting" class="holo-greeting">
+      Selecciona un local para acercarte y hacer zoom.
+    </div>
+    <div id="holo-spaces-grid" class="holo-spaces-grid"></div>
+  </div>
+
+  <!-- Anfitriona bilingüe en pantalla completa -->
+  <div id="hostess-overlay">
+    <video id="hostess-video" playsinline autoplay loop muted></video>
+    <div class="hostess-top">
+      <div class="holo-row">
+        <button id="hostess-es" class="holo-key" type="button">ES</button>
+        <button id="hostess-en" class="holo-key" type="button">EN</button>
+      </div>
+      <button id="hostess-enter" class="holo-key" type="button">Recorrer Lobby ↗</button>
     </div>
 
-    <!-- MENÚ DE ACCESO RÁPIDO INFERIOR EN EL LOBBY -->
-    <div id="menu-departamentos">
-        <a href="pintura.html" class="btn-depto">🖼️ Pintura</a>
-        <a href="escultura.html" class="btn-depto">🗿 Escultura</a>
-        <a href="moda.html" class="btn-depto">👗 Moda</a>
-        <a href="libreria.html" class="btn-depto">📚 Librería</a>
-        <a href="chocolates.html" class="btn-depto">🍫 Chocolates</a>
-        <a href="decoracion.html" class="btn-depto">🏡 Decoración</a>
-        <a href="musica.html" class="btn-depto">🎵 Música</a>
+    <div class="hostess-center">
+      <div id="hostess-title" class="hostess-title">Bienvenida a D'Vitrales Mall</div>
+      <div id="hostess-sub" class="hostess-sub">
+        Recorre el lobby libremente o toca cualquiera de nuestros 10 espacios para viajar y hacer zoom.
+      </div>
+      <div id="hostess-spaces" class="hostess-quick-spaces"></div>
     </div>
 
-    <!-- ESCENARIO 3D DEL LOBBY / FACHADA PRINCIPAL -->
-    <a-scene>
-        <!-- Iluminación del Lobby -->
-        <a-light type="ambient" color="#ffedd0" intensity="0.8"></a-light>
-        <a-light type="directional" color="#ffffff" intensity="0.7" position="2 6 3"></a-light>
-        <a-light type="point" color="#ffca99" intensity="0.6" position="0 4 0"></a-light>
+    <div></div>
+  </div>
 
-        <!-- Cielo exterior del centro comercial -->
-        <a-sky color="#120d0a"></a-sky>
+  <!-- Barra inferior con regreso automático al centro frente al letrero -->
+  <div class="bottom-bar">
+    <button id="btn-center-sign" class="nav-btn active" type="button">Centro / Letrero</button>
+    <button class="nav-btn waypoint-btn" data-wp="west" type="button">Ala Oeste</button>
+    <button class="nav-btn waypoint-btn" data-wp="east" type="button">Ala Este</button>
+    <button class="nav-btn waypoint-btn" data-wp="level2" type="button">Nivel 2</button>
+    <div class="zoom-group">
+      <button id="zoom-out" class="nav-btn" type="button">-</button>
+      <button id="zoom-reset" class="nav-btn" type="button">1x</button>
+      <button id="zoom-in" class="nav-btn" type="button">+</button>
+    </div>
+  </div>
 
-        <!-- Gran Piso del Lobby -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#2b1d15"></a-plane>
+  <script type="module">
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js";
 
-        <!-- PAREDES Y FACHADA INTERIOR DEL LOBBY -->
-        <a-plane position="0 4 -10" width="20" height="8" color="#4a3528"></a-plane>
-        <a-plane position="-10 4 0" rotation="0 90 0" width="20" height="8" color="#3d2c21"></a-plane>
-        <a-plane position="10 4 0" rotation="0 -90 0" width="20" height="8" color="#3d2c21"></a-plane>
+    // Coloca aquí las rutas de tus videos cuando los tengas listos
+    const HOSTESS_VIDEOS = {
+      es: "",
+      en: ""
+    };
 
-        <!-- MONUMENTO / FUENTE O MOSTRADOR CENTRAL DEL LOBBY -->
-        <a-box position="0 0.8 0" width="3" height="1.6" depth="3" color="#21150e"></a-box>
-        <a-box position="0 1.62 0" width="3.4" height="0.05" depth="3.4" color="#d4af37"></a-box>
-        
-        <!-- Elemento escultórico central de bienvenida en el lobby -->
-        <a-cylinder position="0 2.4 0" radius="0.5" height="1.2" color="#5c3a21"></a-cylinder>
-        <a-sphere position="0 3.2 0" radius="0.35" color="#d4af37"></a-sphere>
+    const SPACES = [
+      { id: "chocolatier", level: 1, angle: -2.35, es: "Chocolatier Gallery", en: "Chocolatier Gallery" },
+      { id: "boutique", level: 1, angle: -1.72, es: "Boutique", en: "Boutique" },
+      { id: "runway", level: 1, angle: -1.10, es: "Salón Pasarela de Boutique", en: "Boutique Runway Salon" },
+      { id: "painting", level: 1, angle: 1.10, es: "Galería de Pintura", en: "Painting Gallery" },
+      { id: "sculpture", level: 1, angle: 1.72, es: "Galería de Escultura", en: "Sculpture Gallery" },
+      { id: "decor", level: 2, angle: -2.25, es: "Tienda Decoración para el Hogar", en: "Home Decor Store" },
+      { id: "books", level: 2, angle: -1.57, es: "Tienda de Libros y Series", en: "Books & Series Store" },
+      { id: "music", level: 2, angle: -0.88, es: "Tienda de Música", en: "Music Store" },
+      { id: "school", level: 2, angle: 1.15, es: "Escuela de Pintura", en: "Painting School" },
+      { id: "supplies", level: 2, angle: 1.85, es: "Tienda de Materiales para Arte", en: "Art Supplies Store" }
+    ];
 
-        <!-- CARTEL / PLACA PRINCIPAL DE BIENVENIDA EN LA PARED DEL FONDO -->
-        <a-box position="0 3.5 -9.85" width="6" height="1.8" depth="0.1" color="#d4af37"></a-box>
-        <a-plane position="0 3.5 -9.75" width="5.6" height="1.4" color="#f7f1e8"></a-plane>
+    const UI_TEXT = {
+      es: {
+        guide: "Guía",
+        spaces: "Locales",
+        centerBtn: "Centro / Letrero",
+        enterLobby: "Recorrer Lobby ↗",
+        lobbyTitle: "Lobby Central — D'Vitrales Mall",
+        hostessTitle: "Bienvenida a D'Vitrales Mall",
+        hostessSub: "Explora el lobby en 360° o elige cualquiera de los 10 locales para acercarte y hacer zoom.",
+        drawerHint: "Elige un espacio para viajar y hacer zoom hacia su fachada:"
+      },
+      en: {
+        guide: "Guide",
+        spaces: "Spaces",
+        centerBtn: "Center / Sign",
+        enterLobby: "Explore Lobby ↗",
+        lobbyTitle: "Central Lobby — D'Vitrales Mall",
+        hostessTitle: "Welcome to D'Vitrales Mall",
+        hostessSub: "Explore the lobby in 360° or pick any of the 10 spaces to travel and zoom in.",
+        drawerHint: "Pick a space to travel and zoom toward its storefront:"
+      }
+    };
 
-        <!-- Cámara de recorrido libre -->
-        <a-entity id="camera" camera look-controls wasd-controls position="0 1.6 6">
-            <a-cursor color="#ead7c0"></a-cursor>
-        </a-entity>
-    </a-scene>
+    let lang = "es";
+    let activeSpace = null;
 
-    <script>
-        function entrarAlMall() {
-            // Oculta la pantalla de bienvenida y permite explorar el lobby 3D
-            document.getElementById('modal-bienvenida').style.display = 'none';
-        }
-    </script>
+    const canvas = document.getElementById("scene-canvas");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-</body>
-</html>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x090e16);
+    scene.fog = new THREE.FogExp2(0x090e16, 0.012);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 180);
+
+    // Entrada ubicada en +Z mirando hacia -Z donde están las letras doradas de presentación
+    const ENTRANCE_POS = new THREE.Vector3(0, 2.2, 16.5);
+    const SIGN_LOOK_TARGET = new THREE.Vector3(0, 2.5, -13.5);
+
+    const WAYPOINTS
