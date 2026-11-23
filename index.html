@@ -187,6 +187,7 @@
       text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
     }
 
+    /* Anfitriona: rostro y centro despejados, locales ordenados en la parte inferior */
     #hostess-overlay {
       position: fixed;
       inset: 0;
@@ -196,8 +197,14 @@
       display: none;
       flex-direction: column;
       justify-content: space-between;
-      padding: 18px;
-      background: radial-gradient(circle at 25% 45%, rgba(16, 68, 78, 0.48), rgba(5, 9, 15, 0.82));
+      padding: 16px;
+      background: linear-gradient(
+        180deg,
+        rgba(5, 9, 15, 0.58) 0%,
+        rgba(5, 9, 15, 0.06) 24%,
+        rgba(5, 9, 15, 0.08) 58%,
+        rgba(5, 9, 15, 0.86) 100%
+      );
     }
 
     #hostess-overlay.active {
@@ -210,6 +217,7 @@
       width: 100vw;
       height: 100vh;
       object-fit: cover;
+      object-position: center 20%;
       z-index: -1;
       display: none;
       background: #05090f;
@@ -223,33 +231,43 @@
       flex-wrap: wrap;
     }
 
-    .hostess-center {
-      max-width: 520px;
-      margin: auto 0 auto 3%;
+    .hostess-bottom-panel {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+      padding-bottom: 6px;
     }
 
     .hostess-title {
-      font-size: clamp(22px, 4vw, 32px);
+      font-size: clamp(19px, 3.6vw, 28px);
       font-weight: 700;
       color: #ffe8a3;
       text-shadow: 0 0 16px rgba(255, 212, 102, 0.75), 0 2px 8px rgba(0, 0, 0, 0.98);
     }
 
     .hostess-sub {
-      font-size: 14px;
-      line-height: 1.5;
+      font-size: 12.5px;
+      line-height: 1.4;
       color: #e9fcff;
       text-shadow: 0 0 10px rgba(126, 249, 255, 0.5), 0 2px 6px rgba(0, 0, 0, 0.98);
     }
 
     .hostess-quick-spaces {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, max-content));
-      gap: 6px 20px;
-      margin-top: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px 14px;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .hostess-quick-spaces .holo-space-btn {
+      text-align: center;
+      font-size: 11.5px;
     }
 
     .bottom-bar {
@@ -332,15 +350,13 @@
       <button id="hostess-enter" class="holo-key" type="button">Recorrer Lobby ↗</button>
     </div>
 
-    <div class="hostess-center">
+    <div class="hostess-bottom-panel">
       <div id="hostess-title" class="hostess-title">Bienvenida a D'Vitrales Mall</div>
       <div id="hostess-sub" class="hostess-sub">
         Explora el lobby o elige cualquiera de los 10 locales.
       </div>
       <div id="hostess-spaces" class="hostess-quick-spaces"></div>
     </div>
-
-    <div></div>
   </div>
 
   <div class="bottom-bar">
@@ -607,7 +623,12 @@
 
   <script>
     var __lobby3DStarted = false;
-    var __fallbackTried = false;
+    var __fallbackIndex = 0;
+    var THREE_SOURCES = [
+      "./three.min.js",
+      "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.min.js",
+      "https://unpkg.com/three@0.164.1/build/three.min.js"
+    ];
 
     function setFallbackStatus(msg) {
       var st = document.getElementById("fallback-status");
@@ -624,7 +645,7 @@
       if (__lobby3DStarted) return;
       var canvas = document.getElementById("scene-canvas");
       if (!window.THREE || !canvas) {
-        hide3DCanvas("No se encontró el motor 3D en este navegador.");
+        loadNextThreeSource();
         return;
       }
 
@@ -941,32 +962,25 @@
       }
     }
 
-    function loadThreeFallback() {
-      if (__lobby3DStarted || __fallbackTried) return;
-      __fallbackTried = true;
+    function loadNextThreeSource() {
+      if (__lobby3DStarted) return;
       if (window.THREE) {
         initLobby3D();
         return;
       }
-      var s2 = document.createElement("script");
-      s2.src = "https://unpkg.com/three@0.164.1/build/three.min.js";
-      s2.onload = function () { initLobby3D(); };
-      s2.onerror = function () {
-        hide3DCanvas("Sin conexión a la librería 3D; puedes usar los menús y la anfitriona.");
-      };
-      document.body.appendChild(s2);
+      if (__fallbackIndex >= THREE_SOURCES.length) {
+        hide3DCanvas("Sube three.min.js al repositorio para activar la vista 3D local.");
+        return;
+      }
+      var src = THREE_SOURCES[__fallbackIndex++];
+      var sc = document.createElement("script");
+      sc.src = src;
+      sc.onload = function () { initLobby3D(); };
+      sc.onerror = function () { loadNextThreeSource(); };
+      document.body.appendChild(sc);
     }
 
-    setTimeout(function () {
-      if (!__lobby3DStarted) {
-        loadThreeFallback();
-      }
-    }, 3000);
+    loadNextThreeSource();
   </script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.min.js"
-    onload="initLobby3D()"
-    onerror="loadThreeFallback()"
-  ></script>
 </body>
 </html>
