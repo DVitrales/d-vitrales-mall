@@ -17,9 +17,10 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: radial-gradient(circle at 50% 35%, #162638 0%, #090e16 70%, #05080d 100%);
+      background: #070b10;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: #fff5dc;
+      touch-action: none;
     }
 
     #scene-canvas {
@@ -27,77 +28,15 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      display: none;
-      z-index: 1;
-      touch-action: none;
-    }
-
-    #scene-canvas.ready {
       display: block;
     }
 
-    #fallback-lobby {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
-      background:
-        radial-gradient(circle at 50% 25%, rgba(255, 204, 92, 0.24), transparent 45%),
-        radial-gradient(circle at 50% 70%, rgba(26, 120, 130, 0.24), transparent 55%),
-        linear-gradient(180deg, #0b131e 0%, #070b10 100%);
-    }
-
-    .fallback-sign {
-      font-family: Georgia, serif;
-      font-size: clamp(28px, 6vw, 48px);
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      background: linear-gradient(180deg, #fff1ba 0%, #e4b14b 55%, #9c6c18 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
-    }
-
-    .fallback-note {
-      font-size: 13px;
-      color: rgba(255, 242, 204, 0.85);
-      max-width: 440px;
-      line-height: 1.45;
-    }
-
-    .fallback-status {
-      margin-top: 10px;
-      font-size: 11px;
-      color: rgba(126, 249, 255, 0.88);
-    }
-
-    #focused-badge {
-      position: fixed;
-      top: 14px;
-      left: 14px;
-      z-index: 40;
-      max-width: 42vw;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-size: 12px;
-      font-weight: 600;
-      color: #ffe8a3;
-      text-shadow: 0 0 10px rgba(255, 208, 102, 0.75), 0 1px 5px rgba(0, 0, 0, 0.98);
-      pointer-events: none;
-    }
-
+    /* Teclitas holográficas sin marcos ni bordes */
     .holo-top-right {
       position: fixed;
       top: 14px;
-      right: 14px;
-      z-index: 45;
-      max-width: 56vw;
+      right: 16px;
+      z-index: 20;
       display: flex;
       flex-direction: column;
       align-items: flex-end;
@@ -109,51 +48,43 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: flex-end;
-      gap: 8px;
+      gap: 14px;
       pointer-events: auto;
     }
 
     .holo-key {
-      background: rgba(10, 18, 28, 0.45);
-      border: 1px solid rgba(126, 249, 255, 0.38);
-      border-radius: 999px;
+      background: transparent;
+      border: none;
       outline: none;
-      padding: 5px 11px;
+      padding: 2px 4px;
       color: #fff2cc;
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       cursor: pointer;
-      backdrop-filter: blur(6px);
-      text-shadow: 0 0 10px rgba(126, 249, 255, 0.65), 0 1px 4px rgba(0, 0, 0, 0.98);
-      transition: transform 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+      text-shadow: 0 0 10px rgba(255, 214, 115, 0.75), 0 1px 4px rgba(0, 0, 0, 0.95);
+      transition: transform 0.16s ease, color 0.16s ease, text-shadow 0.16s ease;
     }
 
     .holo-key:hover,
     .holo-key.active {
       color: #7ef9ff;
-      border-color: rgba(126, 249, 255, 0.9);
       transform: translateY(-1px);
-      text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
+      text-shadow: 0 0 14px rgba(126, 249, 255, 0.9), 0 1px 6px rgba(0, 0, 0, 0.95);
     }
 
+    /* Despliegue flotante sin marcos ni bordes */
     .holo-drawer {
       position: fixed;
-      top: 54px;
-      right: 14px;
-      z-index: 50;
-      max-width: min(92vw, 420px);
+      top: 66px;
+      right: 16px;
+      z-index: 25;
+      max-width: min(92vw, 460px);
       display: none;
       flex-direction: column;
       align-items: flex-end;
-      gap: 8px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: rgba(8, 20, 30, 0.56);
-      border: 1px solid rgba(126, 249, 255, 0.45);
-      box-shadow: 0 0 22px rgba(126, 249, 255, 0.16);
-      backdrop-filter: blur(8px);
+      gap: 10px;
       pointer-events: auto;
     }
 
@@ -163,16 +94,16 @@
 
     .holo-greeting {
       text-align: right;
-      font-size: 12px;
-      line-height: 1.35;
-      color: #dffcff;
-      text-shadow: 0 0 12px rgba(126, 249, 255, 0.55), 0 1px 6px rgba(0, 0, 0, 0.98);
+      font-size: 13px;
+      line-height: 1.4;
+      color: #fff6dc;
+      text-shadow: 0 0 12px rgba(126, 249, 255, 0.45), 0 1px 6px rgba(0, 0, 0, 0.95);
     }
 
     .holo-spaces-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, auto));
-      gap: 6px 14px;
+      gap: 7px 18px;
       justify-items: end;
     }
 
@@ -182,11 +113,11 @@
       outline: none;
       padding: 2px 0;
       text-align: right;
-      font-size: 11.5px;
-      font-weight: 600;
+      font-size: 12.5px;
+      font-weight: 500;
       color: #ffe9ad;
       cursor: pointer;
-      text-shadow: 0 0 10px rgba(255, 204, 92, 0.65), 0 1px 5px rgba(0, 0, 0, 0.98);
+      text-shadow: 0 0 10px rgba(255, 204, 92, 0.6), 0 1px 5px rgba(0, 0, 0, 0.98);
       transition: color 0.15s ease, transform 0.15s ease;
     }
 
@@ -196,30 +127,106 @@
       text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
     }
 
+    /* Anfitriona bilingüe en pantalla completa */
+    #hostess-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      background: radial-gradient(circle at 25% 45%, rgba(16, 68, 78, 0.55), rgba(5, 9, 15, 0.86));
+    }
+
+    #hostess-overlay.active {
+      display: flex;
+    }
+
+    #hostess-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      display: none;
+    }
+
+    .hostess-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hostess-center {
+      max-width: 540px;
+      margin: auto 0 auto 4%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hostess-title {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 700;
+      color: #ffe8a3;
+      text-shadow: 0 0 16px rgba(255, 212, 102, 0.7), 0 2px 8px rgba(0, 0, 0, 0.95);
+    }
+
+    .hostess-sub {
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: #e9fcff;
+      text-shadow: 0 0 10px rgba(126, 249, 255, 0.45), 0 2px 6px rgba(0, 0, 0, 0.95);
+    }
+
+    .hostess-quick-spaces {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, max-content));
+      gap: 6px 22px;
+      margin-top: 8px;
+    }
+
+    /* Etiqueta discreta del local enfocado */
+    #focused-badge {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 18;
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffe8a3;
+      text-shadow: 0 0 10px rgba(255, 208, 102, 0.7), 0 1px 5px rgba(0, 0, 0, 0.95);
+      pointer-events: none;
+    }
+
+    /* Barra inferior de desplazamiento y zoom */
     .bottom-bar {
       position: fixed;
       left: 50%;
       bottom: 14px;
       transform: translateX(-50%);
-      z-index: 45;
+      z-index: 20;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      gap: 7px;
+      gap: 10px;
       width: min(96vw, 820px);
-      padding: 4px 8px;
+      padding: 6px 10px;
       pointer-events: auto;
     }
 
     .nav-btn {
-      background: rgba(10, 16, 24, 0.48);
-      border: 1px solid rgba(255, 218, 122, 0.32);
+      background: rgba(10, 16, 24, 0.42);
+      border: 1px solid rgba(255, 218, 122, 0.28);
       border-radius: 999px;
       color: #fff2cc;
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
-      padding: 6px 11px;
+      padding: 7px 12px;
       cursor: pointer;
       backdrop-filter: blur(6px);
       transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
@@ -228,7 +235,7 @@
     .nav-btn:hover,
     .nav-btn.active {
       background: rgba(255, 208, 102, 0.22);
-      border-color: rgba(126, 249, 255, 0.8);
+      border-color: rgba(126, 249, 255, 0.75);
       color: #ffffff;
       transform: translateY(-1px);
     }
@@ -236,40 +243,61 @@
     .zoom-group {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
     }
   </style>
 </head>
 <body>
-  <div id="fallback-lobby">
-    <div class="fallback-sign">D'Vitrales Mall</div>
-    <div id="fallback-sub" class="fallback-note">Recorre los dos niveles del lobby y toca cualquier espacio para trasladarte.</div>
-    <div id="fallback-status" class="fallback-status">Cargando recorrido 3D...</div>
-  </div>
-
   <canvas id="scene-canvas"></canvas>
 
-  <div id="focused-badge">Lobby Central · Piso 1</div>
+  <div id="focused-badge">Lobby Central — D'Vitrales Mall</div>
 
+  <!-- Teclitas holográficas sin marcos ni bordes -->
   <div class="holo-top-right">
     <div class="holo-row">
-      <button id="btn-lang-es" class="holo-key active" type="button">ES</button>
+      <button id="btn-lang-es" class="holo-key" type="button">ES</button>
       <button id="btn-lang-en" class="holo-key" type="button">EN</button>
       <button id="btn-guide" class="holo-key" type="button">Guía</button>
       <button id="btn-spaces" class="holo-key" type="button">Locales</button>
     </div>
   </div>
 
+  <!-- Menú desplegable transparente sin bordes -->
   <div id="holo-drawer" class="holo-drawer">
-    <div id="holo-greeting" class="holo-greeting">Toca un espacio para trasladarte:</div>
+    <div id="holo-greeting" class="holo-greeting">
+      Selecciona un local para acercarte y hacer zoom.
+    </div>
     <div id="holo-spaces-grid" class="holo-spaces-grid"></div>
   </div>
 
+  <!-- Anfitriona bilingüe en pantalla completa -->
+  <div id="hostess-overlay">
+    <video id="hostess-video" playsinline autoplay loop muted></video>
+    <div class="hostess-top">
+      <div class="holo-row">
+        <button id="hostess-es" class="holo-key" type="button">ES</button>
+        <button id="hostess-en" class="holo-key" type="button">EN</button>
+      </div>
+      <button id="hostess-enter" class="holo-key" type="button">Recorrer Lobby ↗</button>
+    </div>
+
+    <div class="hostess-center">
+      <div id="hostess-title" class="hostess-title">Bienvenida a D'Vitrales Mall</div>
+      <div id="hostess-sub" class="hostess-sub">
+        Recorre el lobby libremente o toca cualquiera de nuestros 10 espacios para viajar y hacer zoom.
+      </div>
+      <div id="hostess-spaces" class="hostess-quick-spaces"></div>
+    </div>
+
+    <div></div>
+  </div>
+
+  <!-- Barra inferior con regreso automático al centro frente al letrero -->
   <div class="bottom-bar">
     <button id="btn-center-sign" class="nav-btn active" type="button">Centro / Letrero</button>
     <button class="nav-btn waypoint-btn" data-wp="west" type="button">Ala Oeste</button>
     <button class="nav-btn waypoint-btn" data-wp="east" type="button">Ala Este</button>
-    <button class="nav-btn waypoint-btn" data-wp="level2" type="button">Segundo Piso</button>
+    <button class="nav-btn waypoint-btn" data-wp="level2" type="button">Nivel 2</button>
     <div class="zoom-group">
       <button id="zoom-out" class="nav-btn" type="button">-</button>
       <button id="zoom-reset" class="nav-btn" type="button">1x</button>
@@ -277,18 +305,26 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js";
+
+    // Coloca aquí las rutas de tus videos cuando los tengas listos
+    const HOSTESS_VIDEOS = {
+      es: "",
+      en: ""
+    };
+
     const SPACES = [
-      { id: "chocolatier", level: 1, angle: -2.2, es: "Chocolatier Gallery", en: "Chocolatier Gallery" },
-      { id: "boutique", level: 1, angle: -1.65, es: "Boutique", en: "Boutique" },
-      { id: "runway", level: 1, angle: -1.1, es: "Salón Pasarela de Boutique", en: "Boutique Runway Salon" },
-      { id: "painting", level: 1, angle: 1.1, es: "Galería de Pintura", en: "Painting Gallery" },
-      { id: "sculpture", level: 1, angle: 1.65, es: "Galería de Escultura", en: "Sculpture Gallery" },
-      { id: "decor", level: 2, angle: -2.1, es: "Tienda Decoración para el Hogar", en: "Home Decor Store" },
-      { id: "books", level: 2, angle: -1.55, es: "Tienda de Libros y Series", en: "Books & Series Store" },
-      { id: "music", level: 2, angle: -1.0, es: "Tienda de Música", en: "Music Store" },
+      { id: "chocolatier", level: 1, angle: -2.35, es: "Chocolatier Gallery", en: "Chocolatier Gallery" },
+      { id: "boutique", level: 1, angle: -1.72, es: "Boutique", en: "Boutique" },
+      { id: "runway", level: 1, angle: -1.10, es: "Salón Pasarela de Boutique", en: "Boutique Runway Salon" },
+      { id: "painting", level: 1, angle: 1.10, es: "Galería de Pintura", en: "Painting Gallery" },
+      { id: "sculpture", level: 1, angle: 1.72, es: "Galería de Escultura", en: "Sculpture Gallery" },
+      { id: "decor", level: 2, angle: -2.25, es: "Tienda Decoración para el Hogar", en: "Home Decor Store" },
+      { id: "books", level: 2, angle: -1.57, es: "Tienda de Libros y Series", en: "Books & Series Store" },
+      { id: "music", level: 2, angle: -0.88, es: "Tienda de Música", en: "Music Store" },
       { id: "school", level: 2, angle: 1.15, es: "Escuela de Pintura", en: "Painting School" },
-      { id: "supplies", level: 2, angle: 1.7, es: "Tienda de Materiales para Arte", en: "Art Supplies Store" }
+      { id: "supplies", level: 2, angle: 1.85, es: "Tienda de Materiales para Arte", en: "Art Supplies Store" }
     ];
 
     const UI_TEXT = {
@@ -296,62 +332,361 @@
         guide: "Guía",
         spaces: "Locales",
         centerBtn: "Centro / Letrero",
-        level2Btn: "Segundo Piso",
-        lobbyTitle: "Lobby Central · Piso 1",
-        drawerHint: "Toca un espacio para trasladarte:",
-        fallbackSub: "Recorre los dos niveles del lobby y toca cualquier espacio para trasladarte."
+        enterLobby: "Recorrer Lobby ↗",
+        lobbyTitle: "Lobby Central — D'Vitrales Mall",
+        hostessTitle: "Bienvenida a D'Vitrales Mall",
+        hostessSub: "Explora el lobby en 360° o elige cualquiera de los 10 locales para acercarte y hacer zoom.",
+        drawerHint: "Elige un espacio para viajar y hacer zoom hacia su fachada:"
       },
       en: {
         guide: "Guide",
         spaces: "Spaces",
         centerBtn: "Center / Sign",
-        level2Btn: "Second Floor",
-        lobbyTitle: "Central Lobby · Floor 1",
-        drawerHint: "Tap a space to travel there:",
-        fallbackSub: "Explore both lobby levels and tap any space to travel there."
+        enterLobby: "Explore Lobby ↗",
+        lobbyTitle: "Central Lobby — D'Vitrales Mall",
+        hostessTitle: "Welcome to D'Vitrales Mall",
+        hostessSub: "Explore the lobby in 360° or pick any of the 10 spaces to travel and zoom in.",
+        drawerHint: "Pick a space to travel and zoom toward its storefront:"
       }
     };
 
     let lang = "es";
     let activeSpace = null;
-    window.__lobbyBridge = {
-      travelToSpace: null,
-      waypoint: null,
-      zoom: null,
-      updateLang: null
+
+    const canvas = document.getElementById("scene-canvas");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x090e16);
+    scene.fog = new THREE.FogExp2(0x090e16, 0.012);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 180);
+
+    // Entrada ubicada en +Z mirando hacia -Z donde están las letras doradas de presentación
+    const ENTRANCE_POS = new THREE.Vector3(0, 2.2, 16.5);
+    const SIGN_LOOK_TARGET = new THREE.Vector3(0, 2.5, -13.5);
+
+    const WAYPOINTS = {
+      center: { pos: ENTRANCE_POS.clone(), look: SIGN_LOOK_TARGET.clone(), labelEs: "Lobby Central — D'Vitrales Mall", labelEn: "Central Lobby — D'Vitrales Mall" },
+      west: { pos: new THREE.Vector3(-8.5, 2.2, 4.0), look: new THREE.Vector3(-14.5, 2.2, -3.0), labelEs: "Ala Oeste — Lobby", labelEn: "West Wing — Lobby" },
+      east: { pos: new THREE.Vector3(8.5, 2.2, 4.0), look: new THREE.Vector3(14.5, 2.2, -3.0), labelEs: "Ala Este — Lobby", labelEn: "East Wing — Lobby" },
+      level2: { pos: new THREE.Vector3(0, 7.6, 11.0), look: new THREE.Vector3(0, 7.2, -13.5), labelEs: "Nivel 2 — Balcón del Lobby", labelEn: "Level 2 — Lobby Balcony" }
     };
 
-    const drawer = document.getElementById("holo-drawer");
+    let currentCamPos = ENTRANCE_POS.clone();
+    let targetCamPos = ENTRANCE_POS.clone();
+    let currentLook = SIGN_LOOK_TARGET.clone();
+    let targetLook = SIGN_LOOK_TARGET.clone();
+    let zoomFactor = 1.0;
+    let targetZoom = 1.0;
+
+    // Iluminación base
+    scene.add(new THREE.AmbientLight(0xfff1d0, 1.05));
+    const keyLight = new THREE.PointLight(0xffcf70, 2.4, 65);
+    keyLight.position.set(0, 11, 0);
+    scene.add(keyLight);
+
+    const accentCyan = new THREE.PointLight(0x56e6ff, 1.3, 45);
+    accentCyan.position.set(-10, 5, 4);
+    scene.add(accentCyan);
+
+    // Piso y estructura del atrio
+    const floor = new THREE.Mesh(
+      new THREE.CircleGeometry(24, 64),
+      new THREE.MeshStandardMaterial({ color: 0x18222d, roughness: 0.35, metalness: 0.45 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    const goldRing = new THREE.Mesh(
+      new THREE.RingGeometry(4.8, 5.3, 64),
+      new THREE.MeshStandardMaterial({ color: 0xd9a441, roughness: 0.25, metalness: 0.85, side: THREE.DoubleSide })
+    );
+    goldRing.rotation.x = -Math.PI / 2;
+    goldRing.position.y = 0.02;
+    scene.add(goldRing);
+
+    const atriumWall = new THREE.Mesh(
+      new THREE.CylinderGeometry(23.5, 23.5, 15, 64, 1, true),
+      new THREE.MeshStandardMaterial({ color: 0x111924, roughness: 0.7, metalness: 0.2, side: THREE.BackSide })
+    );
+    atriumWall.position.y = 7.5;
+    scene.add(atriumWall);
+
+    const balconyRing = new THREE.Mesh(
+      new THREE.RingGeometry(18.5, 23.4, 64),
+      new THREE.MeshStandardMaterial({ color: 0x253242, roughness: 0.5, metalness: 0.5, side: THREE.DoubleSide })
+    );
+    balconyRing.rotation.x = -Math.PI / 2;
+    balconyRing.position.y = 5.6;
+    scene.add(balconyRing);
+
+    // Escultura central
+    const sculpture = new THREE.Mesh(
+      new THREE.OctahedronGeometry(2.1, 1),
+      new THREE.MeshStandardMaterial({ color: 0xf7cf74, emissive: 0x473008, roughness: 0.2, metalness: 0.9, wireframe: false })
+    );
+    sculpture.position.set(0, 3.2, -1.5);
+    scene.add(sculpture);
+
+    // Cartel dorado de presentación frente a la vista de entrada
+    function createSignTexture(text) {
+      const c = document.createElement("canvas");
+      c.width = 1024;
+      c.height = 256;
+      const ctx = c.getContext("2d");
+      ctx.clearRect(0, 0, c.width, c.height);
+
+      const grad = ctx.createLinearGradient(0, 40, 0, 210);
+      grad.addColorStop(0, "#fff0b8");
+      grad.addColorStop(0.5, "#e5b24c");
+      grad.addColorStop(1, "#9c6d19");
+
+      ctx.font = "bold 92px Georgia, serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(255, 206, 94, 0.75)";
+      ctx.shadowBlur = 24;
+      ctx.fillStyle = grad;
+      ctx.fillText(text, c.width / 2, c.height / 2);
+      return new THREE.CanvasTexture(c);
+    }
+
+    const signPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(11.5, 2.9),
+      new THREE.MeshBasicMaterial({ map: createSignTexture("D'Vitrales Mall"), transparent: true })
+    );
+    signPlane.position.set(0, 3.1, -13.5);
+    scene.add(signPlane);
+
+    // 10 fachadas interactivas en Nivel 1 y Nivel 2
+    const spaceMeshes = [];
+    const radius = 21.8;
+
+    function makeStoreTexture(title) {
+      const c = document.createElement("canvas");
+      c.width = 512;
+      c.height = 256;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "rgba(14, 24, 36, 0.92)";
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.strokeStyle = "#e6b85c";
+      ctx.lineWidth = 6;
+      ctx.strokeRect(10, 10, c.width - 20, c.height - 20);
+      ctx.fillStyle = "#ffe8a3";
+      ctx.font = "bold 30px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      const words = title.split(" ");
+      const lines = [];
+      let line = "";
+      for (const w of words) {
+        const test = line ? `${line} ${w}` : w;
+        if (ctx.measureText(test).width > 440) {
+          lines.push(line);
+          line = w;
+        } else {
+          line = test;
+        }
+      }
+      if (line) lines.push(line);
+
+      lines.forEach((l, idx) => {
+        const y = c.height / 2 + (idx - (lines.length - 1) / 2) * 38;
+        ctx.fillText(l, c.width / 2, y);
+      });
+      return new THREE.CanvasTexture(c);
+    }
+
+    SPACES.forEach((sp) => {
+      const yPos = sp.level === 1 ? 2.4 : 7.8;
+      const x = Math.sin(sp.angle) * radius;
+      const z = Math.cos(sp.angle) * radius;
+
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(5.2, 2.6),
+        new THREE.MeshBasicMaterial({ map: makeStoreTexture(sp.es), side: THREE.DoubleSide })
+      );
+      panel.position.set(x, yPos, z);
+      panel.lookAt(0, yPos, 0);
+      panel.userData = { space: sp };
+      scene.add(panel);
+      spaceMeshes.push(panel);
+    });
+
+    function focusSpace(sp) {
+      activeSpace = sp;
+      const yPos = sp.level === 1 ? 2.3 : 7.6;
+      const storePos = new THREE.Vector3(Math.sin(sp.angle) * radius, yPos, Math.cos(sp.angle) * radius);
+      const inward = storePos.clone().setY(0).normalize().negate();
+
+      targetCamPos.copy(storePos).addScaledVector(inward, 6.2).setY(yPos);
+      targetLook.copy(storePos);
+      targetZoom = 1.45;
+      updateBadge(sp[lang]);
+      closeDrawer();
+      closeHostess();
+    }
+
+    function returnToCenterSign() {
+      activeSpace = null;
+      const wp = WAYPOINTS.center;
+      targetCamPos.copy(wp.pos);
+      targetLook.copy(wp.look);
+      targetZoom = 1.0;
+      updateBadge(lang === "es" ? wp.labelEs : wp.labelEn);
+      setActiveBottomBtn("btn-center-sign");
+    }
+
+    function setActiveBottomBtn(id) {
+      document.querySelectorAll(".bottom-bar .nav-btn").forEach((b) => b.classList.remove("active"));
+      const el = document.getElementById(id);
+      if (el) el.classList.add("active");
+    }
 
     function updateBadge(text) {
       document.getElementById("focused-badge").textContent = text;
+    }
+
+    // Controles táctiles y de ratón para mirar 360° y hacer zoom
+    let isDragging = false;
+    let prevX = 0;
+    let prevY = 0;
+    let dragDist = 0;
+    let pinchStartDist = null;
+    let pinchStartZoom = 1.0;
+
+    function applyLookDelta(dx, dy) {
+      const dir = targetLook.clone().sub(targetCamPos);
+      const spherical = new THREE.Spherical().setFromVector3(dir);
+      spherical.theta -= dx * 0.0055;
+      spherical.phi = Math.max(0.35, Math.min(Math.PI - 0.35, spherical.phi - dy * 0.0045));
+      dir.setFromSpherical(spherical);
+      targetLook.copy(targetCamPos).add(dir);
+    }
+
+    canvas.addEventListener("pointerdown", (e) => {
+      isDragging = true;
+      prevX = e.clientX;
+      prevY = e.clientY;
+      dragDist = 0;
+    });
+
+    window.addEventListener("pointermove", (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - prevX;
+      const dy = e.clientY - prevY;
+      dragDist += Math.hypot(dx, dy);
+      prevX = e.clientX;
+      prevY = e.clientY;
+      applyLookDelta(dx, dy);
+    });
+
+    window.addEventListener("pointerup", (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      if (dragDist < 7) {
+        checkSpaceTap(e.clientX, e.clientY);
+      }
+    });
+
+    canvas.addEventListener("touchstart", (e) => {
+      if (e.touches.length === 2) {
+        pinchStartDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        pinchStartZoom = targetZoom;
+      }
+    }, { passive: true });
+
+    canvas.addEventListener("touchmove", (e) => {
+      if (e.touches.length === 2 && pinchStartDist) {
+        const d = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        targetZoom = Math.max(0.75, Math.min(2.4, pinchStartZoom * (d / pinchStartDist)));
+      }
+    }, { passive: true });
+
+    canvas.addEventListener("touchend", () => {
+      pinchStartDist = null;
+    });
+
+    canvas.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      targetZoom = Math.max(0.75, Math.min(2.4, targetZoom + (e.deltaY > 0 ? -0.14 : 0.14)));
+    }, { passive: false });
+
+    const raycaster = new THREE.Raycaster();
+    function checkSpaceTap(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect();
+      const ndc = new THREE.Vector2(
+        ((clientX - rect.left) / rect.width) * 2 - 1,
+        -((clientY - rect.top) / rect.height) * 2 + 1
+      );
+      raycaster.setFromCamera(ndc, camera);
+      const hits = raycaster.intersectObjects(spaceMeshes, false);
+      if (hits.length > 0 && hits[0].object.userData.space) {
+        focusSpace(hits[0].object.userData.space);
+      }
+    }
+
+    // Menú holográfico y anfitriona bilingüe
+    const drawer = document.getElementById("holo-drawer");
+    const hostessOverlay = document.getElementById("hostess-overlay");
+    const hostessVideo = document.getElementById("hostess-video");
+
+    function openDrawer() {
+      drawer.classList.add("open");
     }
 
     function closeDrawer() {
       drawer.classList.remove("open");
     }
 
-    function selectSpace(sp) {
-      activeSpace = sp;
-      const floorLabel = lang === "es" ? "Piso " + sp.level : "Floor " + sp.level;
-      updateBadge(sp[lang] + " · " + floorLabel);
-      closeDrawer();
-      if (typeof window.__lobbyBridge.travelToSpace === "function") {
-        window.__lobbyBridge.travelToSpace(sp);
+    function openHostess(selectedLang) {
+      setLanguage(selectedLang);
+      hostessOverlay.classList.add("active");
+      const src = HOSTESS_VIDEOS[selectedLang];
+      if (src) {
+        hostessVideo.src = src;
+        hostessVideo.style.display = "block";
+        hostessVideo.play().catch(() => {});
+      } else {
+        hostessVideo.style.display = "none";
       }
+    }
+
+    function closeHostess() {
+      hostessOverlay.classList.remove("active");
+      hostessVideo.pause();
     }
 
     function renderSpaceButtons() {
       const grid = document.getElementById("holo-spaces-grid");
+      const quick = document.getElementById("hostess-spaces");
       grid.innerHTML = "";
+      quick.innerHTML = "";
 
-      SPACES.forEach(function (sp) {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "holo-space-btn";
-        btn.textContent = sp[lang] + " (P" + sp.level + ")";
-        btn.addEventListener("click", function () { selectSpace(sp); });
-        grid.appendChild(btn);
+      SPACES.forEach((sp) => {
+        const b1 = document.createElement("button");
+        b1.type = "button";
+        b1.className = "holo-space-btn";
+        b1.textContent = sp[lang];
+        b1.addEventListener("click", () => focusSpace(sp));
+        grid.appendChild(b1);
+
+        const b2 = document.createElement("button");
+        b2.type = "button";
+        b2.className = "holo-space-btn";
+        b2.textContent = sp[lang];
+        b2.addEventListener("click", () => focusSpace(sp));
+        quick.appendChild(b2);
       });
     }
 
@@ -360,429 +695,97 @@
       const t = UI_TEXT[lang];
       document.getElementById("btn-lang-es").classList.toggle("active", lang === "es");
       document.getElementById("btn-lang-en").classList.toggle("active", lang === "en");
+      document.getElementById("hostess-es").classList.toggle("active", lang === "es");
+      document.getElementById("hostess-en").classList.toggle("active", lang === "en");
 
       document.getElementById("btn-guide").textContent = t.guide;
       document.getElementById("btn-spaces").textContent = t.spaces;
       document.getElementById("btn-center-sign").textContent = t.centerBtn;
-      document.querySelector('[data-wp="level2"]').textContent = t.level2Btn;
+      document.getElementById("hostess-enter").textContent = t.enterLobby;
+      document.getElementById("hostess-title").textContent = t.hostessTitle;
+      document.getElementById("hostess-sub").textContent = t.hostessSub;
       document.getElementById("holo-greeting").textContent = t.drawerHint;
-      document.getElementById("fallback-sub").textContent = t.fallbackSub;
 
-      if (typeof window.__lobbyBridge.updateLang === "function") {
-        window.__lobbyBridge.updateLang(lang);
-      }
+      spaceMeshes.forEach((m) => {
+        const sp = m.userData.space;
+        m.material.map = makeStoreTexture(sp[lang]);
+        m.material.needsUpdate = true;
+      });
 
-      if (activeSpace) {
-        const floorLabel = lang === "es" ? "Piso " + activeSpace.level : "Floor " + activeSpace.level;
-        updateBadge(activeSpace[lang] + " · " + floorLabel);
-      } else {
-        updateBadge(t.lobbyTitle);
-      }
+      updateBadge(activeSpace ? activeSpace[lang] : t.lobbyTitle);
       renderSpaceButtons();
     }
 
-    document.getElementById("btn-lang-es").addEventListener("click", function () { setLanguage("es"); });
-    document.getElementById("btn-lang-en").addEventListener("click", function () { setLanguage("en"); });
+    document.getElementById("btn-lang-es").addEventListener("click", () => openHostess("es"));
+    document.getElementById("btn-lang-en").addEventListener("click", () => openHostess("en"));
+    document.getElementById("hostess-es").addEventListener("click", () => openHostess("es"));
+    document.getElementById("hostess-en").addEventListener("click", () => openHostess("en"));
+    document.getElementById("hostess-enter").addEventListener("click", closeHostess);
 
-    document.getElementById("btn-guide").addEventListener("click", function () {
+    document.getElementById("btn-guide").addEventListener("click", () => {
       drawer.classList.toggle("open");
     });
 
-    document.getElementById("btn-spaces").addEventListener("click", function () {
-      drawer.classList.toggle("open");
+    document.getElementById("btn-spaces").addEventListener("click", () => {
+      openDrawer();
     });
 
-    document.getElementById("btn-center-sign").addEventListener("click", function () {
-      activeSpace = null;
-      closeDrawer();
-      updateBadge(lang === "es" ? "Lobby Central · Piso 1" : "Central Lobby · Floor 1");
-      document.querySelectorAll(".bottom-bar .nav-btn").forEach(function (b) { b.classList.remove("active"); });
-      document.getElementById("btn-center-sign").classList.add("active");
-      if (typeof window.__lobbyBridge.waypoint === "function") {
-        window.__lobbyBridge.waypoint("center", lang);
-      }
-    });
+    document.getElementById("btn-center-sign").addEventListener("click", returnToCenterSign);
 
-    document.querySelectorAll(".waypoint-btn").forEach(function (btn) {
-      btn.addEventListener("click", function () {
+    document.querySelectorAll(".waypoint-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const key = btn.dataset.wp;
+        const wp = WAYPOINTS[key];
+        if (!wp) return;
         activeSpace = null;
-        closeDrawer();
-        document.querySelectorAll(".bottom-bar .nav-btn").forEach(function (b) { b.classList.remove("active"); });
+        targetCamPos.copy(wp.pos);
+        targetLook.copy(wp.look);
+        targetZoom = 1.0;
+        updateBadge(lang === "es" ? wp.labelEs : wp.labelEn);
+        setActiveBottomBtn(e.currentTarget.id || "");
+        document.querySelectorAll(".bottom-bar .nav-btn").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
-        if (typeof window.__lobbyBridge.waypoint === "function") {
-          window.__lobbyBridge.waypoint(btn.dataset.wp, lang);
-        }
       });
     });
 
-    document.getElementById("zoom-in").addEventListener("click", function () {
-      if (typeof window.__lobbyBridge.zoom === "function") window.__lobbyBridge.zoom(0.25, false);
+    document.getElementById("zoom-in").addEventListener("click", () => {
+      targetZoom = Math.min(2.4, targetZoom + 0.22);
     });
-    document.getElementById("zoom-out").addEventListener("click", function () {
-      if (typeof window.__lobbyBridge.zoom === "function") window.__lobbyBridge.zoom(-0.25, false);
+    document.getElementById("zoom-out").addEventListener("click", () => {
+      targetZoom = Math.max(0.75, targetZoom - 0.22);
     });
-    document.getElementById("zoom-reset").addEventListener("click", function () {
-      if (typeof window.__lobbyBridge.zoom === "function") window.__lobbyBridge.zoom(1.0, true);
+    document.getElementById("zoom-reset").addEventListener("click", () => {
+      targetZoom = 1.0;
+    });
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
     setLanguage("es");
-  </script>
+    camera.position.copy(currentCamPos);
+    camera.lookAt(currentLook);
 
-  <script type="module">
-    function setFallbackStatus(msg) {
-      const st = document.getElementById("fallback-status");
-      if (st) st.textContent = msg;
+    function animate() {
+      requestAnimationFrame(animate);
+
+      currentCamPos.lerp(targetCamPos, 0.08);
+      currentLook.lerp(targetLook, 0.08);
+      zoomFactor += (targetZoom - zoomFactor) * 0.1;
+
+      camera.position.copy(currentCamPos);
+      camera.fov = 60 / zoomFactor;
+      camera.updateProjectionMatrix();
+      camera.lookAt(currentLook);
+
+      sculpture.rotation.y += 0.006;
+
+      renderer.render(scene, camera);
     }
 
-    async function loadThreeModule() {
-      const urls = [
-        "https://esm.sh/three@0.164.1",
-        "https://cdn.jsdelivr.net/npm/three@0.164.1/+esm",
-        "https://cdn.skypack.dev/three@0.164.1"
-      ];
-      for (const u of urls) {
-        try {
-          const mod = await import(u);
-          if (mod && mod.WebGLRenderer) return mod;
-        } catch (_) {}
-      }
-      return null;
-    }
-
-    async function start3D() {
-      const canvas = document.getElementById("scene-canvas");
-      const THREE = await loadThreeModule();
-      if (!THREE || !canvas) {
-        setFallbackStatus("Navegación lista; sin conexión al motor 3D en este momento.");
-        return;
-      }
-
-      try {
-        const renderer = new THREE.WebGLRenderer({
-          canvas,
-          antialias: true,
-          powerPreference: "high-performance"
-        });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x090e16);
-        scene.fog = new THREE.FogExp2(0x090e16, 0.0085);
-
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 180);
-
-        const WAYPOINTS = {
-          center: { x: 0, y: 2.2, z: 11.5, lookX: 0, lookY: 2.6, lookZ: -2.0, labelEs: "Lobby Central · Piso 1", labelEn: "Central Lobby · Floor 1" },
-          west: { x: -8.5, y: 2.2, z: 7.5, lookX: -12.0, lookY: 2.5, lookZ: -8.0, labelEs: "Ala Oeste · Piso 1", labelEn: "West Wing · Floor 1" },
-          east: { x: 8.5, y: 2.2, z: 7.5, lookX: 12.0, lookY: 2.5, lookZ: -8.0, labelEs: "Ala Este · Piso 1", labelEn: "East Wing · Floor 1" },
-          level2: { x: 0, y: 7.2, z: 12.0, lookX: 0, lookY: 7.2, lookZ: -4.0, labelEs: "Segundo Piso", labelEn: "Second Floor" }
-        };
-
-        let camPos = new THREE.Vector3(WAYPOINTS.center.x, WAYPOINTS.center.y, WAYPOINTS.center.z);
-        let targetPos = camPos.clone();
-        let lookAtPos = new THREE.Vector3(WAYPOINTS.center.lookX, WAYPOINTS.center.lookY, WAYPOINTS.center.lookZ);
-        let targetLook = lookAtPos.clone();
-        let yawOffset = 0;
-        let pitchOffset = 0;
-
-        scene.add(new THREE.AmbientLight(0xfff1d0, 1.25));
-        const keyLight = new THREE.PointLight(0xffcf70, 2.8, 75);
-        keyLight.position.set(0, 11, 2);
-        scene.add(keyLight);
-
-        const floor = new THREE.Mesh(
-          new THREE.CircleGeometry(24, 64),
-          new THREE.MeshStandardMaterial({ color: 0x162230, roughness: 0.35, metalness: 0.45 })
-        );
-        floor.rotation.x = -Math.PI / 2;
-        scene.add(floor);
-
-        const goldRing = new THREE.Mesh(
-          new THREE.RingGeometry(4.4, 5.0, 64),
-          new THREE.MeshStandardMaterial({ color: 0xd9a441, roughness: 0.25, metalness: 0.85, side: THREE.DoubleSide })
-        );
-        goldRing.rotation.x = -Math.PI / 2;
-        goldRing.position.y = 0.02;
-        scene.add(goldRing);
-
-        const level2Deck = new THREE.Mesh(
-          new THREE.RingGeometry(14.5, 19.2, 64),
-          new THREE.MeshStandardMaterial({ color: 0x1d2b3b, roughness: 0.45, metalness: 0.5, side: THREE.DoubleSide })
-        );
-        level2Deck.rotation.x = -Math.PI / 2;
-        level2Deck.position.y = 5.6;
-        scene.add(level2Deck);
-
-        const sculpture = new THREE.Mesh(
-          new THREE.OctahedronGeometry(1.85, 1),
-          new THREE.MeshStandardMaterial({ color: 0xf7cf74, emissive: 0x473008, roughness: 0.2, metalness: 0.9 })
-        );
-        sculpture.position.set(0, 2.9, -1.5);
-        scene.add(sculpture);
-
-        function createSignTexture(text) {
-          const c = document.createElement("canvas");
-          c.width = 1024;
-          c.height = 256;
-          const ctx = c.getContext("2d");
-          ctx.clearRect(0, 0, c.width, c.height);
-
-          const grad = ctx.createLinearGradient(0, 40, 0, 210);
-          grad.addColorStop(0, "#fff0b8");
-          grad.addColorStop(0.5, "#e5b24c");
-          grad.addColorStop(1, "#9c6d19");
-
-          ctx.font = "bold 88px Georgia, serif";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.shadowColor = "rgba(255, 206, 94, 0.75)";
-          ctx.shadowBlur = 22;
-          ctx.fillStyle = grad;
-          ctx.fillText(text, c.width / 2, c.height / 2);
-          return new THREE.CanvasTexture(c);
-        }
-
-        const signPlane = new THREE.Mesh(
-          new THREE.PlaneGeometry(10.5, 2.6),
-          new THREE.MeshBasicMaterial({ map: createSignTexture("D'Vitrales Mall"), transparent: true })
-        );
-        signPlane.position.set(0, 3.1, -11.5);
-        scene.add(signPlane);
-
-        const spaceMeshes = [];
-        const radius = 17.2;
-
-        function makeTransparentStoreTexture(title) {
-          const c = document.createElement("canvas");
-          c.width = 512;
-          c.height = 256;
-          const ctx = c.getContext("2d");
-          ctx.clearRect(0, 0, c.width, c.height);
-
-          ctx.fillStyle = "rgba(12, 22, 34, 0.22)";
-          ctx.fillRect(10, 10, c.width - 20, c.height - 20);
-
-          ctx.strokeStyle = "rgba(240, 198, 102, 0.75)";
-          ctx.lineWidth = 3;
-          ctx.strokeRect(10, 10, c.width - 20, c.height - 20);
-
-          ctx.fillStyle = "#fff3c8";
-          ctx.font = "bold 28px sans-serif";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.shadowColor = "rgba(0, 0, 0, 0.95)";
-          ctx.shadowBlur = 10;
-
-          const words = title.split(" ");
-          const lines = [];
-          let line = "";
-          for (const w of words) {
-            const test = line ? (line + " " + w) : w;
-            if (ctx.measureText(test).width > 430) {
-              lines.push(line);
-              line = w;
-            } else {
-              line = test;
-            }
-          }
-          if (line) lines.push(line);
-
-          lines.forEach((txt, idx) => {
-            const y = c.height / 2 + (idx - (lines.length - 1) / 2) * 36;
-            ctx.fillText(txt, c.width / 2, y);
-          });
-          return new THREE.CanvasTexture(c);
-        }
-
-        SPACES.forEach((sp) => {
-          const yPos = sp.level === 1 ? 2.4 : 7.3;
-          const x = Math.sin(sp.angle) * radius;
-          const z = Math.cos(sp.angle) * radius;
-
-          const panel = new THREE.Mesh(
-            new THREE.PlaneGeometry(5.0, 2.5),
-            new THREE.MeshBasicMaterial({
-              map: makeTransparentStoreTexture(sp.es),
-              transparent: true,
-              opacity: 0.85,
-              side: THREE.DoubleSide,
-              depthWrite: false
-            })
-          );
-          panel.position.set(x, yPos, z);
-          panel.lookAt(0, yPos, 0);
-          panel.userData = { space: sp };
-          scene.add(panel);
-          spaceMeshes.push(panel);
-        });
-
-        window.__lobbyBridge.updateLang = (currentLang) => {
-          spaceMeshes.forEach((m) => {
-            const sp = m.userData.space;
-            m.material.map = makeTransparentStoreTexture(sp[currentLang]);
-            m.material.needsUpdate = true;
-          });
-        };
-
-        window.__lobbyBridge.travelToSpace = (sp) => {
-          const yPos = sp.level === 1 ? 2.3 : 7.2;
-          const destX = Math.sin(sp.angle) * (radius - 6.2);
-          const destZ = Math.cos(sp.angle) * (radius - 6.2);
-          const lookX = Math.sin(sp.angle) * radius;
-          const lookZ = Math.cos(sp.angle) * radius;
-
-          yawOffset = 0;
-          pitchOffset = 0;
-          targetPos.set(destX, yPos, destZ);
-          targetLook.set(lookX, yPos, lookZ);
-        };
-
-        window.__lobbyBridge.waypoint = (key, currentLang) => {
-          const wp = WAYPOINTS[key];
-          if (!wp) return;
-          yawOffset = 0;
-          pitchOffset = 0;
-          targetPos.set(wp.x, wp.y, wp.z);
-          targetLook.set(wp.lookX, wp.lookY, wp.lookZ);
-          updateBadge(currentLang === "es" ? wp.labelEs : wp.labelEn);
-        };
-
-        window.__lobbyBridge.zoom = (val, reset) => {
-          if (reset) {
-            targetPos.set(WAYPOINTS.center.x, WAYPOINTS.center.y, WAYPOINTS.center.z);
-            targetLook.set(WAYPOINTS.center.lookX, WAYPOINTS.center.lookY, WAYPOINTS.center.lookZ);
-            yawOffset = 0;
-            pitchOffset = 0;
-            return;
-          }
-          const dir = new THREE.Vector3().subVectors(targetLook, targetPos);
-          const currentLen = dir.length();
-          const nextLen = Math.max(5.5, Math.min(22.0, currentLen - val * 6));
-          dir.normalize().multiplyScalar(nextLen);
-          targetPos.copy(targetLook).sub(dir);
-        };
-
-        let isDragging = false;
-        let prevX = 0;
-        let prevY = 0;
-        let dragDist = 0;
-        let pinchStartDist = null;
-
-        canvas.addEventListener("pointerdown", (e) => {
-          isDragging = true;
-          prevX = e.clientX;
-          prevY = e.clientY;
-          dragDist = 0;
-        });
-
-        window.addEventListener("pointermove", (e) => {
-          if (!isDragging) return;
-          const dx = e.clientX - prevX;
-          const dy = e.clientY - prevY;
-          dragDist += Math.hypot(dx, dy);
-          prevX = e.clientX;
-          prevY = e.clientY;
-
-          yawOffset -= dx * 0.0035;
-          pitchOffset = Math.max(-0.35, Math.min(0.45, pitchOffset - dy * 0.0025));
-        });
-
-        const raycaster = new THREE.Raycaster();
-        function checkSpaceTap(clientX, clientY) {
-          const rect = canvas.getBoundingClientRect();
-          const ndc = new THREE.Vector2(
-            ((clientX - rect.left) / rect.width) * 2 - 1,
-            -((clientY - rect.top) / rect.height) * 2 + 1
-          );
-          raycaster.setFromCamera(ndc, camera);
-          const hits = raycaster.intersectObjects(spaceMeshes, false);
-          if (hits.length > 0 && hits[0].object.userData.space) {
-            selectSpace(hits[0].object.userData.space);
-          }
-        }
-
-        window.addEventListener("pointerup", (e) => {
-          if (!isDragging) return;
-          isDragging = false;
-          if (dragDist < 7) {
-            checkSpaceTap(e.clientX, e.clientY);
-          }
-        });
-
-        canvas.addEventListener("touchstart", (e) => {
-          if (e.touches.length === 2) {
-            isDragging = false;
-            pinchStartDist = Math.hypot(
-              e.touches[0].clientX - e.touches[1].clientX,
-              e.touches[0].clientY - e.touches[1].clientY
-            );
-          }
-        }, { passive: true });
-
-        canvas.addEventListener("touchmove", (e) => {
-          if (e.touches.length === 2 && pinchStartDist) {
-            const d = Math.hypot(
-              e.touches[0].clientX - e.touches[1].clientX,
-              e.touches[0].clientY - e.touches[1].clientY
-            );
-            const factor = pinchStartDist / d;
-            pinchStartDist = d;
-            const dir = new THREE.Vector3().subVectors(targetLook, targetPos);
-            const nextLen = Math.max(5.5, Math.min(22.0, dir.length() * factor));
-            dir.normalize().multiplyScalar(nextLen);
-            targetPos.copy(targetLook).sub(dir);
-          }
-        }, { passive: true });
-
-        canvas.addEventListener("touchend", () => {
-          pinchStartDist = null;
-        });
-
-        canvas.addEventListener("wheel", (e) => {
-          e.preventDefault();
-          const dir = new THREE.Vector3().subVectors(targetLook, targetPos);
-          const nextLen = Math.max(5.5, Math.min(22.0, dir.length() + (e.deltaY > 0 ? 1.2 : -1.2)));
-          dir.normalize().multiplyScalar(nextLen);
-          targetPos.copy(targetLook).sub(dir);
-        }, { passive: false });
-
-        window.addEventListener("resize", () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        function applyCameraTransform() {
-          camera.position.copy(camPos);
-          const baseDir = new THREE.Vector3().subVectors(lookAtPos, camPos);
-          const euler = new THREE.Euler(pitchOffset, yawOffset, 0, "YXZ");
-          baseDir.applyEuler(euler);
-          camera.lookAt(camPos.clone().add(baseDir));
-        }
-
-        applyCameraTransform();
-        canvas.classList.add("ready");
-
-        function animate() {
-          requestAnimationFrame(animate);
-
-          camPos.lerp(targetPos, 0.12);
-          lookAtPos.lerp(targetLook, 0.12);
-
-          applyCameraTransform();
-          sculpture.rotation.y += 0.004;
-
-          renderer.render(scene, camera);
-        }
-
-        animate();
-      } catch (_) {
-        setFallbackStatus("No se pudo iniciar WebGL en este navegador; la navegación sigue activa.");
-      }
-    }
-
-    start3D();
+    animate();
   </script>
 </body>
 </html>
