@@ -115,10 +115,10 @@
 
     .holo-key {
       background: rgba(10, 18, 28, 0.45);
-      border: 1px solid rgba(126, 249, 255, 0.38);
+      border: 1px solid rgba(255, 214, 115, 0.35);
       border-radius: 999px;
       outline: none;
-      padding: 5px 11px;
+      padding: 5px 10px;
       color: #fff2cc;
       font-size: 11.5px;
       font-weight: 700;
@@ -126,14 +126,14 @@
       text-transform: uppercase;
       cursor: pointer;
       backdrop-filter: blur(6px);
-      text-shadow: 0 0 10px rgba(126, 249, 255, 0.65), 0 1px 4px rgba(0, 0, 0, 0.98);
+      text-shadow: 0 0 10px rgba(255, 214, 115, 0.7), 0 1px 4px rgba(0, 0, 0, 0.98);
       transition: transform 0.16s ease, color 0.16s ease, border-color 0.16s ease;
     }
 
     .holo-key:hover,
     .holo-key.active {
       color: #7ef9ff;
-      border-color: rgba(126, 249, 255, 0.9);
+      border-color: rgba(126, 249, 255, 0.85);
       transform: translateY(-1px);
       text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
     }
@@ -150,9 +150,8 @@
       gap: 8px;
       padding: 12px 14px;
       border-radius: 16px;
-      background: rgba(8, 20, 30, 0.56);
-      border: 1px solid rgba(126, 249, 255, 0.45);
-      box-shadow: 0 0 22px rgba(126, 249, 255, 0.16);
+      background: rgba(9, 16, 26, 0.58);
+      border: 1px solid rgba(255, 214, 115, 0.35);
       backdrop-filter: blur(8px);
       pointer-events: auto;
     }
@@ -165,8 +164,8 @@
       text-align: right;
       font-size: 12px;
       line-height: 1.35;
-      color: #dffcff;
-      text-shadow: 0 0 12px rgba(126, 249, 255, 0.55), 0 1px 6px rgba(0, 0, 0, 0.98);
+      color: #fff6dc;
+      text-shadow: 0 0 12px rgba(126, 249, 255, 0.45), 0 1px 6px rgba(0, 0, 0, 0.98);
     }
 
     .holo-spaces-grid {
@@ -194,6 +193,94 @@
       color: #7ef9ff;
       transform: translateX(-2px);
       text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
+    }
+
+    /* Anfitriona integrada como ventana/tarjeta compacta sin tapar el recorrido 3D */
+    #hostess-card {
+      position: fixed;
+      left: 14px;
+      bottom: 72px;
+      z-index: 55;
+      width: min(88vw, 290px);
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 16px;
+      background: rgba(8, 15, 24, 0.72);
+      border: 1px solid rgba(255, 214, 115, 0.48);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+      pointer-events: auto;
+    }
+
+    #hostess-card.active {
+      display: flex;
+    }
+
+    .hostess-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hostess-badge {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #ffe8a3;
+    }
+
+    .hostess-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 214, 115, 0.35);
+      border-radius: 999px;
+      color: #fff2cc;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      cursor: pointer;
+    }
+
+    .hostess-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #05090f;
+      border: 1px solid rgba(126, 249, 255, 0.25);
+    }
+
+    #hostess-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+      display: block;
+    }
+
+    .hostess-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hostess-mini-btn {
+      background: rgba(255, 214, 115, 0.12);
+      border: 1px solid rgba(255, 214, 115, 0.35);
+      border-radius: 999px;
+      color: #fff2cc;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 4px 9px;
+      cursor: pointer;
+    }
+
+    .hostess-mini-btn.active {
+      color: #7ef9ff;
+      border-color: rgba(126, 249, 255, 0.8);
     }
 
     .bottom-bar {
@@ -243,7 +330,7 @@
 <body>
   <div id="fallback-lobby">
     <div class="fallback-sign">D'Vitrales Mall</div>
-    <div id="fallback-sub" class="fallback-note">Recorre los dos niveles del lobby y toca cualquier espacio para trasladarte.</div>
+    <div id="fallback-sub" class="fallback-note">Recorre los dos niveles del lobby o abre ES / EN para escuchar a la anfitriona.</div>
     <div id="fallback-status" class="fallback-status">Cargando recorrido 3D...</div>
   </div>
 
@@ -253,7 +340,7 @@
 
   <div class="holo-top-right">
     <div class="holo-row">
-      <button id="btn-lang-es" class="holo-key active" type="button">ES</button>
+      <button id="btn-lang-es" class="holo-key" type="button">ES</button>
       <button id="btn-lang-en" class="holo-key" type="button">EN</button>
       <button id="btn-guide" class="holo-key" type="button">Guía</button>
       <button id="btn-spaces" class="holo-key" type="button">Locales</button>
@@ -264,6 +351,21 @@
     <div id="holo-greeting" class="holo-greeting">Toca un espacio para trasladarte:</div>
     <div id="holo-spaces-grid" class="holo-spaces-grid"></div>
   </div>
+
+  <aside id="hostess-card" aria-live="polite">
+    <div class="hostess-header">
+      <span id="hostess-title" class="hostess-badge">Anfitriona D'Vitrales</span>
+      <button id="hostess-close" class="hostess-close" type="button">✕</button>
+    </div>
+    <div class="hostess-frame">
+      <video id="hostess-video" playsinline webkit-playsinline autoplay loop></video>
+    </div>
+    <div class="hostess-actions">
+      <button id="hostess-es" class="hostess-mini-btn" type="button">ES</button>
+      <button id="hostess-en" class="hostess-mini-btn" type="button">EN</button>
+      <button id="hostess-audio" class="hostess-mini-btn" type="button">Audio ON</button>
+    </div>
+  </aside>
 
   <div class="bottom-bar">
     <button id="btn-center-sign" class="nav-btn active" type="button">Centro / Letrero</button>
@@ -278,6 +380,11 @@
   </div>
 
   <script>
+    const HOSTESS_MEDIA = {
+      es: { video: "anfitrionamp4.mp4" },
+      en: { video: "anfitriona-en.mp4" }
+    };
+
     const SPACES = [
       { id: "chocolatier", level: 1, angle: -2.2, es: "Chocolatier Gallery", en: "Chocolatier Gallery" },
       { id: "boutique", level: 1, angle: -1.65, es: "Boutique", en: "Boutique" },
@@ -297,18 +404,24 @@
         spaces: "Locales",
         centerBtn: "Centro / Letrero",
         level2Btn: "Segundo Piso",
+        audioOn: "Audio ON",
+        audioOff: "Audio OFF",
         lobbyTitle: "Lobby Central · Piso 1",
+        hostessTitle: "Anfitriona D'Vitrales",
         drawerHint: "Toca un espacio para trasladarte:",
-        fallbackSub: "Recorre los dos niveles del lobby y toca cualquier espacio para trasladarte."
+        fallbackSub: "Recorre los dos niveles del lobby o abre ES / EN para escuchar a la anfitriona."
       },
       en: {
         guide: "Guide",
         spaces: "Spaces",
         centerBtn: "Center / Sign",
         level2Btn: "Second Floor",
+        audioOn: "Audio ON",
+        audioOff: "Audio OFF",
         lobbyTitle: "Central Lobby · Floor 1",
+        hostessTitle: "D'Vitrales Host",
         drawerHint: "Tap a space to travel there:",
-        fallbackSub: "Explore both lobby levels and tap any space to travel there."
+        fallbackSub: "Explore both lobby levels or select ES / EN to hear the host."
       }
     };
 
@@ -322,15 +435,59 @@
     };
 
     const drawer = document.getElementById("holo-drawer");
+    const hostessCard = document.getElementById("hostess-card");
+    const hostessVideo = document.getElementById("hostess-video");
+    const audioBtn = document.getElementById("hostess-audio");
 
     function updateBadge(text) {
       document.getElementById("focused-badge").textContent = text;
+    }
+
+    function updateAudioLabel() {
+      const t = UI_TEXT[lang];
+      audioBtn.textContent = hostessVideo.muted ? t.audioOff : t.audioOn;
+      audioBtn.classList.toggle("active", !hostessVideo.muted);
     }
 
     function closeDrawer() {
       drawer.classList.remove("open");
     }
 
+    function openHostess(selectedLang) {
+      setLanguage(selectedLang);
+      closeDrawer();
+      hostessCard.classList.add("active");
+
+      const media = HOSTESS_MEDIA[selectedLang] || {};
+      const src = media.video || "";
+
+      if (src) {
+        if (hostessVideo.getAttribute("data-src") !== src) {
+          hostessVideo.src = src;
+          hostessVideo.setAttribute("data-src", src);
+        }
+        hostessVideo.currentTime = 0;
+        hostessVideo.muted = false;
+        hostessVideo.volume = 1.0;
+        updateAudioLabel();
+
+        const playPromise = hostessVideo.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(function () {
+            hostessVideo.muted = true;
+            updateAudioLabel();
+            hostessVideo.play().catch(function () {});
+          });
+        }
+      }
+    }
+
+    function closeHostess() {
+      hostessCard.classList.remove("active");
+      hostessVideo.pause();
+    }
+
+    // Traslado directo al espacio tocado sin bloquear el recorrido
     function selectSpace(sp) {
       activeSpace = sp;
       const floorLabel = lang === "es" ? "Piso " + sp.level : "Floor " + sp.level;
@@ -360,13 +517,17 @@
       const t = UI_TEXT[lang];
       document.getElementById("btn-lang-es").classList.toggle("active", lang === "es");
       document.getElementById("btn-lang-en").classList.toggle("active", lang === "en");
+      document.getElementById("hostess-es").classList.toggle("active", lang === "es");
+      document.getElementById("hostess-en").classList.toggle("active", lang === "en");
 
       document.getElementById("btn-guide").textContent = t.guide;
       document.getElementById("btn-spaces").textContent = t.spaces;
       document.getElementById("btn-center-sign").textContent = t.centerBtn;
       document.querySelector('[data-wp="level2"]').textContent = t.level2Btn;
+      document.getElementById("hostess-title").textContent = t.hostessTitle;
       document.getElementById("holo-greeting").textContent = t.drawerHint;
       document.getElementById("fallback-sub").textContent = t.fallbackSub;
+      updateAudioLabel();
 
       if (typeof window.__lobbyBridge.updateLang === "function") {
         window.__lobbyBridge.updateLang(lang);
@@ -381,8 +542,20 @@
       renderSpaceButtons();
     }
 
-    document.getElementById("btn-lang-es").addEventListener("click", function () { setLanguage("es"); });
-    document.getElementById("btn-lang-en").addEventListener("click", function () { setLanguage("en"); });
+    document.getElementById("btn-lang-es").addEventListener("click", function () { openHostess("es"); });
+    document.getElementById("btn-lang-en").addEventListener("click", function () { openHostess("en"); });
+    document.getElementById("hostess-es").addEventListener("click", function () { openHostess("es"); });
+    document.getElementById("hostess-en").addEventListener("click", function () { openHostess("en"); });
+    document.getElementById("hostess-close").addEventListener("click", closeHostess);
+
+    audioBtn.addEventListener("click", function () {
+      hostessVideo.muted = !hostessVideo.muted;
+      if (!hostessVideo.muted) {
+        hostessVideo.volume = 1.0;
+        hostessVideo.play().catch(function () {});
+      }
+      updateAudioLabel();
+    });
 
     document.getElementById("btn-guide").addEventListener("click", function () {
       drawer.classList.toggle("open");
@@ -453,7 +626,7 @@
       const canvas = document.getElementById("scene-canvas");
       const THREE = await loadThreeModule();
       if (!THREE || !canvas) {
-        setFallbackStatus("Navegación lista; sin conexión al motor 3D en este momento.");
+        setFallbackStatus("Navegación y anfitriona listas; sin conexión al motor 3D en este momento.");
         return;
       }
 
@@ -491,6 +664,7 @@
         keyLight.position.set(0, 11, 2);
         scene.add(keyLight);
 
+        // Piso primer nivel
         const floor = new THREE.Mesh(
           new THREE.CircleGeometry(24, 64),
           new THREE.MeshStandardMaterial({ color: 0x162230, roughness: 0.35, metalness: 0.45 })
@@ -498,6 +672,7 @@
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
 
+        // Aro central dorado
         const goldRing = new THREE.Mesh(
           new THREE.RingGeometry(4.4, 5.0, 64),
           new THREE.MeshStandardMaterial({ color: 0xd9a441, roughness: 0.25, metalness: 0.85, side: THREE.DoubleSide })
@@ -506,6 +681,7 @@
         goldRing.position.y = 0.02;
         scene.add(goldRing);
 
+        // Pasarela / plataforma perimetral segundo piso
         const level2Deck = new THREE.Mesh(
           new THREE.RingGeometry(14.5, 19.2, 64),
           new THREE.MeshStandardMaterial({ color: 0x1d2b3b, roughness: 0.45, metalness: 0.5, side: THREE.DoubleSide })
@@ -553,6 +729,7 @@
         const spaceMeshes = [];
         const radius = 17.2;
 
+        // Letreros con transparencia real para ver el recorrido detrás
         function makeTransparentStoreTexture(title) {
           const c = document.createElement("canvas");
           c.width = 512;
@@ -625,6 +802,7 @@
           });
         };
 
+        // Traslado directo hacia la ubicación del espacio elegido
         window.__lobbyBridge.travelToSpace = (sp) => {
           const yPos = sp.level === 1 ? 2.3 : 7.2;
           const destX = Math.sin(sp.angle) * (radius - 6.2);
@@ -663,6 +841,7 @@
           targetPos.copy(targetLook).sub(dir);
         };
 
+        // Mirar alrededor con arrastre suave sin perder la posición del recorrido
         let isDragging = false;
         let prevX = 0;
         let prevY = 0;
