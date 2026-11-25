@@ -365,7 +365,7 @@
 
   <script>
     const HOSTESS_MEDIA = {
-      es: { video: "anfitrionamp4.mp4" },
+      es: { video: "anfitriona.mp4" },
       en: { video: "anfitriona-en.mp4" }
     };
 
@@ -786,6 +786,7 @@
         window.__lobbyBridge.updateLang = function (currentLang) {
           spaceMeshes.forEach(function (m) {
             const sp = m.userData.space;
+            if (m.material.map) m.material.map.dispose();
             m.material.map = makeStoreTexture(sp[currentLang]);
             m.material.needsUpdate = true;
           });
