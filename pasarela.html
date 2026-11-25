@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>D'Vitrales Mall — Salón Pasarela</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 50% 10%, rgba(230, 184, 92, 0.2), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(126, 249, 255, 0.12), transparent 50%),
+        linear-gradient(180deg, #0b121c 0%, #06090f 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #fff5dc;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
+      background: rgba(7, 11, 18, 0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(230, 184, 92, 0.25);
+    }
+
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7ef9ff;
+    }
+
+    .brand-title {
+      font-family: Georgia, serif;
+      font-size: clamp(21px, 4.4vw, 29px);
+      font-weight: 700;
+      background: linear-gradient(180deg, #fff1ba 0%, #e4b14b 60%, #9c6c18 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .holo-btn {
+      background: rgba(14, 23, 35, 0.72);
+      border: 1px solid rgba(255, 218, 122, 0.35);
+      border-radius: 999px;
+      padding: 7px 13px;
+      color: #fff2cc;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .holo-btn:hover,
+    .holo-btn.active {
+      border-color: #7ef9ff;
+      color: #7ef9ff;
+      box-shadow: 0 0 14px rgba(126, 249, 255, 0.28);
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 18px 16px 64px;
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 840px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stage-box {
+      background: rgba(12, 20, 31, 0.86);
+      border: 1px solid rgba(230, 184, 92, 0.32);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .player-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 40%, rgba(230, 184, 92, 0.16), rgba(6, 10, 16, 0.96));
+      border: 1px solid rgba(126, 249, 255, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .player-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .player-frame video.has-video {
+      display: block;
+    }
+
+    .empty-stage {
+      padding: 20px;
+      max-width: 420px;
+    }
+
+    .empty-stage-badge {
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #7ef9ff;
+      margin-bottom: 6px;
+    }
+
+    .empty-stage-title {
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #ffe8a3;
+      margin-bottom: 8px;
+    }
+
+    .empty-stage-note {
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: rgba(255, 245, 220, 0.78);
+    }
+
+    .look-details {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .look-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #ffe8a3;
+    }
+
+    .look-desc {
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(255, 245, 220, 0.85);
+    }
+
+    .look-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .action-link {
+      padding: 9px 14px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid rgba(126, 249, 255, 0.55);
+      background: rgba(126, 249, 255, 0.14);
+      color: #7ef9ff;
+    }
+
+    .action-link.secondary {
+      border-color: rgba(230, 184, 92, 0.5);
+      background: rgba(230, 184, 92, 0.14);
+      color: #ffe8a3;
+    }
+
+    .index-panel {
+      background: rgba(12, 20, 31, 0.82);
+      border: 1px solid rgba(230, 184, 92, 0.24);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .index-heading {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffe8a3;
+      margin-bottom: 6px;
+    }
+
+    .index-sub {
+      font-size: 12px;
+      color: rgba(255, 245, 220, 0.72);
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .video-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .video-item {
+      width: 100%;
+      text-align: left;
+      background: rgba(18, 29, 44, 0.75);
+      border: 1px solid rgba(230, 184, 92, 0.22);
+      border-radius: 12px;
+      padding: 11px 12px;
+      color: #fff5dc;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .video-item.active,
+    .video-item:hover {
+      border-color: #7ef9ff;
+      background: rgba(18, 46, 56, 0.85);
+    }
+
+    .video-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #ffe8a3;
+    }
+
+    .video-status {
+      font-size: 10.5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(230, 184, 92, 0.16);
+      color: #ffe8a3;
+    }
+
+    .video-item-meta {
+      margin-top: 4px;
+      font-size: 11.5px;
+      color: rgba(255, 245, 220, 0.72);
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-block">
+      <span class="brand-sub">D'Vitrales Mall</span>
+      <span class="brand-title" id="brand-title">Salón Pasarela</span>
+    </div>
+
+    <div class="top-actions">
+      <button id="lang-es" class="holo-btn active" type="button">ES</button>
+      <button id="lang-en" class="holo-btn" type="button">EN</button>
+      <a id="btn-vestidor" class="holo-btn" href="vestidor.html">Vestidor ✦</a>
+      <a id="btn-boutique" class="holo-btn" href="boutique.html">← Boutique</a>
+      <a id="btn-lobby" class="holo-btn" href="index.html">Lobby</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="stage-box">
+      <div class="player-frame">
+        <video id="runway-video" controls playsinline webkit-playsinline></video>
+        <div id="empty-stage" class="empty-stage">
+          <div class="empty-stage-badge" id="empty-badge">Índice Listo</div>
+          <div class="empty-stage-title" id="empty-title">Video pendiente por subir</div>
+          <div class="empty-stage-note" id="empty-note">
+            Sube tu archivo .mp4 al repositorio y coloca su ruta en el campo "video" dentro de RUNWAY_VIDEOS.
+          </div>
+        </div>
+      </div>
+
+      <div class="look-details">
+        <div id="look-title" class="look-title"></div>
+        <div id="look-desc" class="look-desc"></div>
+        <div class="look-actions">
+          <a id="link-try-vestidor" class="action-link" href="vestidor.html">Probar en Vestidor ✦</a>
+          <a id="link-back-boutique" class="action-link secondary" href="boutique.html">Volver a Boutique</a>
+        </div>
+      </div>
+    </section>
+
+    <aside class="index-panel">
+      <div id="index-heading" class="index-heading">Índice de Desfiles y Vestidos</div>
+      <div id="index-sub" class="index-sub">
+        Selecciona un diseño para verlo en pasarela o enviarlo directo al vestidor holográfico.
+      </div>
+      <div id="video-list" class="video-list"></div>
+    </aside>
+  </main>
+
+  <script>
+    /* =========================================================================
+       ÍNDICE DE VIDEOS DE PASARELA (Sube tus videos poco a poco y anótalos aquí)
+       - id: identificador único (ej. "pasarela-01")
+       - video: ruta del archivo subido en GitHub (ej. "videos/pasarela-01.mp4" o "")
+       ========================================================================= */
+    const RUNWAY_VIDEOS = [
+      {
+        id: "pasarela-01",
+        video: "",
+        nameEs: "Desfile 01 · Vestido Verde Intenso D'Vitrales",
+        nameEn: "Runway 01 · D'Vitrales Deep Green Gown",
+        descEs: "Recorrido en pasarela resaltando el movimiento fluido y los acabados artesanales en verde intenso.",
+        descEn: "Runway walk highlighting fluid movement and handcrafted deep green finishes."
+      },
+      {
+        id: "pasarela-02",
+        video: "",
+        nameEs: "Desfile 02 · Conjunto Champán & Oro Mate",
+        nameEn: "Runway 02 · Champagne & Matte Gold Ensemble",
+        descEs: "Presentación de gala en tono champán con destellos sobrios en oro mate.",
+        descEn: "Gala presentation in champagne tone with understated matte gold accents."
+      },
+      {
+        id: "pasarela-03",
+        video: "",
+        nameEs: "Desfile 03 · Vestido Dorado Jardín de Girasoles",
+        nameEn: "Runway 03 · Golden Sunflower Garden Gown",
+        descEs: "Diseño luminoso con capas vaporosas y detalles florales en pasarela.",
+        descEn: "Luminous design with airy layers and floral details on the runway."
+      }
+    ];
+
+    const COPY = {
+      es: {
+        brandTitle: "Salón Pasarela",
+        vestidorBtn: "Vestidor ✦",
+        boutiqueBtn: "← Boutique",
+        lobbyBtn: "Lobby",
+        indexHeading: "Índice de Desfiles y Vestidos",
+        indexSub: "Selecciona un diseño para verlo en pasarela o enviarlo directo al vestidor holográfico.",
+        tryVestidor: "Probar en Vestidor ✦",
+        backBoutique: "Volver a Boutique",
+        readyStatus: "Video listo",
+        pendingStatus: "Pendiente",
+        emptyBadge: "Índice Preparado",
+        emptyTitle: "Aún no has asignado archivo de video a este diseño",
+        emptyNote: "Cuando subas tu .mp4 al repositorio, escribe su ruta en \"video\" dentro de RUNWAY_VIDEOS y aparecerá aquí automáticamente."
+      },
+      en: {
+        brandTitle: "Runway Salon",
+        vestidorBtn: "Fitting Room ✦",
+        boutiqueBtn: "← Boutique",
+        lobbyBtn: "Lobby",
+        indexHeading: "Runway & Dress Index",
+        indexSub: "Select a design to watch it on the runway or send it straight to the holographic fitting room.",
+        tryVestidor: "Try in Fitting Room ✦",
+        backBoutique: "Back to Boutique",
+        readyStatus: "Video ready",
+        pendingStatus: "Pending",
+        emptyBadge: "Index Ready",
+        emptyTitle: "No video file assigned to this design yet",
+        emptyNote: "Once you upload your .mp4 to the repository, add its path in \"video\" inside RUNWAY_VIDEOS and it will play here automatically."
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    let lang = params.get("lang") === "en" ? "en" : "es";
+    let currentIdx = 0;
+
+    const requestedVideo = params.get("video");
+    if (requestedVideo) {
+      const found = RUNWAY_VIDEOS.findIndex(function (v) { return v.id === requestedVideo; });
+      if (found >= 0) currentIdx = found;
+    }
+
+    const videoEl = document.getElementById("runway-video");
+    const emptyEl = document.getElementById("empty-stage");
+
+    function renderRunway() {
+      const t = COPY[lang];
+      const item = RUNWAY_VIDEOS[currentIdx];
+
+      document.getElementById("lang-es").classList.toggle("active", lang === "es");
+      document.getElementById("lang-en").classList.toggle("active", lang === "en");
+
+      document.getElementById("brand-title").textContent = t.brandTitle;
+      document.getElementById("btn-vestidor").textContent = t.vestidorBtn;
+      document.getElementById("btn-boutique").textContent = t.boutiqueBtn;
+      document.getElementById("btn-lobby").textContent = t.lobbyBtn;
+
+      document.getElementById("index-heading").textContent = t.indexHeading;
+      document.getElementById("index-sub").textContent = t.indexSub;
+      document.getElementById("link-try-vestidor").textContent = t.tryVestidor;
+      document.getElementById("link-back-boutique").textContent = t.backBoutique;
+
+      document.getElementById("empty-badge").textContent = t.emptyBadge;
+      document.getElementById("empty-title").textContent = t.emptyTitle;
+      document.getElementById("empty-note").textContent = t.emptyNote;
+
+      const title = lang === "es" ? item.nameEs : item.nameEn;
+      const desc = lang === "es" ? item.descEs : item.descEn;
+
+      document.getElementById("look-title").textContent = title;
+      document.getElementById("look-desc").textContent = desc;
+
+      document.getElementById("link-try-vestidor").href =
+        "vestidor.html?video=" + encodeURIComponent(item.id) + "&lang=" + lang;
+      document.getElementById("btn-vestidor").href =
+        "vestidor.html?video=" + encodeURIComponent(item.id) + "&lang=" + lang;
+
+      if (item.video) {
+        if (videoEl.getAttribute("data-current-src") !== item.video) {
+          videoEl.src = item.video;
+          videoEl.setAttribute("data-current-src", item.video);
+          videoEl.load();
+        }
+        videoEl.classList.add("has-video");
+        emptyEl.style.display = "none";
+      } else {
+        videoEl.pause();
+        videoEl.removeAttribute("src");
+        videoEl.removeAttribute("data-current-src");
+        videoEl.classList.remove("has-video");
+        emptyEl.style.display = "block";
+      }
+
+      const listEl = document.getElementById("video-list");
+      listEl.innerHTML = "";
+
+      RUNWAY_VIDEOS.forEach(function (v, idx) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "video-item" + (idx === currentIdx ? " active" : "");
+
+        const vName = lang === "es" ? v.nameEs : v.nameEn;
+        const statusLabel = v.video ? t.readyStatus : t.pendingStatus;
+        const fileHint = v.video ? v.video : "ID: " + v.id;
+
+        btn.innerHTML =
+          '<div class="video-item-top">' +
+            '<span>' + vName + '</span>' +
+            '<span class="video-status">' + statusLabel + '</span>' +
+          '</div>' +
+          '<div class="video-item-meta">' + fileHint + '</div>';
+
+        btn.addEventListener("click", function () {
+          currentIdx = idx;
+          renderRunway();
+        });
+
+        listEl.appendChild(btn);
+      });
+    }
+
+    document.getElementById("lang-es").addEventListener("click", function () {
+      lang = "es";
+      renderRunway();
+    });
+
+    document.getElementById("lang-en").addEventListener("click", function () {
+      lang = "en";
+      renderRunway();
+    });
+
+    renderRunway();
+  </script>
+</body>
+</html>
