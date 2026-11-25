@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>D'Vitrales Mall — Vestidor Holográfico</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #fff6dc;
+      background: #081214;
+    }
+
+    /* Fondo arquitectónico estilo Boutique Esmeralda & Oro (visible detrás de la transparencia) */
+    .boutique-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        linear-gradient(180deg, rgba(16, 26, 28, 0.35) 0%, rgba(8, 16, 18, 0.55) 68%, rgba(18, 26, 28, 0.85) 100%),
+        radial-gradient(circle at 76% 32%, rgba(16, 94, 72, 0.72), transparent 46%),
+        radial-gradient(circle at 22% 38%, rgba(212, 186, 138, 0.24), transparent 48%),
+        linear-gradient(90deg, #1b2426 0%, #101d1b 32%, #0c2620 65%, #162224 100%);
+    }
+
+    /* Vetas decorativas de mármol y columnas doradas del fondo */
+    .boutique-backdrop::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 14%, rgba(230, 184, 92, 0.22) 14.3%, transparent 14.6%),
+        linear-gradient(90deg, transparent 84%, rgba(230, 184, 92, 0.24) 84.3%, transparent 84.6%),
+        radial-gradient(ellipse at 50% 88%, rgba(235, 228, 214, 0.22), transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Barra superior minimalista */
+    .topbar {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 16px;
+    }
+
+    .top-brand {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .top-brand-main {
+      font-family: Georgia, serif;
+      font-size: clamp(19px, 3.8vw, 26px);
+      font-weight: 700;
+      color: #fff2cc;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+    }
+
+    .top-brand-sub {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #7ef9ff;
+      text-shadow: 0 0 10px rgba(126, 249, 255, 0.65);
+    }
+
+    .top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .holo-pill {
+      background: rgba(10, 22, 26, 0.55);
+      border: 1px solid rgba(154, 247, 255, 0.45);
+      border-radius: 999px;
+      padding: 6px 12px;
+      color: #e9fcff;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.18s ease;
+    }
+
+    .holo-pill:hover,
+    .holo-pill.active {
+      border-color: #7ef9ff;
+      color: #7ef9ff;
+      box-shadow: 0 0 14px rgba(126, 249, 255, 0.4);
+    }
+
+    /* Escenario principal del Vestidor Holográfico */
+    .stage {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4px 12px 28px;
+      display: grid;
+      grid-template-columns: 145px minmax(260px, 1fr) 155px;
+      align-items: center;
+      gap: 12px;
+      min-height: calc(100vh - 64px);
+    }
+
+    @media (max-width: 780px) {
+      .stage {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+    }
+
+    /* Columnas laterales flotantes */
+    .side-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 15;
+    }
+
+    @media (max-width: 780px) {
+      .side-col.left-col {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+    }
+
+    .holo-widget {
+      width: 124px;
+      background: rgba(12, 28, 32, 0.36);
+      border: 1px solid rgba(164, 248, 255, 0.48);
+      border-radius: 16px;
+      padding: 10px 8px;
+      text-align: center;
+      backdrop-filter: blur(7px);
+      box-shadow: inset 0 0 16px rgba(126, 249, 255, 0.14), 0 4px 18px rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      transition: transform 0.16s ease, border-color 0.16s ease;
+    }
+
+    .holo-widget:hover {
+      transform: translateY(-2px);
+      border-color: #7ef9ff;
+    }
+
+    .widget-icon {
+      font-size: 22px;
+      margin-bottom: 4px;
+      filter: drop-shadow(0 0 8px rgba(126, 249, 255, 0.7));
+    }
+
+    .widget-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Tarjeta Original / Foto subida */
+    .original-card {
+      width: 124px;
+      background: rgba(12, 28, 32, 0.42);
+      border: 1px solid rgba(164, 248, 255, 0.52);
+      border-radius: 16px;
+      padding: 8px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .original-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #e9fcff;
+      margin-bottom: 5px;
+    }
+
+    .original-thumb {
+      width: 100%;
+      height: 118px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: rgba(6, 15, 18, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 11px;
+      color: rgba(255, 246, 220, 0.75);
+      padding: 6px;
+    }
+
+    .original-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .original-foot {
+      margin-top: 5px;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #ffe8a3;
+    }
+
+    /* Cilindro Holográfico Transparente Central */
+    .cylinder-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .holo-cylinder {
+      position: relative;
+      width: min(92vw, 430px);
+      min-height: 535px;
+      border-radius: 210px 210px 44px 44px / 54px 54px 28px 28px;
+      background: linear-gradient(
+        90deg,
+        rgba(170, 248, 255, 0.19) 0%,
+        rgba(255, 255, 255, 0.04) 18%,
+        rgba(126, 249, 255, 0.02) 50%,
+        rgba(255, 255, 255, 0.04) 82%,
+        rgba(170, 248, 255, 0.19) 100%
+      );
+      border: 1.5px solid rgba(176, 250, 255, 0.58);
+      box-shadow:
+        inset 0 0 36px rgba(126, 249, 255, 0.18),
+        0 0 32px rgba(126, 249, 255, 0.16);
+      backdrop-filter: blur(2.5px);
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    /* Aro elíptico superior del cilindro */
+    .cylinder-header {
+      width: 88%;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(185, 252, 255, 0.65);
+      background: rgba(12, 34, 38, 0.34);
+      text-align: center;
+      font-size: clamp(14px, 3.2vw, 18px);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(126, 249, 255, 0.85), 0 1px 4px rgba(0, 0, 0, 0.9);
+    }
+
+    .ai-badge {
+      margin-top: 8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(185, 252, 255, 0.45);
+      background: rgba(8, 24, 28, 0.42);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #d8fcff;
+    }
+
+    /* Área de proyección del Look / Foto + Vestido */
+    .projection-area {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      min-height: 315px;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .user-photo-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.88;
+      border-radius: 18px;
+      display: none;
+    }
+
+    .garment-projection {
+      position: relative;
+      z-index: 3;
+      width: 86%;
+      max-height: 310px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .garment-projection img,
+    .garment-projection video {
+      max-width: 100%;
+      max-height: 295px;
+      border-radius: 16px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 18px rgba(255, 214, 115, 0.45));
+    }
+
+    /* Silueta holográfica elegante cuando aún no se sube foto/video del diseño */
+    .holo-mannequin-card {
+      width: 100%;
+      padding: 18px 14px;
+      border-radius: 22px;
+      background: radial-gradient(circle at 50% 35%, rgba(255, 216, 118, 0.24), rgba(14, 38, 42, 0.36));
+      border: 1px dashed rgba(255, 224, 140, 0.65);
+      box-shadow: 0 0 24px rgba(255, 208, 102, 0.2);
+    }
+
+    .holo-dress-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #7ef9ff;
+      margin-bottom: 6px;
+    }
+
+    .holo-dress-name {
+      font-family: Georgia, serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff2cc;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    }
+
+    .holo-dress-details {
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: #eafcff;
+      margin-bottom: 10px;
+    }
+
+    .holo-dress-specs {
+      font-size: 11px;
+      color: #ffe8a3;
+      opacity: 0.92;
+    }
+
+    /* Controles inferiores dentro de la base luminosa */
+    .cylinder-footer {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      z-index: 5;
+    }
+
+    .interactive-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(126, 249, 255, 0.9);
+    }
+
+    .base-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .base-btn {
+      background: rgba(10, 32, 34, 0.62);
+      border: 1px solid rgba(176, 250, 255, 0.58);
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .base-btn:hover {
+      background: rgba(126, 249, 255, 0.22);
+      border-color: #7ef9ff;
+      box-shadow: 0 0 12px rgba(126, 249, 255, 0.45);
+    }
+
+    /* Plataforma circular luminosa debajo del cilindro */
+    .pedestal-ring {
+      width: min(96vw, 460px);
+      height: 34px;
+      margin-top: -12px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(168, 252, 255, 0.68) 0%, rgba(20, 68, 58, 0.85) 58%, rgba(8, 20, 22, 0.95) 100%);
+      border: 2px solid rgba(210, 255, 255, 0.85);
+      box-shadow: 0 0 28px rgba(126, 249, 255, 0.65), 0 10px 24px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Columna derecha: MIS DISEÑOS deslizable */
+    .designs-panel {
+      width: 100%;
+      max-width: 155px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    @media (max-width: 780px) {
+      .designs-panel {
+        max-width: 94vw;
+      }
+    }
+
+    .designs-heading {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(126, 249, 255, 0.8);
+    }
+
+    .designs-list {
+      width: 100%;
+      max-height: 390px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 4px;
+    }
+
+    @media (max-width: 780px) {
+      .designs-list {
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-height: none;
+      }
+    }
+
+    .design-thumb {
+      min-width: 122px;
+      background: rgba(12, 28, 32, 0.44);
+      border: 1px solid rgba(164, 248, 255, 0.42);
+      border-radius: 14px;
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      backdrop-filter: blur(7px);
+      transition: all 0.16s ease;
+    }
+
+    .design-thumb.active,
+    .design-thumb:hover {
+      border-color: #ffe8a3;
+      background: rgba(230, 184, 92, 0.22);
+      box-shadow: 0 0 16px rgba(255, 214, 115, 0.35);
+    }
+
+    .design-thumb-box {
+      height: 88px;
+      border-radius: 9px;
+      background: radial-gradient(circle at 50% 35%, rgba(255, 214, 115, 0.28), rgba(8, 18, 22, 0.8));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 5px;
+      padding: 4px;
+      font-family: Georgia, serif;
+      font-size: 11px;
+      color: #ffe8a3;
+    }
+
+    .design-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .design-thumb-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+    }
+
+    /* Toast discreto para confirmaciones */
+    .holo-toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      background: rgba(8, 26, 30, 0.9);
+      border: 1px solid #7ef9ff;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: #e9fcff;
+      display: none;
+      box-shadow: 0 0 18px rgba(126, 249, 255, 0.35);
+    }
+  </style>
+</head>
+<body>
+  <div class="boutique-backdrop"></div>
+
+  <header class="topbar">
+    <div class="top-brand">
+      <span class="top-brand-main">D'Vitrales Mall</span>
+      <span class="top-brand-sub" id="sub-brand">Boutique · Vestidor Holográfico</span>
+    </div>
+
+    <nav class="top-nav">
+      <button id="lang-es" class="holo-pill active" type="button">ES</button>
+      <button id="lang-en" class="holo-pill" type="button">EN</button>
+      <a id="nav-boutique" class="holo-pill" href="boutique.html">← Boutique</a>
+      <a id="nav-pasarela" class="holo-pill" href="pasarela.html">Pasarela ↗</a>
+      <a id="nav-lobby" class="holo-pill" href="index.html">Lobby</a>
+    </nav>
+  </header>
+
+  <main class="stage">
+    <!-- Columna Izquierda: Sube tu foto, Original y Ajuste IA -->
+    <aside class="side-col left-col">
+      <label class="holo-widget" for="photo-input">
+        <div class="widget-icon">📷</div>
+        <div class="widget-label" id="lbl-upload">Sube tu foto</div>
+        <input id="photo-input" type="file" accept="image/*" hidden />
+      </label>
+
+      <div class="original-card">
+        <div class="original-title" id="lbl-original">Original</div>
+        <div class="original-thumb" id="original-preview">
+          <span id="lbl-no-photo">Sin foto aún</span>
+        </div>
+        <div class="original-foot">TU LOOK D'VITRALES</div>
+      </div>
+
+      <button class="holo-widget" id="btn-ai-fit" type="button">
+        <div class="widget-icon">⚙️</div>
+        <div class="widget-label" id="lbl-ai-fit">Ajuste IA</div>
+      </button>
+    </aside>
+
+    <!-- Centro: Cilindro Holográfico Transparente -->
+    <section class="cylinder-wrap">
+      <div class="holo-cylinder">
+        <div class="cylinder-header" id="cyl-title">TU LOOK D'VITRALES</div>
+        <div class="ai-badge" id="cyl-badge">PROBADOR VIRTUAL IA</div>
+
+        <div class="projection-area">
+          <img id="user-photo-layer" class="user-photo-layer" alt="Tu foto" />
+          <div id="garment-projection" class="garment-projection"></div>
+        </div>
+
+        <div class="cylinder-footer">
+          <div class="interactive-label" id="lbl-interactive">ESTILO INTERACTIVO</div>
+          <div class="base-grid">
+            <button class="base-btn" id="btn-save-style" type="button">GUARDAR ESTILO</button>
+            <button class="base-btn" id="btn-book-appt" type="button">RESERVAR CITA</button>
+            <button class="base-btn" id="btn-prev-design" type="button">‹ LUGAR / ANTERIOR</button>
+            <button class="base-btn" id="btn-next-design" type="button">NAVEGAR / SIGUIENTE ›</button>
+          </div>
+        </div>
+      </div>
+      <div class="pedestal-ring"></div>
+    </section>
+
+    <!-- Columna Derecha: MIS DISEÑOS -->
+    <aside class="side-col designs-panel">
+      <div class="designs-heading" id="lbl-my-designs">MIS DISEÑOS</div>
+      <div class="designs-list" id="designs-list"></div>
+    </aside>
+  </main>
+
+  <div id="holo-toast" class="holo-toast"></div>
+
+  <script>
+    /* =========================================================================
+       ÍNDICE DE DISEÑOS DEL VESTIDOR (Enlazado con Boutique y Pasarela)
+       - Puedes agregar aquí la imagen transparente o foto de cada vestido
+         en "image" (ej. "img/vestido-girasoles.png") o su video en "video".
+       ========================================================================= */
+    const VESTIDOR_DESIGNS = [
+      {
+        id: "vestido-esmeralda-01",
+        videoId: "pasarela-01",
+        tagEs: "Alta Costura · Nivel 1",
+        tagEn: "Haute Couture · Level 1",
+        nameEs: "Vestido Verde Intenso D'Vitrales",
+        nameEn: "D'Vitrales Deep Green Gown",
+        descEs: "Silueta estilizada en verde intenso con caída fluida y detalles artesanales.",
+        descEn: "Tailored deep green silhouette with fluid drape and handcrafted details.",
+        specsEs: "Tallas: XS - XL · Confección a medida disponible",
+        specsEn: "Sizes: XS - XL · Custom tailoring available",
+        image: "",
+        video: ""
+      },
+      {
+        id: "conjunto-champan-02",
+        videoId: "pasarela-02",
+        tagEs: "Colección Gala",
+        tagEn: "Gala Collection",
+        nameEs: "Conjunto Champán & Oro Mate",
+        nameEn: "Champagne & Matte Gold Ensemble",
+        descEs: "Corte elegante en tono champán iluminado con acentos en oro mate.",
+        descEn: "Elegant champagne cut illuminated with matte gold accents.",
+        specsEs: "Tallas: S - L · Tela satinada de caída ligera",
+        specsEn: "Sizes: S - L · Lightweight satin drape fabric",
+        image: "",
+        video: ""
+      },
+      {
+        id: "vestido-girasoles-03",
+        videoId: "pasarela-03",
+        tagEs: "Edición Artística",
+        tagEn: "Artistic Edition",
+        nameEs: "Vestido Dorado Jardín de Girasoles",
+        nameEn: "Golden Sunflower Garden Gown",
+        descEs: "Falda vaporosa en capas doradas con aplicaciones florales bordadas a mano.",
+        descEn: "Airy layered golden skirt with hand-embroidered floral appliqués.",
+        specsEs: "Pieza de exhibición · Ajuste personalizado en estudio",
+        specsEn: "Exhibition piece · Custom studio fitting",
+        image: "",
+        video: ""
+      },
+      {
+        id: "botitas-oliva-01",
+        videoId: "",
+        tagEs: "Calzado de Autor",
+        tagEn: "Signature Footwear",
+        nameEs: "Botitas Estilizadas Verde Oliva",
+        nameEn: "Olive Green Sculpted Ankle Boots",
+        descEs: "Diseño cómodo y firme de caña corta con acabado satinado y herraje bronce.",
+        descEn: "Comfortable short-shaft sculpted design with satin finish and bronze hardware.",
+        specsEs: "Numeración: 35 - 41 · Horma ergonómica",
+        specsEn: "Sizes: 35 - 41 · Ergonomic fit",
+        image: "",
+        video: ""
+      },
+      {
+        id: "collar-vitral-01",
+        videoId: "",
+        tagEs: "Joyería Artística",
+        tagEn: "Artistic Jewelry",
+        nameEs: "Gargantilla Luz de Vitral",
+        nameEn: "Stained-Glass Light Choker",
+        descEs: "Pieza escultórica en tonos oro mate y destellos translúcidos.",
+        descEn: "Sculptural piece in matte gold tones and translucent glints.",
+        specsEs: "Acabado hipoalergénico · Pieza única",
+        specsEn: "Hypoallergenic finish · One-of-a-kind piece",
+        image: "",
+        video: ""
+      }
+    ];
+
+    const UI_COPY = {
+      es: {
+        subBrand: "Boutique · Vestidor Holográfico",
+        navBoutique: "← Boutique",
+        navPasarela: "Pasarela ↗",
+        navLobby: "Lobby",
+        upload: "Sube tu foto",
+        original: "Original",
+        noPhoto: "Sin foto aún",
+        aiFit: "Ajuste IA",
+        cylTitle: "TU LOOK D'VITRALES",
+        cylBadge: "PROBADOR VIRTUAL IA",
+        interactive: "ESTILO INTERACTIVO",
+        saveStyle: "GUARDAR ESTILO",
+        bookAppt: "RESERVAR CITA",
+        prevDesign: "‹ ANTERIOR",
+        nextDesign: "NAVEGAR ›",
+        myDesigns: "MIS DISEÑOS",
+        watchRunway: "Ver este diseño en Pasarela ↗",
+        toastSaved: "Look guardado en tu selección D'Vitrales ✦",
+        toastAppt: "Solicitud de cita registrada para prueba personalizada.",
+        toastFit: "Ajuste IA calibrado al centro del cilindro."
+      },
+      en: {
+        subBrand: "Boutique · Holographic Fitting Room",
+        navBoutique: "← Boutique",
+        navPasarela: "Runway ↗",
+        navLobby: "Lobby",
+        upload: "Upload Photo",
+        original: "Original",
+        noPhoto: "No photo yet",
+        aiFit: "AI Fit",
+        cylTitle: "YOUR D'VITRALES LOOK",
+        cylBadge: "AI VIRTUAL FITTING ROOM",
+        interactive: "INTERACTIVE STYLE",
+        saveStyle: "SAVE STYLE",
+        bookAppt: "BOOK FITTING",
+        prevDesign: "‹ PREVIOUS",
+        nextDesign: "BROWSE ›",
+        myDesigns: "MY DESIGNS",
+        watchRunway: "Watch this design on Runway ↗",
+        toastSaved: "Look saved to your D'Vitrales selection ✦",
+        toastAppt: "Appointment request noted for custom fitting.",
+        toastFit: "AI Fit calibrated to cylinder center."
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    let lang = params.get("lang") === "en" ? "en" : "es";
+    let selectedIndex = 0;
+    let fitMode = 0;
+
+    // Si viene enlazado desde boutique.html (?item=...) o pasarela.html (?video=...)
+    const requestedItem = params.get("item");
+    const requestedVideo = params.get("video");
+    if (requestedItem) {
+      const idx = VESTIDOR_DESIGNS.findIndex(function (d) { return d.id === requestedItem; });
+      if (idx >= 0) selectedIndex = idx;
+    } else if (requestedVideo) {
+      const idx = VESTIDOR_DESIGNS.findIndex(function (d) { return d.videoId === requestedVideo; });
+      if (idx >= 0) selectedIndex = idx;
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("holo-toast");
+      el.textContent = msg;
+      el.style.display = "block";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(function () {
+        el.style.display = "none";
+      }, 2800);
+    }
+
+    function renderProjection() {
+      const d = VESTIDOR_DESIGNS[selectedIndex];
+      const t = UI_COPY[lang];
+      const name = lang === "es" ? d.nameEs : d.nameEn;
+      const desc = lang === "es" ? d.descEs : d.descEn;
+      const tag = lang === "es" ? d.tagEs : d.tagEn;
+      const specs = lang === "es" ? d.specsEs : d.specsEn;
+
+      const box = document.getElementById("garment-projection");
+      const runwayAnchor = d.videoId
+        ? '<div style="margin-top:10px;"><a class="holo-pill" href="pasarela.html?video=' + encodeURIComponent(d.videoId) + '&lang=' + lang + '">' + t.watchRunway + '</a></div>'
+        : "";
+
+      if (d.video) {
+        box.innerHTML =
+          '<video src="' + d.video + '" autoplay loop muted playsinline></video>' +
+          '<div style="margin-top:6px;font-size:12px;font-weight:700;color:#ffe8a3;">' + name + '</div>' +
+          runwayAnchor;
+      } else if (d.image) {
+        box.innerHTML =
+          '<img src="' + d.image + '" alt="' + name + '" />' +
+          '<div style="margin-top:6px;font-size:12px;font-weight:700;color:#ffe8a3;">' + name + '</div>' +
+          runwayAnchor;
+      } else {
+        box.innerHTML =
+          '<div class="holo-mannequin-card">' +
+            '<div class="holo-dress-tag">' + tag + '</div>' +
+            '<div class="holo-dress-name">' + name + '</div>' +
+            '<div class="holo-dress-details">' + desc + '</div>' +
+            '<div class="holo-dress-specs">' + specs + '</div>' +
+            runwayAnchor +
+          '</div>';
+      }
+
+      document.querySelectorAll(".design-thumb").forEach(function (thumb, idx) {
+        thumb.classList.toggle("active", idx === selectedIndex);
+      });
+    }
+
+    function renderDesignsList() {
+      const list = document.getElementById("designs-list");
+      list.innerHTML = "";
+
+      VESTIDOR_DESIGNS.forEach(function (d, idx) {
+        const name = lang === "es" ? d.nameEs : d.nameEn;
+        const btn = document.createElement("div");
+        btn.className = "design-thumb" + (idx === selectedIndex ? " active" : "");
+
+        const preview = d.image
+          ? '<img src="' + d.image + '" alt="' + name + '" />'
+          : '<span>' + name + '</span>';
+
+        btn.innerHTML =
+          '<div class="design-thumb-box">' + preview + '</div>' +
+          '<div class="design-thumb-title">' + UI_COPY[lang].myDesigns + '</div>';
+
+        btn.addEventListener("click", function () {
+          selectedIndex = idx;
+          renderProjection();
+        });
+
+        list.appendChild(btn);
+      });
+    }
+
+    function renderUI() {
+      const t = UI_COPY[lang];
+      document.getElementById("lang-es").classList.toggle("active", lang === "es");
+      document.getElementById("lang-en").classList.toggle("active", lang === "en");
+
+      document.getElementById("sub-brand").textContent = t.subBrand;
+      document.getElementById("nav-boutique").textContent = t.navBoutique;
+      document.getElementById("nav-pasarela").textContent = t.navPasarela;
+      document.getElementById("nav-lobby").textContent = t.navLobby;
+      document.getElementById("lbl-upload").textContent = t.upload;
+      document.getElementById("lbl-original").textContent = t.original;
+      const noPhoto = document.getElementById("lbl-no-photo");
+      if (noPhoto) noPhoto.textContent = t.noPhoto;
+      document.getElementById("lbl-ai-fit").textContent = t.aiFit;
+      document.getElementById("cyl-title").textContent = t.cylTitle;
+      document.getElementById("cyl-badge").textContent = t.cylBadge;
+      document.getElementById("lbl-interactive").textContent = t.interactive;
+      document.getElementById("btn-save-style").textContent = t.saveStyle;
+      document.getElementById("btn-book-appt").textContent = t.bookAppt;
+      document.getElementById("btn-prev-design").textContent = t.prevDesign;
+      document.getElementById("btn-next-design").textContent = t.nextDesign;
+      document.getElementById("lbl-my-designs").textContent = t.myDesigns;
+
+      renderDesignsList();
+      renderProjection();
+    }
+
+    // Subir foto del visitante desde su galería o cámara
+    document.getElementById("photo-input").addEventListener("change", function (e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+
+      const thumb = document.getElementById("original-preview");
+      thumb.innerHTML = '<img src="' + url + '" alt="Original" />';
+
+      const layer = document.getElementById("user-photo-layer");
+      layer.src = url;
+      layer.style.display = "block";
+    });
+
+    // Ajuste IA: alterna escala/posición de la proyección sobre la foto
+    document.getElementById("btn-ai-fit").addEventListener("click", function () {
+      fitMode = (fitMode + 1) % 3;
+      const proj = document.getElementById("garment-projection");
+      if (fitMode === 0) {
+        proj.style.transform = "scale(1) translateY(0px)";
+      } else if (fitMode === 1) {
+        proj.style.transform = "scale(1.08) translateY(10px)";
+      } else {
+        proj.style.transform = "scale(0.92) translateY(-8px)";
+      }
+      showToast(UI_COPY[lang].toastFit);
+    });
+
+    document.getElementById("btn-prev-design").addEventListener("click", function () {
+      selectedIndex = (selectedIndex - 1 + VESTIDOR_DESIGNS.length) % VESTIDOR_DESIGNS.length;
+      renderProjection();
+    });
+
+    document.getElementById("btn-next-design").addEventListener("click", function () {
+      selectedIndex = (selectedIndex + 1) % VESTIDOR_DESIGNS.length;
+      renderProjection();
+    });
+
+    document.getElementById("btn-save-style").addEventListener("click", function () {
+      showToast(UI_COPY[lang].toastSaved);
+    });
+
+    document.getElementById("btn-book-appt").addEventListener("click", function () {
+      showToast(UI_COPY[lang].toastAppt);
+    });
+
+    document.getElementById("lang-es").addEventListener("click", function () {
+      lang = "es";
+      renderUI();
+    });
+
+    document.getElementById("lang-en").addEventListener("click", function () {
+      lang = "en";
+      renderUI();
+    });
+
+    renderUI();
+  </script>
+</body>
+</html>
