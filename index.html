@@ -73,7 +73,7 @@
     .fallback-status {
       margin-top: 10px;
       font-size: 11px;
-      color: rgba(126, 249, 255, 0.88);
+      color: rgba(126, 249, 255, 0.82);
     }
 
     #focused-badge {
@@ -300,7 +300,7 @@
   <div id="fallback-lobby">
     <div class="fallback-sign">D'Vitrales Mall</div>
     <div id="fallback-sub" class="fallback-note">Explora los 10 espacios del lobby o selecciona ES / EN para ver a la anfitriona.</div>
-    <div id="fallback-status" class="fallback-status">Iniciando vista 3D...</div>
+    <div id="fallback-status" class="fallback-status">Cargando vista 3D...</div>
   </div>
 
   <canvas id="scene-canvas"></canvas>
@@ -607,7 +607,6 @@
 
   <script>
     var __lobby3DStarted = false;
-    var __fallbackTried = false;
 
     function setFallbackStatus(msg) {
       var st = document.getElementById("fallback-status");
@@ -624,7 +623,7 @@
       if (__lobby3DStarted) return;
       var canvas = document.getElementById("scene-canvas");
       if (!window.THREE || !canvas) {
-        hide3DCanvas("No se encontró el motor 3D en este navegador.");
+        hide3DCanvas("No se pudo cargar el motor 3D en esta red o navegador.");
         return;
       }
 
@@ -937,13 +936,11 @@
 
         animate();
       } catch (_) {
-        hide3DCanvas("No se pudo iniciar WebGL en este dispositivo; los menús y la anfitriona siguen activos.");
+        hide3DCanvas("El dispositivo no pudo iniciar el gráfico 3D; el resto sigue operativo.");
       }
     }
 
     function loadThreeFallback() {
-      if (__lobby3DStarted || __fallbackTried) return;
-      __fallbackTried = true;
       if (window.THREE) {
         initLobby3D();
         return;
@@ -952,7 +949,7 @@
       s2.src = "https://unpkg.com/three@0.164.1/build/three.min.js";
       s2.onload = function () { initLobby3D(); };
       s2.onerror = function () {
-        hide3DCanvas("Sin conexión a la librería 3D; puedes usar los menús y la anfitriona.");
+        hide3DCanvas("No se pudo conectar con la librería 3D; puedes usar los menús y la anfitriona.");
       };
       document.body.appendChild(s2);
     }
@@ -961,7 +958,7 @@
       if (!__lobby3DStarted) {
         loadThreeFallback();
       }
-    }, 3000);
+    }, 3500);
   </script>
   <script
     src="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.min.js"
