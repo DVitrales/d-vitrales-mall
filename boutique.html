@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>D'Vitrales Mall — Boutique</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(229, 178, 76, 0.16), transparent 42%),
+        radial-gradient(circle at 85% 25%, rgba(126, 249, 255, 0.12), transparent 45%),
+        linear-gradient(180deg, #0b131e 0%, #060a10 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #fff5dc;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
+      background: rgba(7, 12, 19, 0.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(230, 184, 92, 0.25);
+    }
+
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7ef9ff;
+    }
+
+    .brand-title {
+      font-family: Georgia, serif;
+      font-size: clamp(22px, 4.5vw, 30px);
+      font-weight: 700;
+      background: linear-gradient(180deg, #fff1ba 0%, #e4b14b 60%, #9c6c18 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .holo-btn {
+      background: rgba(14, 23, 35, 0.72);
+      border: 1px solid rgba(255, 218, 122, 0.35);
+      border-radius: 999px;
+      padding: 7px 13px;
+      color: #fff2cc;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .holo-btn:hover,
+    .holo-btn.active {
+      border-color: #7ef9ff;
+      color: #7ef9ff;
+      box-shadow: 0 0 14px rgba(126, 249, 255, 0.28);
+    }
+
+    .holo-btn.portal-vestidor {
+      border-color: rgba(126, 249, 255, 0.55);
+      background: linear-gradient(135deg, rgba(18, 62, 72, 0.65), rgba(12, 22, 34, 0.85));
+    }
+
+    .holo-btn.portal-pasarela {
+      border-color: rgba(255, 208, 102, 0.65);
+      background: linear-gradient(135deg, rgba(78, 56, 18, 0.65), rgba(14, 20, 30, 0.85));
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 18px 16px 64px;
+    }
+
+    .dept-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .dept-tab {
+      background: rgba(14, 22, 34, 0.75);
+      border: 1px solid rgba(255, 214, 115, 0.26);
+      border-radius: 14px;
+      padding: 12px 10px;
+      color: #ffe8a3;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .dept-tab.active {
+      background: linear-gradient(180deg, rgba(230, 184, 92, 0.24), rgba(16, 28, 42, 0.9));
+      border-color: #e6b85c;
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(230, 184, 92, 0.18);
+    }
+
+    .dept-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 242, 204, 0.12);
+    }
+
+    .dept-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #ffe8a3;
+    }
+
+    .dept-desc {
+      font-size: 13px;
+      color: rgba(255, 245, 220, 0.78);
+    }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+      gap: 16px;
+    }
+
+    .item-card {
+      background: rgba(13, 21, 32, 0.84);
+      border: 1px solid rgba(230, 184, 92, 0.24);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .item-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(126, 249, 255, 0.65);
+    }
+
+    .item-visual {
+      height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: radial-gradient(circle at 50% 40%, rgba(230, 184, 92, 0.22), rgba(8, 13, 20, 0.95));
+      border-bottom: 1px solid rgba(255, 242, 204, 0.1);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .item-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .item-placeholder {
+      font-family: Georgia, serif;
+      font-size: 16px;
+      color: #ffe8a3;
+      opacity: 0.9;
+    }
+
+    .item-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(7, 12, 19, 0.82);
+      border: 1px solid rgba(230, 184, 92, 0.4);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 10.5px;
+      color: #ffe8a3;
+    }
+
+    .item-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-name {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #fff5dc;
+    }
+
+    .item-info {
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: rgba(255, 245, 220, 0.8);
+    }
+
+    .item-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .card-link {
+      flex: 1;
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .card-link.try-on {
+      background: rgba(126, 249, 255, 0.14);
+      border: 1px solid rgba(126, 249, 255, 0.55);
+      color: #7ef9ff;
+    }
+
+    .card-link.runway {
+      background: rgba(230, 184, 92, 0.14);
+      border: 1px solid rgba(230, 184, 92, 0.5);
+      color: #ffe8a3;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-block">
+      <span class="brand-sub">D'Vitrales Mall</span>
+      <span class="brand-title">Boutique</span>
+    </div>
+
+    <div class="top-actions">
+      <button id="lang-es" class="holo-btn active" type="button">ES</button>
+      <button id="lang-en" class="holo-btn" type="button">EN</button>
+      <a id="link-vestidor" class="holo-btn portal-vestidor" href="vestidor.html">Vestidor Holográfico ✦</a>
+      <a id="link-pasarela" class="holo-btn portal-pasarela" href="pasarela.html">Salón Pasarela ↗</a>
+      <a id="link-lobby" class="holo-btn" href="index.html">Lobby</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="dept-tabs" aria-label="Departamentos de Boutique">
+      <button class="dept-tab active" data-dept="ropa" type="button" id="tab-ropa">Ropa y Conjuntos</button>
+      <button class="dept-tab" data-dept="calzado" type="button" id="tab-calzado">Calzado y Bolsos</button>
+      <button class="dept-tab" data-dept="joyeria" type="button" id="tab-joyeria">Joyería y Complementos</button>
+    </nav>
+
+    <section class="dept-header">
+      <div>
+        <div id="dept-title" class="dept-title">Ropa y Conjuntos</div>
+        <div id="dept-desc" class="dept-desc">Diseños exclusivos listos para admirar en pasarela o probar en el vestidor holográfico.</div>
+      </div>
+    </section>
+
+    <section id="items-grid" class="items-grid"></section>
+  </main>
+
+  <script>
+    /* =========================================================================
+       CATÁLOGO DE LA BOUTIQUE (Fácil de ampliar poco a poco sin tocar el código)
+       - dept: "ropa" | "calzado" | "joyeria"
+       - image: ruta de foto si la subes (ej. "img/vestido-01.jpg") o "" si aún no tiene foto
+       - videoId: ID del video en pasarela.html para saltar directo a su desfile
+       ========================================================================= */
+    const BOUTIQUE_CATALOG = [
+      {
+        id: "vestido-esmeralda-01",
+        dept: "ropa",
+        tagEs: "Alta Costura",
+        tagEn: "Haute Couture",
+        nameEs: "Vestido Verde Intenso D'Vitrales",
+        nameEn: "D'Vitrales Deep Green Gown",
+        descEs: "Silueta estilizada en verde intenso con caída fluida y detalles artesanales.",
+        descEn: "Tailored deep green silhouette with fluid drape and handcrafted details.",
+        image: "",
+        videoId: "pasarela-01"
+      },
+      {
+        id: "conjunto-champan-02",
+        dept: "ropa",
+        tagEs: "Colección Gala",
+        tagEn: "Gala Collection",
+        nameEs: "Conjunto Champán & Oro Mate",
+        nameEn: "Champagne & Matte Gold Ensemble",
+        descEs: "Corte elegante en tono champán iluminado con acentos en oro mate.",
+        descEn: "Elegant champagne cut illuminated with matte gold accents.",
+        image: "",
+        videoId: "pasarela-02"
+      },
+      {
+        id: "botitas-oliva-01",
+        dept: "calzado",
+        tagEs: "Calzado de Autor",
+        tagEn: "Signature Footwear",
+        nameEs: "Botitas Estilizadas Verde Oliva",
+        nameEn: "Olive Green Sculpted Ankle Boots",
+        descEs: "Diseño cómodo y firme de caña corta con acabado satinado y herraje bronce.",
+        descEn: "Comfortable short-shaft sculpted design with satin finish and bronze hardware.",
+        image: "",
+        videoId: ""
+      },
+      {
+        id: "bolso-bronce-01",
+        dept: "calzado",
+        tagEs: "Marroquinería",
+        tagEn: "Handbags",
+        nameEs: "Bolso Estructurado Bronce Vitral",
+        nameEn: "Stained-Glass Bronze Structured Bag",
+        descEs: "Bolso de mano con geometría artística y cierre metálico dorado.",
+        descEn: "Structured handbag with artistic geometry and gold metallic clasp.",
+        image: "",
+        videoId: ""
+      },
+      {
+        id: "collar-vitral-01",
+        dept: "joyeria",
+        tagEs: "Joyería Artística",
+        tagEn: "Artistic Jewelry",
+        nameEs: "Gargantilla Luz de Vitral",
+        nameEn: "Stained-Glass Light Choker",
+        descEs: "Pieza escultórica en tonos oro mate y destellos translúcidos.",
+        descEn: "Sculptural piece in matte gold tones and translucent glints.",
+        image: "",
+        videoId: ""
+      },
+      {
+        id: "aretes-aura-02",
+        dept: "joyeria",
+        tagEs: "Complementos",
+        tagEn: "Accessories",
+        nameEs: "Aretes Escultóricos Aura Dorada",
+        nameEn: "Golden Aura Sculptural Earrings",
+        descEs: "Diseño ligero de líneas orgánicas para acompañar conjuntos de gala.",
+        descEn: "Lightweight organic-line design crafted to pair with gala ensembles.",
+        image: "",
+        videoId: ""
+      }
+    ];
+
+    const TEXTS = {
+      es: {
+        vestidorBtn: "Vestidor Holográfico ✦",
+        pasarelaBtn: "Salón Pasarela ↗",
+        lobbyBtn: "Lobby",
+        tryOn: "Probar en Vestidor",
+        seeRunway: "Ver en Pasarela",
+        depts: {
+          ropa: {
+            tab: "Ropa y Conjuntos",
+            title: "Ropa y Conjuntos",
+            desc: "Diseños exclusivos listos para admirar en pasarela o probar en el vestidor holográfico."
+          },
+          calzado: {
+            tab: "Calzado y Bolsos",
+            title: "Calzado y Bolsos",
+            desc: "Botitas de autor, calzado estilizado y bolsos estructurados de colección."
+          },
+          joyeria: {
+            tab: "Joyería y Complementos",
+            title: "Joyería y Complementos",
+            desc: "Piezas escultóricas y accesorios diseñados para completar cada atuendo."
+          }
+        }
+      },
+      en: {
+        vestidorBtn: "Holographic Fitting Room ✦",
+        pasarelaBtn: "Runway Salon ↗",
+        lobbyBtn: "Lobby",
+        tryOn: "Try in Fitting Room",
+        seeRunway: "Watch on Runway",
+        depts: {
+          ropa: {
+            tab: "Apparel & Ensembles",
+            title: "Apparel & Ensembles",
+            desc: "Exclusive designs ready to admire on the runway or try in the holographic fitting room."
+          },
+          calzado: {
+            tab: "Footwear & Handbags",
+            title: "Footwear & Handbags",
+            desc: "Signature ankle boots, sculpted footwear, and structured collection handbags."
+          },
+          joyeria: {
+            tab: "Jewelry & Accessories",
+            title: "Jewelry & Accessories",
+            desc: "Sculptural pieces and accessories designed to complete every look."
+          }
+        }
+      }
+    };
+
+    let currentLang = "es";
+    let currentDept = "ropa";
+
+    function renderBoutique() {
+      const t = TEXTS[currentLang];
+      document.getElementById("lang-es").classList.toggle("active", currentLang === "es");
+      document.getElementById("lang-en").classList.toggle("active", currentLang === "en");
+
+      document.getElementById("link-vestidor").textContent = t.vestidorBtn;
+      document.getElementById("link-pasarela").textContent = t.pasarelaBtn;
+      document.getElementById("link-lobby").textContent = t.lobbyBtn;
+
+      document.getElementById("tab-ropa").textContent = t.depts.ropa.tab;
+      document.getElementById("tab-calzado").textContent = t.depts.calzado.tab;
+      document.getElementById("tab-joyeria").textContent = t.depts.joyeria.tab;
+
+      document.querySelectorAll(".dept-tab").forEach(function (btn) {
+        btn.classList.toggle("active", btn.dataset.dept === currentDept);
+      });
+
+      document.getElementById("dept-title").textContent = t.depts[currentDept].title;
+      document.getElementById("dept-desc").textContent = t.depts[currentDept].desc;
+
+      const grid = document.getElementById("items-grid");
+      grid.innerHTML = "";
+
+      const filtered = BOUTIQUE_CATALOG.filter(function (item) {
+        return item.dept === currentDept;
+      });
+
+      filtered.forEach(function (item) {
+        const name = currentLang === "es" ? item.nameEs : item.nameEn;
+        const desc = currentLang === "es" ? item.descEs : item.descEn;
+        const tag = currentLang === "es" ? item.tagEs : item.tagEn;
+
+        const card = document.createElement("article");
+        card.className = "item-card";
+
+        const visualContent = item.image
+          ? '<img src="' + item.image + '" alt="' + name + '" />'
+          : '<div class="item-placeholder">' + name + '</div>';
+
+        const runwayLink = item.videoId
+          ? '<a class="card-link runway" href="pasarela.html?video=' + encodeURIComponent(item.videoId) + '&lang=' + currentLang + '">' + t.seeRunway + '</a>'
+          : "";
+
+        card.innerHTML =
+          '<div class="item-visual">' +
+            '<span class="item-tag">' + tag + '</span>' +
+            visualContent +
+          '</div>' +
+          '<div class="item-body">' +
+            '<div class="item-name">' + name + '</div>' +
+            '<div class="item-info">' + desc + '</div>' +
+            '<div class="item-actions">' +
+              '<a class="card-link try-on" href="vestidor.html?item=' + encodeURIComponent(item.id) + '&lang=' + currentLang + '">' + t.tryOn + '</a>' +
+              runwayLink +
+            '</div>' +
+          '</div>';
+
+        grid.appendChild(card);
+      });
+    }
+
+    document.getElementById("lang-es").addEventListener("click", function () {
+      currentLang = "es";
+      renderBoutique();
+    });
+
+    document.getElementById("lang-en").addEventListener("click", function () {
+      currentLang = "en";
+      renderBoutique();
+    });
+
+    document.querySelectorAll(".dept-tab").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        currentDept = btn.dataset.dept;
+        renderBoutique();
+      });
+    });
+
+    renderBoutique();
+  </script>
+</body>
+</html>
