@@ -20,6 +20,7 @@
       background: radial-gradient(circle at 50% 35%, #162638 0%, #090e16 70%, #05080d 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: #fff5dc;
+      touch-action: none;
     }
 
     #scene-canvas {
@@ -29,9 +30,9 @@
       height: 100%;
       display: block;
       z-index: 1;
-      touch-action: none;
     }
 
+    /* Respaldo visual si el 3D no alcanza a cargar en algún equipo */
     #fallback-lobby {
       position: fixed;
       inset: 0;
@@ -43,8 +44,8 @@
       padding: 24px;
       text-align: center;
       background:
-        radial-gradient(circle at 50% 25%, rgba(255, 204, 92, 0.24), transparent 45%),
-        radial-gradient(circle at 50% 70%, rgba(26, 120, 130, 0.24), transparent 55%),
+        radial-gradient(circle at 50% 25%, rgba(255, 204, 92, 0.22), transparent 45%),
+        radial-gradient(circle at 50% 70%, rgba(26, 120, 130, 0.22), transparent 55%),
         linear-gradient(180deg, #0b131e 0%, #070b10 100%);
     }
 
@@ -56,20 +57,22 @@
       background: linear-gradient(180deg, #fff1ba 0%, #e4b14b 55%, #9c6c18 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      text-shadow: 0 6px 24px rgba(229, 178, 76, 0.28);
       margin-bottom: 10px;
     }
 
     .fallback-note {
       font-size: 13px;
-      color: rgba(255, 242, 204, 0.85);
+      color: rgba(255, 242, 204, 0.8);
       max-width: 420px;
     }
 
+    /* Etiqueta superior izquierda sin invadir la derecha */
     #focused-badge {
       position: fixed;
       top: 14px;
       left: 14px;
-      z-index: 40;
+      z-index: 20;
       max-width: 42vw;
       white-space: nowrap;
       overflow: hidden;
@@ -77,7 +80,7 @@
       font-size: 12px;
       font-weight: 600;
       color: #ffe8a3;
-      text-shadow: 0 0 10px rgba(255, 208, 102, 0.75), 0 1px 5px rgba(0, 0, 0, 0.98);
+      text-shadow: 0 0 10px rgba(255, 208, 102, 0.7), 0 1px 5px rgba(0, 0, 0, 0.98);
       pointer-events: none;
     }
 
@@ -86,7 +89,7 @@
       position: fixed;
       top: 14px;
       right: 14px;
-      z-index: 45;
+      z-index: 22;
       max-width: 54vw;
       display: flex;
       flex-direction: column;
@@ -107,7 +110,7 @@
       background: transparent;
       border: none;
       outline: none;
-      padding: 4px 4px;
+      padding: 2px 3px;
       color: #fff2cc;
       font-size: 12px;
       font-weight: 700;
@@ -115,7 +118,7 @@
       text-transform: uppercase;
       cursor: pointer;
       text-shadow: 0 0 10px rgba(255, 214, 115, 0.8), 0 1px 4px rgba(0, 0, 0, 0.98);
-      transition: transform 0.16s ease, color 0.16s ease;
+      transition: transform 0.16s ease, color 0.16s ease, text-shadow 0.16s ease;
     }
 
     .holo-key:hover,
@@ -130,7 +133,7 @@
       position: fixed;
       top: 52px;
       right: 14px;
-      z-index: 50;
+      z-index: 25;
       max-width: min(92vw, 440px);
       display: none;
       flex-direction: column;
@@ -184,7 +187,7 @@
       inset: 0;
       width: 100vw;
       height: 100vh;
-      z-index: 60;
+      z-index: 30;
       display: none;
       flex-direction: column;
       justify-content: space-between;
@@ -244,12 +247,13 @@
       margin-top: 8px;
     }
 
+    /* Barra inferior con regreso automático al centro frente al letrero */
     .bottom-bar {
       position: fixed;
       left: 50%;
       bottom: 14px;
       transform: translateX(-50%);
-      z-index: 45;
+      z-index: 22;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -261,8 +265,8 @@
     }
 
     .nav-btn {
-      background: rgba(10, 16, 24, 0.58);
-      border: 1px solid rgba(255, 218, 122, 0.32);
+      background: rgba(10, 16, 24, 0.52);
+      border: 1px solid rgba(255, 218, 122, 0.3);
       border-radius: 999px;
       color: #fff2cc;
       font-size: 12px;
@@ -291,7 +295,7 @@
 <body>
   <div id="fallback-lobby">
     <div class="fallback-sign">D'Vitrales Mall</div>
-    <div id="fallback-sub" class="fallback-note">Explora los 10 espacios del lobby o selecciona ES / EN para ver a la anfitriona.</div>
+    <div class="fallback-note">Explora los 10 espacios del lobby o selecciona ES / EN para ver a la anfitriona.</div>
   </div>
 
   <canvas id="scene-canvas"></canvas>
@@ -386,9 +390,8 @@
         audioOff: "Audio OFF",
         lobbyTitle: "Lobby Central",
         hostessTitle: "Bienvenida a D'Vitrales Mall",
-        hostessSub: "Explora el lobby o elige cualquiera de los 10 locales.",
-        drawerHint: "Elige un espacio:",
-        fallbackSub: "Explora los 10 espacios del lobby o selecciona ES / EN para ver a la anfitriona."
+        hostessSub: "Explora el lobby en 360° o elige cualquiera de los 10 locales para acercarte y hacer zoom.",
+        drawerHint: "Elige un espacio para viajar y hacer zoom hacia su fachada:"
       },
       en: {
         guide: "Guide",
@@ -399,283 +402,13 @@
         audioOff: "Audio OFF",
         lobbyTitle: "Central Lobby",
         hostessTitle: "Welcome to D'Vitrales Mall",
-        hostessSub: "Explore the lobby or pick any of the 10 spaces.",
-        drawerHint: "Pick a space:",
-        fallbackSub: "Explore the 10 lobby spaces or select ES / EN to see the host."
+        hostessSub: "Explore the lobby in 360° or pick any of the 10 spaces to travel and zoom in.",
+        drawerHint: "Pick a space to travel and zoom toward its storefront:"
       }
     };
 
     let lang = "es";
     let activeSpace = null;
-    window.__lobbyBridge = {
-      focusSpace: null,
-      waypoint: null,
-      zoom: null,
-      updateLang: null
-    };
-
-    const drawer = document.getElementById("holo-drawer");
-    const hostessOverlay = document.getElementById("hostess-overlay");
-    const hostessVideo = document.getElementById("hostess-video");
-    const audioBtn = document.getElementById("hostess-audio");
-
-    function updateBadge(text) {
-      document.getElementById("focused-badge").textContent = text;
-    }
-
-    function updateAudioLabel() {
-      const t = UI_TEXT[lang];
-      audioBtn.textContent = hostessVideo.muted ? t.audioOff : t.audioOn;
-      audioBtn.classList.toggle("active", !hostessVideo.muted);
-    }
-
-    function requestFullscreenSafe(el) {
-      try {
-        if (!document.fullscreenElement && el.requestFullscreen) {
-          el.requestFullscreen().catch(function () {});
-        }
-      } catch (_) {}
-    }
-
-    function exitFullscreenSafe() {
-      try {
-        if (document.fullscreenElement && document.exitFullscreen) {
-          document.exitFullscreen().catch(function () {});
-        }
-      } catch (_) {}
-    }
-
-    function closeDrawer() {
-      drawer.classList.remove("open");
-    }
-
-    function openHostess(selectedLang) {
-      setLanguage(selectedLang);
-      closeDrawer();
-      hostessOverlay.classList.add("active");
-      requestFullscreenSafe(hostessOverlay);
-
-      const media = HOSTESS_MEDIA[selectedLang] || {};
-      const src = media.video || "";
-
-      if (src) {
-        if (hostessVideo.getAttribute("data-src") !== src) {
-          hostessVideo.src = src;
-          hostessVideo.setAttribute("data-src", src);
-        }
-        hostessVideo.style.display = "block";
-        hostessVideo.currentTime = 0;
-        hostessVideo.muted = false;
-        hostessVideo.volume = 1.0;
-        updateAudioLabel();
-
-        const playPromise = hostessVideo.play();
-        if (playPromise && typeof playPromise.catch === "function") {
-          playPromise.catch(function () {
-            hostessVideo.muted = true;
-            updateAudioLabel();
-            hostessVideo.play().catch(function () {});
-          });
-        }
-      } else {
-        hostessVideo.pause();
-        hostessVideo.style.display = "none";
-      }
-    }
-
-    function closeHostess() {
-      hostessOverlay.classList.remove("active");
-      hostessVideo.pause();
-      exitFullscreenSafe();
-    }
-
-    function selectSpace(sp) {
-      activeSpace = sp;
-      updateBadge(sp[lang]);
-      closeDrawer();
-      closeHostess();
-      if (typeof window.__lobbyBridge.focusSpace === "function") {
-        window.__lobbyBridge.focusSpace(sp);
-      }
-    }
-
-    function renderSpaceButtons() {
-      const grid = document.getElementById("holo-spaces-grid");
-      const quick = document.getElementById("hostess-spaces");
-      grid.innerHTML = "";
-      quick.innerHTML = "";
-
-      SPACES.forEach(function (sp) {
-        const b1 = document.createElement("button");
-        b1.type = "button";
-        b1.className = "holo-space-btn";
-        b1.textContent = sp[lang];
-        b1.addEventListener("click", function () { selectSpace(sp); });
-        grid.appendChild(b1);
-
-        const b2 = document.createElement("button");
-        b2.type = "button";
-        b2.className = "holo-space-btn";
-        b2.textContent = sp[lang];
-        b2.addEventListener("click", function () { selectSpace(sp); });
-        quick.appendChild(b2);
-      });
-    }
-
-    function setLanguage(newLang) {
-      lang = newLang;
-      const t = UI_TEXT[lang];
-      document.getElementById("btn-lang-es").classList.toggle("active", lang === "es");
-      document.getElementById("btn-lang-en").classList.toggle("active", lang === "en");
-      document.getElementById("hostess-es").classList.toggle("active", lang === "es");
-      document.getElementById("hostess-en").classList.toggle("active", lang === "en");
-
-      document.getElementById("btn-guide").textContent = t.guide;
-      document.getElementById("btn-spaces").textContent = t.spaces;
-      document.getElementById("btn-center-sign").textContent = t.centerBtn;
-      document.getElementById("hostess-enter").textContent = t.enterLobby;
-      document.getElementById("hostess-title").textContent = t.hostessTitle;
-      document.getElementById("hostess-sub").textContent = t.hostessSub;
-      document.getElementById("holo-greeting").textContent = t.drawerHint;
-      document.getElementById("fallback-sub").textContent = t.fallbackSub;
-      updateAudioLabel();
-
-      if (typeof window.__lobbyBridge.updateLang === "function") {
-        window.__lobbyBridge.updateLang(lang);
-      }
-
-      updateBadge(activeSpace ? activeSpace[lang] : t.lobbyTitle);
-      renderSpaceButtons();
-    }
-
-    document.getElementById("btn-lang-es").addEventListener("click", function () { openHostess("es"); });
-    document.getElementById("btn-lang-en").addEventListener("click", function () { openHostess("en"); });
-    document.getElementById("hostess-es").addEventListener("click", function () { openHostess("es"); });
-    document.getElementById("hostess-en").addEventListener("click", function () { openHostess("en"); });
-    document.getElementById("hostess-enter").addEventListener("click", closeHostess);
-
-    audioBtn.addEventListener("click", function () {
-      hostessVideo.muted = !hostessVideo.muted;
-      if (!hostessVideo.muted) {
-        hostessVideo.volume = 1.0;
-        hostessVideo.play().catch(function () {});
-      }
-      updateAudioLabel();
-    });
-
-    document.getElementById("btn-guide").addEventListener("click", function () {
-      drawer.classList.toggle("open");
-    });
-
-    document.getElementById("btn-spaces").addEventListener("click", function () {
-      drawer.classList.toggle("open");
-    });
-
-    document.getElementById("btn-center-sign").addEventListener("click", function () {
-      activeSpace = null;
-      closeDrawer();
-      updateBadge(lang === "es" ? "Lobby Central" : "Central Lobby");
-      document.querySelectorAll(".bottom-bar .nav-btn").forEach(function (b) { b.classList.remove("active"); });
-      document.getElementById("btn-center-sign").classList.add("active");
-      if (typeof window.__lobbyBridge.waypoint === "function") {
-        window.__lobbyBridge.waypoint("center", lang);
-      }
-    });
-
-    document.querySelectorAll(".waypoint-btn").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        activeSpace = null;
-        closeDrawer();
-        document.querySelectorAll(".bottom-bar .nav-btn").forEach(function (b) { b.classList.remove("active"); });
-        btn.classList.add("active");
-        if (typeof window.__lobbyBridge.waypoint === "function") {
-          window.__lobbyBridge.waypoint(btn.dataset.wp, lang);
-        }
-      });
-    });
-
-    document.getElementById("zoom-in").addEventListener("click", function () {
-      if (typeof window.__lobbyBridge.zoom === "function") window.__lobbyBridge.zoom(0.22, false);
-    });
-    document.getElementById("zoom-out").addEventListener("click", function () {
-      if (typeof window.__lobbyBridge.zoom === "function") window.__lobbyBridge.zoom(-0.22, false);
-    });
-    document.getElementById("zoom-reset").addEventListener("click", function () {
-      if (typeof window.__lobbyBridge.zoom === "function") window.__lobbyBridge.zoom(1.0, true);
-    });
-
-    setLanguage("es");
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.min.js" onload="initLobby3D()" onerror="hide3DCanvas()"></script>
-  <script>
-    function hide3DCanvas() {
-      const c = document.getElementById("scene-canvas");
-      if (c) c.style.display = "none";
-    }
-
-    function initLobby3D() {
-      const canvas = document.getElementById("scene-canvas");
-      if (!window.THREE || !canvas) {
-        hide3DCanvas();
-        return;
-      }
-
-      try {
-        const THREE = window.THREE;
-        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: "high-performance" });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x090e16);
-        scene.fog = new THREE.FogExp2(0x090e16, 0.012);
-
-        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 180);
-
-        const ENTRANCE_POS = new THREE.Vector3(0, 2.2, 16.5);
-        const SIGN_LOOK_TARGET = new THREE.Vector3(0, 2.5, -13.5);
-
-        const WAYPOINTS = {
-          center: { pos: ENTRANCE_POS.clone(), look: SIGN_LOOK_TARGET.clone(), labelEs: "Lobby Central", labelEn: "Central Lobby" },
-          west: { pos: new THREE.Vector3(-8.5, 2.2, 4.0), look: new THREE.Vector3(-14.5, 2.2, -3.0), labelEs: "Ala Oeste", labelEn: "West Wing" },
-          east: { pos: new THREE.Vector3(8.5, 2.2, 4.0), look: new THREE.Vector3(14.5, 2.2, -3.0), labelEs: "Ala Este", labelEn: "East Wing" },
-          level2: { pos: new THREE.Vector3(0, 7.6, 11.0), look: new THREE.Vector3(0, 7.2, -13.5), labelEs: "Nivel 2", labelEn: "Level 2" }
-        };
-
-        let currentCamPos = ENTRANCE_POS.clone();
-        let targetCamPos = ENTRANCE_POS.clone();
-        let currentLook = SIGN_LOOK_TARGET.clone();
-        let targetLook = SIGN_LOOK_TARGET.clone();
-        let zoomFactor = 1.0;
-        let targetZoom = 1.0;
-
-        scene.add(new THREE.AmbientLight(0xfff1d0, 1.05));
-        const keyLight = new THREE.PointLight(0xffcf70, 2.4, 65);
-        keyLight.position.set(0, 11, 0);
-        scene.add(keyLight);
-
-        const floor = new THREE.Mesh(
-          new THREE.CircleGeometry(24, 64),
-          new THREE.MeshStandardMaterial({ color: 0x18222d, roughness: 0.35, metalness: 0.45 })
-        );
-        floor.rotation.x = -Math.PI / 2;
-        scene.add(floor);
-
-        const goldRing = new THREE.Mesh(
-          new THREE.RingGeometry(4.8, 5.3, 64),
-          new THREE.MeshStandardMaterial({ color: 0xd9a441, roughness: 0.25, metalness: 0.85, side: THREE.DoubleSide })
-        );
-        goldRing.rotation.x = -Math.PI / 2;
-        goldRing.position.y = 0.02;
-        scene.add(goldRing);
-
-        const atriumWall = new THREE.Mesh(
-          new THREE.CylinderGeometry(23.5, 23.5, 15, 64, 1, true),
-          new THREE.MeshStandardMaterial({ color: 0x111924, roughness: 0.7, metalness: 0.2, side: THREE.BackSide })
-        );
-        atriumWall.position.y = 7.5;
-        scene.add(atriumWall);
-
-        const balconyRing = new THREE.Mesh(
-          new THREE.RingGeometry(18.5,
+    let onFocusSpaceCallback = null;
+    let onWaypointCallback = null;
+    let onZoomChange
