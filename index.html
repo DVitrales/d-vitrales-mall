@@ -27,13 +27,9 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      display: none;
+      display: block;
       z-index: 1;
       touch-action: none;
-    }
-
-    #scene-canvas.ready {
-      display: block;
     }
 
     #fallback-lobby {
@@ -66,14 +62,7 @@
     .fallback-note {
       font-size: 13px;
       color: rgba(255, 242, 204, 0.85);
-      max-width: 440px;
-      line-height: 1.45;
-    }
-
-    .fallback-status {
-      margin-top: 10px;
-      font-size: 11px;
-      color: rgba(126, 249, 255, 0.82);
+      max-width: 420px;
     }
 
     #focused-badge {
@@ -92,6 +81,7 @@
       pointer-events: none;
     }
 
+    /* Teclitas holográficas sin marcos ni bordes */
     .holo-top-right {
       position: fixed;
       top: 14px;
@@ -135,6 +125,7 @@
       text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
     }
 
+    /* Despliegue flotante sin marcos ni bordes */
     .holo-drawer {
       position: fixed;
       top: 52px;
@@ -187,6 +178,7 @@
       text-shadow: 0 0 14px rgba(126, 249, 255, 0.95), 0 1px 6px rgba(0, 0, 0, 0.98);
     }
 
+    /* Anfitriona bilingüe en pantalla completa con audio */
     #hostess-overlay {
       position: fixed;
       inset: 0;
@@ -300,13 +292,13 @@
   <div id="fallback-lobby">
     <div class="fallback-sign">D'Vitrales Mall</div>
     <div id="fallback-sub" class="fallback-note">Explora los 10 espacios del lobby o selecciona ES / EN para ver a la anfitriona.</div>
-    <div id="fallback-status" class="fallback-status">Cargando vista 3D...</div>
   </div>
 
   <canvas id="scene-canvas"></canvas>
 
   <div id="focused-badge">Lobby Central</div>
 
+  <!-- Teclitas holográficas sin marcos ni bordes -->
   <div class="holo-top-right">
     <div class="holo-row">
       <button id="btn-lang-es" class="holo-key" type="button">ES</button>
@@ -316,11 +308,15 @@
     </div>
   </div>
 
+  <!-- Menú desplegable transparente sin bordes -->
   <div id="holo-drawer" class="holo-drawer">
-    <div id="holo-greeting" class="holo-greeting">Elige un espacio:</div>
+    <div id="holo-greeting" class="holo-greeting">
+      Elige un espacio para viajar y hacer zoom hacia su fachada:
+    </div>
     <div id="holo-spaces-grid" class="holo-spaces-grid"></div>
   </div>
 
+  <!-- Anfitriona bilingüe en pantalla completa con audio -->
   <div id="hostess-overlay">
     <video id="hostess-video" playsinline webkit-playsinline autoplay></video>
     <div class="hostess-top">
@@ -335,7 +331,7 @@
     <div class="hostess-center">
       <div id="hostess-title" class="hostess-title">Bienvenida a D'Vitrales Mall</div>
       <div id="hostess-sub" class="hostess-sub">
-        Explora el lobby o elige cualquiera de los 10 locales.
+        Explora el lobby en 360° o elige cualquiera de los 10 locales para acercarte y hacer zoom.
       </div>
       <div id="hostess-spaces" class="hostess-quick-spaces"></div>
     </div>
@@ -343,6 +339,7 @@
     <div></div>
   </div>
 
+  <!-- Barra inferior con regreso automático al centro frente al letrero -->
   <div class="bottom-bar">
     <button id="btn-center-sign" class="nav-btn active" type="button">Centro / Letrero</button>
     <button class="nav-btn waypoint-btn" data-wp="west" type="button">Ala Oeste</button>
@@ -356,9 +353,14 @@
   </div>
 
   <script>
+    // Videos de la anfitriona por idioma en tu repositorio (español e inglés)
     const HOSTESS_MEDIA = {
-      es: { video: "anfitrionamp4.mp4" },
-      en: { video: "anfitriona-en.mp4" }
+      es: {
+        video: "anfitrionamp4.mp4"
+      },
+      en: {
+        video: "anfitriona-en.mp4"
+      }
     };
 
     const SPACES = [
@@ -605,74 +607,62 @@
     setLanguage("es");
   </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.min.js" onload="initLobby3D()" onerror="hide3DCanvas()"></script>
   <script>
-    var __lobby3DStarted = false;
-
-    function setFallbackStatus(msg) {
-      var st = document.getElementById("fallback-status");
-      if (st) st.textContent = msg;
-    }
-
-    function hide3DCanvas(reason) {
-      var c = document.getElementById("scene-canvas");
-      if (c) c.classList.remove("ready");
-      setFallbackStatus(reason || "Modo respaldo activo: los menús y la anfitriona funcionan con normalidad.");
+    function hide3DCanvas() {
+      const c = document.getElementById("scene-canvas");
+      if (c) c.style.display = "none";
     }
 
     function initLobby3D() {
-      if (__lobby3DStarted) return;
-      var canvas = document.getElementById("scene-canvas");
+      const canvas = document.getElementById("scene-canvas");
       if (!window.THREE || !canvas) {
-        hide3DCanvas("No se pudo cargar el motor 3D en esta red o navegador.");
+        hide3DCanvas();
         return;
       }
 
       try {
-        var THREE = window.THREE;
-        var renderer = new THREE.WebGLRenderer({
-          canvas: canvas,
-          antialias: true,
-          powerPreference: "high-performance"
-        });
+        const THREE = window.THREE;
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: "high-performance" });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        var scene = new THREE.Scene();
+        const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x090e16);
         scene.fog = new THREE.FogExp2(0x090e16, 0.012);
 
-        var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 180);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 180);
 
-        var ENTRANCE_POS = new THREE.Vector3(0, 2.2, 16.5);
-        var SIGN_LOOK_TARGET = new THREE.Vector3(0, 2.5, -13.5);
+        const ENTRANCE_POS = new THREE.Vector3(0, 2.2, 16.5);
+        const SIGN_LOOK_TARGET = new THREE.Vector3(0, 2.5, -13.5);
 
-        var WAYPOINTS = {
+        const WAYPOINTS = {
           center: { pos: ENTRANCE_POS.clone(), look: SIGN_LOOK_TARGET.clone(), labelEs: "Lobby Central", labelEn: "Central Lobby" },
           west: { pos: new THREE.Vector3(-8.5, 2.2, 4.0), look: new THREE.Vector3(-14.5, 2.2, -3.0), labelEs: "Ala Oeste", labelEn: "West Wing" },
           east: { pos: new THREE.Vector3(8.5, 2.2, 4.0), look: new THREE.Vector3(14.5, 2.2, -3.0), labelEs: "Ala Este", labelEn: "East Wing" },
           level2: { pos: new THREE.Vector3(0, 7.6, 11.0), look: new THREE.Vector3(0, 7.2, -13.5), labelEs: "Nivel 2", labelEn: "Level 2" }
         };
 
-        var currentCamPos = ENTRANCE_POS.clone();
-        var targetCamPos = ENTRANCE_POS.clone();
-        var currentLook = SIGN_LOOK_TARGET.clone();
-        var targetLook = SIGN_LOOK_TARGET.clone();
-        var zoomFactor = 1.0;
-        var targetZoom = 1.0;
+        let currentCamPos = ENTRANCE_POS.clone();
+        let targetCamPos = ENTRANCE_POS.clone();
+        let currentLook = SIGN_LOOK_TARGET.clone();
+        let targetLook = SIGN_LOOK_TARGET.clone();
+        let zoomFactor = 1.0;
+        let targetZoom = 1.0;
 
         scene.add(new THREE.AmbientLight(0xfff1d0, 1.05));
-        var keyLight = new THREE.PointLight(0xffcf70, 2.4, 65);
+        const keyLight = new THREE.PointLight(0xffcf70, 2.4, 65);
         keyLight.position.set(0, 11, 0);
         scene.add(keyLight);
 
-        var floor = new THREE.Mesh(
+        const floor = new THREE.Mesh(
           new THREE.CircleGeometry(24, 64),
           new THREE.MeshStandardMaterial({ color: 0x18222d, roughness: 0.35, metalness: 0.45 })
         );
         floor.rotation.x = -Math.PI / 2;
         scene.add(floor);
 
-        var goldRing = new THREE.Mesh(
+        const goldRing = new THREE.Mesh(
           new THREE.RingGeometry(4.8, 5.3, 64),
           new THREE.MeshStandardMaterial({ color: 0xd9a441, roughness: 0.25, metalness: 0.85, side: THREE.DoubleSide })
         );
@@ -680,290 +670,12 @@
         goldRing.position.y = 0.02;
         scene.add(goldRing);
 
-        var atriumWall = new THREE.Mesh(
+        const atriumWall = new THREE.Mesh(
           new THREE.CylinderGeometry(23.5, 23.5, 15, 64, 1, true),
           new THREE.MeshStandardMaterial({ color: 0x111924, roughness: 0.7, metalness: 0.2, side: THREE.BackSide })
         );
         atriumWall.position.y = 7.5;
         scene.add(atriumWall);
 
-        var balconyRing = new THREE.Mesh(
-          new THREE.RingGeometry(18.5, 23.4, 64),
-          new THREE.MeshStandardMaterial({ color: 0x253242, roughness: 0.5, metalness: 0.5, side: THREE.DoubleSide })
-        );
-        balconyRing.rotation.x = -Math.PI / 2;
-        balconyRing.position.y = 5.6;
-        scene.add(balconyRing);
-
-        var sculpture = new THREE.Mesh(
-          new THREE.OctahedronGeometry(2.1, 1),
-          new THREE.MeshStandardMaterial({ color: 0xf7cf74, emissive: 0x473008, roughness: 0.2, metalness: 0.9 })
-        );
-        sculpture.position.set(0, 3.2, -1.5);
-        scene.add(sculpture);
-
-        function createSignTexture(text) {
-          var c = document.createElement("canvas");
-          c.width = 1024;
-          c.height = 256;
-          var ctx = c.getContext("2d");
-          ctx.clearRect(0, 0, c.width, c.height);
-
-          var grad = ctx.createLinearGradient(0, 40, 0, 210);
-          grad.addColorStop(0, "#fff0b8");
-          grad.addColorStop(0.5, "#e5b24c");
-          grad.addColorStop(1, "#9c6d19");
-
-          ctx.font = "bold 92px Georgia, serif";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.shadowColor = "rgba(255, 206, 94, 0.75)";
-          ctx.shadowBlur = 24;
-          ctx.fillStyle = grad;
-          ctx.fillText(text, c.width / 2, c.height / 2);
-          return new THREE.CanvasTexture(c);
-        }
-
-        var signPlane = new THREE.Mesh(
-          new THREE.PlaneGeometry(11.5, 2.9),
-          new THREE.MeshBasicMaterial({ map: createSignTexture("D'Vitrales Mall"), transparent: true })
-        );
-        signPlane.position.set(0, 3.1, -13.5);
-        scene.add(signPlane);
-
-        var spaceMeshes = [];
-        var radius = 21.8;
-
-        function makeStoreTexture(title) {
-          var c = document.createElement("canvas");
-          c.width = 512;
-          c.height = 256;
-          var ctx = c.getContext("2d");
-          ctx.fillStyle = "rgba(14, 24, 36, 0.92)";
-          ctx.fillRect(0, 0, c.width, c.height);
-          ctx.strokeStyle = "#e6b85c";
-          ctx.lineWidth = 6;
-          ctx.strokeRect(10, 10, c.width - 20, c.height - 20);
-          ctx.fillStyle = "#ffe8a3";
-          ctx.font = "bold 30px sans-serif";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-
-          var words = title.split(" ");
-          var lines = [];
-          var line = "";
-          for (var i = 0; i < words.length; i++) {
-            var w = words[i];
-            var test = line ? (line + " " + w) : w;
-            if (ctx.measureText(test).width > 440) {
-              lines.push(line);
-              line = w;
-            } else {
-              line = test;
-            }
-          }
-          if (line) lines.push(line);
-
-          for (var j = 0; j < lines.length; j++) {
-            var y = c.height / 2 + (j - (lines.length - 1) / 2) * 38;
-            ctx.fillText(lines[j], c.width / 2, y);
-          }
-          return new THREE.CanvasTexture(c);
-        }
-
-        SPACES.forEach(function (sp) {
-          var yPos = sp.level === 1 ? 2.4 : 7.8;
-          var x = Math.sin(sp.angle) * radius;
-          var z = Math.cos(sp.angle) * radius;
-
-          var panel = new THREE.Mesh(
-            new THREE.PlaneGeometry(5.2, 2.6),
-            new THREE.MeshBasicMaterial({ map: makeStoreTexture(sp.es), side: THREE.DoubleSide })
-          );
-          panel.position.set(x, yPos, z);
-          panel.lookAt(0, yPos, 0);
-          panel.userData = { space: sp };
-          scene.add(panel);
-          spaceMeshes.push(panel);
-        });
-
-        window.__lobbyBridge.updateLang = function (currentLang) {
-          spaceMeshes.forEach(function (m) {
-            var sp = m.userData.space;
-            m.material.map = makeStoreTexture(sp[currentLang]);
-            m.material.needsUpdate = true;
-          });
-        };
-
-        window.__lobbyBridge.focusSpace = function (sp) {
-          var yPos = sp.level === 1 ? 2.3 : 7.6;
-          var storePos = new THREE.Vector3(Math.sin(sp.angle) * radius, yPos, Math.cos(sp.angle) * radius);
-          var inward = storePos.clone().setY(0).normalize().negate();
-
-          targetCamPos.copy(storePos).addScaledVector(inward, 6.2).setY(yPos);
-          targetLook.copy(storePos);
-          targetZoom = 1.45;
-        };
-
-        window.__lobbyBridge.waypoint = function (key, currentLang) {
-          var wp = WAYPOINTS[key];
-          if (!wp) return;
-          targetCamPos.copy(wp.pos);
-          targetLook.copy(wp.look);
-          targetZoom = 1.0;
-          updateBadge(currentLang === "es" ? wp.labelEs : wp.labelEn);
-        };
-
-        window.__lobbyBridge.zoom = function (val, reset) {
-          if (reset) {
-            targetZoom = 1.0;
-          } else {
-            targetZoom = Math.max(0.75, Math.min(2.4, targetZoom + val));
-          }
-        };
-
-        var isDragging = false;
-        var prevX = 0;
-        var prevY = 0;
-        var dragDist = 0;
-        var pinchStartDist = null;
-        var pinchStartZoom = 1.0;
-
-        function applyLookDelta(dx, dy) {
-          var dir = targetLook.clone().sub(targetCamPos);
-          var spherical = new THREE.Spherical().setFromVector3(dir);
-          spherical.theta -= dx * 0.0055;
-          spherical.phi = Math.max(0.35, Math.min(Math.PI - 0.35, spherical.phi - dy * 0.0045));
-          dir.setFromSpherical(spherical);
-          targetLook.copy(targetCamPos).add(dir);
-        }
-
-        canvas.addEventListener("pointerdown", function (e) {
-          isDragging = true;
-          prevX = e.clientX;
-          prevY = e.clientY;
-          dragDist = 0;
-        });
-
-        window.addEventListener("pointermove", function (e) {
-          if (!isDragging) return;
-          var dx = e.clientX - prevX;
-          var dy = e.clientY - prevY;
-          dragDist += Math.hypot(dx, dy);
-          prevX = e.clientX;
-          prevY = e.clientY;
-          applyLookDelta(dx, dy);
-        });
-
-        var raycaster = new THREE.Raycaster();
-        function checkSpaceTap(clientX, clientY) {
-          var rect = canvas.getBoundingClientRect();
-          var ndc = new THREE.Vector2(
-            ((clientX - rect.left) / rect.width) * 2 - 1,
-            -((clientY - rect.top) / rect.height) * 2 + 1
-          );
-          raycaster.setFromCamera(ndc, camera);
-          var hits = raycaster.intersectObjects(spaceMeshes, false);
-          if (hits.length > 0 && hits[0].object.userData.space) {
-            selectSpace(hits[0].object.userData.space);
-          }
-        }
-
-        window.addEventListener("pointerup", function (e) {
-          if (!isDragging) return;
-          isDragging = false;
-          if (dragDist < 7) {
-            checkSpaceTap(e.clientX, e.clientY);
-          }
-        });
-
-        canvas.addEventListener("touchstart", function (e) {
-          if (e.touches.length === 2) {
-            pinchStartDist = Math.hypot(
-              e.touches[0].clientX - e.touches[1].clientX,
-              e.touches[0].clientY - e.touches[1].clientY
-            );
-            pinchStartZoom = targetZoom;
-          }
-        }, { passive: true });
-
-        canvas.addEventListener("touchmove", function (e) {
-          if (e.touches.length === 2 && pinchStartDist) {
-            var d = Math.hypot(
-              e.touches[0].clientX - e.touches[1].clientX,
-              e.touches[0].clientY - e.touches[1].clientY
-            );
-            targetZoom = Math.max(0.75, Math.min(2.4, pinchStartZoom * (d / pinchStartDist)));
-          }
-        }, { passive: true });
-
-        canvas.addEventListener("touchend", function () {
-          pinchStartDist = null;
-        });
-
-        canvas.addEventListener("wheel", function (e) {
-          e.preventDefault();
-          targetZoom = Math.max(0.75, Math.min(2.4, targetZoom + (e.deltaY > 0 ? -0.14 : 0.14)));
-        }, { passive: false });
-
-        window.addEventListener("resize", function () {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        camera.position.copy(currentCamPos);
-        camera.lookAt(currentLook);
-        canvas.classList.add("ready");
-        __lobby3DStarted = true;
-
-        function animate() {
-          requestAnimationFrame(animate);
-
-          currentCamPos.lerp(targetCamPos, 0.08);
-          currentLook.lerp(targetLook, 0.08);
-          zoomFactor += (targetZoom - zoomFactor) * 0.1;
-
-          camera.position.copy(currentCamPos);
-          camera.fov = 60 / zoomFactor;
-          camera.updateProjectionMatrix();
-          camera.lookAt(currentLook);
-
-          sculpture.rotation.y += 0.006;
-
-          renderer.render(scene, camera);
-        }
-
-        animate();
-      } catch (_) {
-        hide3DCanvas("El dispositivo no pudo iniciar el gráfico 3D; el resto sigue operativo.");
-      }
-    }
-
-    function loadThreeFallback() {
-      if (window.THREE) {
-        initLobby3D();
-        return;
-      }
-      var s2 = document.createElement("script");
-      s2.src = "https://unpkg.com/three@0.164.1/build/three.min.js";
-      s2.onload = function () { initLobby3D(); };
-      s2.onerror = function () {
-        hide3DCanvas("No se pudo conectar con la librería 3D; puedes usar los menús y la anfitriona.");
-      };
-      document.body.appendChild(s2);
-    }
-
-    setTimeout(function () {
-      if (!__lobby3DStarted) {
-        loadThreeFallback();
-      }
-    }, 3500);
-  </script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.min.js"
-    onload="initLobby3D()"
-    onerror="loadThreeFallback()"
-  ></script>
-</body>
-</html>
+        const balconyRing = new THREE.Mesh(
+          new THREE.RingGeometry(18.5,
