@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>D'Vitrales Mall — Lobby</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:#05080d;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff5dc}
+#view{position:fixed;inset:0;width:100%;height:100%;touch-action:none;z-index:1}
+#badge{position:fixed;top:14px;left:14px;z-index:40;font-size:12px;font-weight:600;color:#ffe8a3;max-width:40vw;text-shadow:0 1px 5px #000;pointer-events:none}
+#top{position:fixed;top:12px;right:12px;z-index:45;display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;max-width:58vw}
+.pill{background:rgba(10,18,28,.5);border:1px solid rgba(126,249,255,.4);border-radius:999px;padding:5px 10px;color:#fff2cc;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(6px);text-shadow:0 0 8px rgba(126,249,255,.6)}
+.pill.on,.pill:active{color:#7ef9ff;border-color:#7ef9ff}
+#drawer{position:fixed;top:56px;right:12px;z-index:50;display:none;flex-direction:column;gap:5px;padding:10px 12px;border-radius:14px;background:rgba(8,20,30,.62);border:1px solid rgba(126,249,255,.45);backdrop-filter:blur(8px);max-height:70vh;overflow-y:auto;max-width:86vw}
+#drawer.open{display:flex}
+#drawer .h{font-size:11px;color:#7ef9ff;text-align:right;margin-top:4px}
+#drawer button{background:transparent;border:none;color:#ffe9ad;font-size:12px;font-weight:600;text-align:right;padding:3px 0;cursor:pointer;text-shadow:0 0 8px rgba(255,204,92,.6)}
+#enter{position:fixed;left:50%;bottom:160px;transform:translateX(-50%);z-index:46;display:none;padding:10px 20px;font-size:14px}
+#enter.show{display:block}
+#stick{position:fixed;left:22px;bottom:26px;width:110px;height:110px;border-radius:50%;z-index:45;background:rgba(10,18,28,.4);border:1px solid rgba(126,249,255,.45);touch-action:none;display:flex;align-items:center;justify-content:center}
+#knob{width:46px;height:46px;border-radius:50%;background:rgba(126,249,255,.35);border:1px solid #7ef9ff;pointer-events:none}
+#hint{position:fixed;right:14px;bottom:30px;z-index:40;max-width:44vw;text-align:right;font-size:11px;color:rgba(255,245,220,.7);pointer-events:none}
+#toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);z-index:60;background:rgba(8,26,30,.9);border:1px solid #7ef9ff;border-radius:999px;padding:7px 16px;font-size:12px;display:none}
+#host{position:fixed;left:12px;bottom:150px;z-index:55;width:min(60vw,230px);display:none;flex-direction:column;gap:6px;padding:8px;border-radius:14px;background:rgba(8,15,24,.72);border:1px solid rgba(255,214,115,.48);backdrop-filter:blur(8px)}
+#host.on{display:flex}
+#host .r{display:flex;justify-content:space-between;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#ffe8a3}
+#hv{width:100%;aspect-ratio:16/10;border-radius:9px;background:#05090f;object-fit:cover;object-position:center 20%}
+</style>
+</head>
+<body>
+<canvas id="view"></canvas>
+<div id="badge"></div>
+<div id="top">
+  <button id="b-es" class="pill on" type="button">ES</button>
+  <button id="b-en" class="pill" type="button">EN</button>
+  <button id="b-guide" class="pill" type="button"></button>
+  <button id="b-loc" class="pill" type="button"></button>
+</div>
+<div id="drawer"></div>
+<div id="toast"></div>
+<button id="enter" class="pill" type="button"></button>
+<div id="host">
+  <div class="r"><span id="h-t"></span><button id="h-x" class="pill" type="button">✕</button></div>
+  <video id="hv" playsinline webkit-playsinline loop preload="none"></video>
+  <div class="r"><button id="h-es" class="pill" type="button">ES</button><button id="h-en" class="pill" type="button">EN</button><button id="h-a" class="pill" type="button"></button></div>
+</div>
+<div id="stick"><div id="knob"></div></div>
+<div id="hint"></div>
+
+<script>
+(function () {
+"use strict";
+var $ = function (id) { return document.getElementById(id); };
+window.addEventListener("error", function (e) { toast("Error: " + e.message); });
+var tt = 0;
+function toast(m) { var t = $("toast"); t.textContent = m; t.style.display = "block"; clearTimeout(tt); tt = setTimeout(function () { t.style.display = "none"; }, 2600); }
+
+/* ---------- LOCALES: ajusta aquí el nombre de archivo de cada uno ---------- */
+var LOCALES = [
+  { es: "Chocolatier Gallery", en: "Chocolatier Gallery", url: "chocolates.html" },
+  { es: "Boutique", en: "Boutique", url: "boutique.html" },
+  { es: "Salón Pasarela", en: "Runway Salon", url: "pasarela.html" },
+  { es: "Galería de Pintura", en: "Painting Gallery", url: "pintura.html" },
+  { es: "Galería de Escultura", en: "Sculpture Gallery", url: "escultura.html" },
+  { es: "Decoración para el Hogar", en: "Home Decor", url: "decoracion.html" },
+  { es: "Libros y Series", en: "Books & Series", url: "libreria.html" },
+  { es: "Tienda de Música", en: "Music Store", url: "musica.html" },
+  { es: "Escuela de Pintura", en: "Painting School", url: "" },
+  { es: "Materiales para Arte", en: "Art Supplies", url: "" }
+];
+/* Videos de la anfitriona (si el de inglés no existe, usa el de español) */
+var HOST = { es: ["anfitrionamp4.mp4"], en: ["anfitriona-en.mp4", "anfitrionamp4.mp4"] };
+
+var L = {
+  es: { guide: "Guía", loc: "Locales", hint: "Arrastra para mirar · joystick para caminar", f1: "Lobby Central · Piso 1", f2: "Lobby Central · Piso 2",
+        enter: "Entrar a ", up: "Subir al Piso 2 ▲", down: "Bajar al Piso 1 ▼", soon: "Próximamente", floor: "Piso", host: "Anfitriona D'Vitrales", audio: ["Audio ON", "Audio OFF"], s2: "Segundo Piso", vid: "No se pudo cargar el video" },
+  en: { guide: "Guide", loc: "Spaces", hint: "Drag to look · joystick to walk", f1: "Central Lobby · Floor 1", f2: "Central Lobby · Floor 2",
+        enter: "Enter ", up: "Go up to Floor 2 ▲", down: "Go down to Floor 1 ▼", soon: "Coming soon", floor: "Floor", host: "D'Vitrales Host", audio: ["Audio ON", "Audio OFF"], s2: "Second Floor", vid: "The video could not be loaded" }
+};
+var lang = "es", floor = 0;
+
+/* ---------- MAPAS (0-9 puertas de locales · U/N escaleras · S letrero · G columna) ---------- */
+var MAPS = [
+  ["###0###1###2##SSSSS##",
+   "#...................#",
+   "#...................#",
+   "#....G.........G....#",
+   "#...................#",
+   "#...................U",
+   "#...................#",
+   "#....G.........G....#",
+   "#...................#",
+   "#...................#",
+   "###3###4#############"],
+  ["###5###6###7##SSSSS##",
+   "#...................#",
+   "#...................#",
+   "#....G.........G....#",
+   "#...................#",
+   "#...................N",
+   "#...................#",
+   "#....G.........G....#",
+   "#...................#",
+   "#...................#",
+   "###8###9#############"]
+];
+var MAP = MAPS[0], MW = MAPS[0][0].length, MH = MAPS[0].length;
+function cell(x, y) { return (x < 0 || y < 0 || x >= MW || y >= MH) ? "#" : MAP[y].charAt(x); }
+
+/* posiciones de las puertas y escaleras */
+var DOOR = [], STAIR = [];
+MAPS.forEach(function (m, f) {
+  m.forEach(function (row, y) {
+    for (var x = 0; x < row.length; x++) {
+      var ch = row.charAt(x);
+      if (/\d/.test(ch)) DOOR[+ch] = { f: f, x: x + .5, y: y === 0 ? 2.2 : y - 2.2, a: y === 0 ? -Math.PI / 2 : Math.PI / 2 };
+      if (ch === "U" || ch === "N") STAIR[f] = { x: x - 2, y: y + .5, a: 0 };
+    }
+  });
+});
+
+/* ---------- TEXTURAS ---------- */
+function mk(w, h) { var c = document.createElement("canvas"); c.width = w; c.height = h; return c; }
+function wallBase(x, w, h) {
+  var g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, "#1a3a46"); g.addColorStop(1, "#0d1f2a");
+  x.fillStyle = g; x.fillRect(0, 0, w, h); x.fillStyle = "rgba(255,255,255,.04)";
+  for (var i = 0; i < w; i += 32) x.fillRect(i, 0, 2, h);
+  x.fillStyle = "#c9993f"; x.fillRect(0, h - 12, w, 4); x.fillRect(0, 6, w, 3);
+}
+function tex(c, span, start) { return { c: c, span: span || 1, start: start || 0 }; }
+function wrapText(x, text, w, lh, y) {
+  var words = text.split(" "), line = "", ls = [];
+  words.forEach(function (wd) { var t = line ? line + " " + wd : wd; if (x.measureText(t).width > w && line) { ls.push(line); line = wd; } else line = t; });
+  ls.push(line); ls.forEach(function (l, i) { x.fillText(l, 64, y + i * lh); });
+}
+function doorTex(i) {
+  var c = mk(128, 128), x = c.getContext("2d"); wallBase(x, 128, 128);
+  x.fillStyle = "#fff3c8"; x.font = "bold 13px sans-serif"; x.textAlign = "center"; x.textBaseline = "middle";
+  wrapText(x, LOCALES[i][lang], 112, 14, 22);
+  x.fillStyle = "#2a1a10"; x.fillRect(36, 62, 56, 58);
+  x.strokeStyle = "#e5b24c"; x.lineWidth = 3; x.strokeRect(36, 62, 56, 58);
+  x.fillStyle = "rgba(126,249,255,.25)"; x.fillRect(42, 68, 44, 46);
+  x.fillStyle = "#e5b24c"; x.beginPath(); x.arc(84, 92, 3, 0, 7); x.fill();
+  return tex(c);
+}
+function stairsTex(up) {
+  var c = mk(128, 128), x = c.getContext("2d"); wallBase(x, 128, 128);
+  for (var k = 0; k < 6; k++) { x.fillStyle = k % 2 ? "#c9993f" : "#f1d27c"; x.fillRect(24 + k * 4, 100 - k * 12, 80 - k * 8, 10); }
+  x.fillStyle = "#7ef9ff"; x.font = "bold 22px sans-serif"; x.textAlign = "center"; x.fillText(up ? "▲" : "▼", 64, 28);
+  return tex(c);
+}
+function signTex(text) {
+  var w = 640, c = mk(w, 128), x = c.getContext("2d"); wallBase(x, w, 128);
+  x.strokeStyle = "#e5b24c"; x.lineWidth = 3; x.strokeRect(10, 18, w - 20, 92);
+  var s = 64; x.textAlign = "center"; x.textBaseline = "middle";
+  do { x.font = "bold " + s + "px Georgia, serif"; s -= 2; } while (x.measureText(text).width > w * .85 && s > 16);
+  var g = x.createLinearGradient(0, 30, 0, 100); g.addColorStop(0, "#fff0b8"); g.addColorStop(.5, "#e5b24c"); g.addColorStop(1, "#9c6d19");
+  x.fillStyle = g; x.fillText(text, w / 2, 64); return tex(c, 5, 14);
+}
+function pillarTex() {
+  var c = mk(128, 128), x = c.getContext("2d"), g = x.createLinearGradient(0, 0, 128, 0);
+  g.addColorStop(0, "#5a3d0e"); g.addColorStop(.35, "#f7d98a"); g.addColorStop(.6, "#d9a441"); g.addColorStop(1, "#4a310a");
+  x.fillStyle = g; x.fillRect(0, 0, 128, 128); return tex(c);
+}
+var wallT, pillT = pillarTex(), upT = stairsTex(true), downT = stairsTex(false), doorT = [], signT = [];
+function buildTex() {
+  var c = mk(128, 128); wallBase(c.getContext("2d"), 128, 128); wallT = tex(c);
+  for (var i = 0; i < LOCALES.length; i++) doorT[i] = doorTex(i);
+  signT = [signTex("D'Vitrales Mall"), signTex(L[lang].s2)];
+}
+buildTex();
+
+/* ---------- JUGADOR ---------- */
+var px = 10.5, py = 7.5, ang = -Math.PI / 2, joy = { x: 0, y: 0 }, keys = {};
+function free(x, y, r) {
+  return cell(Math.floor(x - r), Math.floor(y - r)) === "." && cell(Math.floor(x + r), Math.floor(y - r)) === "." &&
+         cell(Math.floor(x - r), Math.floor(y + r)) === "." && cell(Math.floor(x + r), Math.floor(y + r)) === ".";
+}
+function tryMove(nx, ny) { var r = .24; if (free(nx, py, r)) px = nx; if (free(px, ny, r)) py = ny; }
+function setFloor(f) { floor = f; MAP = MAPS[f]; lastBadge = ""; }
+
+/* ---------- PANTALLA ---------- */
+var cv = $("view"), ctx = cv.getContext("2d"), W = 0, H = 0, bg = null;
+function resize() {
+  W = Math.min(window.innerWidth, 400); H = Math.round(W * window.innerHeight / window.innerWidth);
+  cv.width = W; cv.height = H;
+  bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, "#080e16"); bg.addColorStop(.5, "#18304a"); bg.addColorStop(.5, "#10302f"); bg.addColorStop(1, "#050b0e");
+}
+window.addEventListener("resize", resize); resize();
+var hit = null;
+function render() {
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  var dx = Math.cos(ang), dy = Math.sin(ang), plx = -dy * .66, ply = dx * .66, mid = H / 2;
+  for (var x = 0; x < W; x++) {
+    var cam = 2 * x / W - 1, rdx = dx + plx * cam, rdy = dy + ply * cam;
+    var mx = Math.floor(px), my = Math.floor(py), ddx = Math.abs(1 / rdx), ddy = Math.abs(1 / rdy);
+    var stx, sty, sdx, sdy, side = 0, ch = "#";
+    if (rdx < 0) { stx = -1; sdx = (px - mx) * ddx; } else { stx = 1; sdx = (mx + 1 - px) * ddx; }
+    if (rdy < 0) { sty = -1; sdy = (py - my) * ddy; } else { sty = 1; sdy = (my + 1 - py) * ddy; }
+    for (var n = 0; n < 64; n++) {
+      if (sdx < sdy) { sdx += ddx; mx += stx; side = 0; } else { sdy += ddy; my += sty; side = 1; }
+      ch = cell(mx, my); if (ch !== ".") break;
+    }
+    var perp = side === 0 ? sdx - ddx : sdy - ddy; if (perp < .05) perp = .05;
+    var f = side === 0 ? py + perp * rdy : px + perp * rdx; f -= Math.floor(f);
+    if ((side === 1 && rdy > 0) || (side === 0 && rdx < 0)) f = 1 - f;
+    var T = /\d/.test(ch) ? doorT[+ch] : ch === "S" ? signT[floor] : ch === "U" ? upT : ch === "N" ? downT : ch === "G" ? pillT : wallT;
+    var u = T.span > 1 ? ((mx - T.start) + f) / T.span : f;
+    var sx = Math.max(0, Math.min(T.c.width - 1, Math.floor(u * T.c.width)));
+    var lh = 1.14 * W / perp, top = mid - lh / 2;
+    ctx.drawImage(T.c, sx, 0, 1, T.c.height, x, top, 1, lh);
+    ctx.fillStyle = "rgba(5,8,13," + Math.min(.9, perp * .085 + (side ? .1 : 0)).toFixed(2) + ")"; ctx.fillRect(x, top, 1, lh);
+    if (x === (W >> 1)) hit = { ch: ch, d: perp };
+  }
+}
+
+/* ---------- INTERFAZ ---------- */
+var lastBadge = "", action = null;
+function updateUI() {
+  var b = floor ? L[lang].f2 : L[lang].f1;
+  if (b !== lastBadge) { lastBadge = b; $("badge").textContent = b; }
+  var a = null, lab = "";
+  if (hit && hit.d < 2.6) {
+    if (/\d/.test(hit.ch)) { a = { t: "door", i: +hit.ch }; lab = L[lang].enter + LOCALES[+hit.ch][lang]; if (!LOCALES[+hit.ch].url) lab += " (" + L[lang].soon + ")"; }
+    else if (hit.ch === "U") { a = { t: "up" }; lab = L[lang].up; }
+    else if (hit.ch === "N") { a = { t: "down" }; lab = L[lang].down; }
+  }
+  action = a; var e = $("enter"); if (a) e.textContent = lab; e.classList.toggle("show", !!a);
+}
+$("enter").addEventListener("click", function () {
+  if (!action) return;
+  if (action.t === "door") {
+    var u = LOCALES[action.i].url;
+    if (u) window.location.href = u; else toast(L[lang].soon);
+  } else {
+    var to = action.t === "up" ? 1 : 0; setFloor(to);
+    var s = STAIR[to]; px = s.x; py = s.y; ang = Math.PI;
+  }
+});
+function go(i) {
+  var d = DOOR[i]; setFloor(d.f); px = d.x; py = d.y; ang = d.a; $("drawer").classList.remove("open");
+}
+function buildDrawer() {
+  var d = $("drawer"); d.innerHTML = "";
+  [0, 1].forEach(function (f) {
+    var h = document.createElement("div"); h.className = "h"; h.textContent = L[lang].floor + " " + (f + 1); d.appendChild(h);
+    LOCALES.forEach(function (lc, i) {
+      if (DOOR[i].f !== f) return;
+      var b = document.createElement("button"); b.type = "button"; b.textContent = lc[lang]; b.addEventListener("click", function () { go(i); }); d.appendChild(b);
+    });
+  });
+}
+function setLang(l) {
+  lang = l; lastBadge = "";
+  $("b-es").classList.toggle("on", l === "es"); $("b-en").classList.toggle("on", l === "en");
+  $("b-guide").textContent = L[l].guide; $("b-loc").textContent = L[l].loc; $("hint").textContent = L[l].hint;
+  $("h-t").textContent = L[l].host; updateAudio(); buildTex(); buildDrawer();
+}
+$("b-es").addEventListener("click", function () { setLang("es"); });
+$("b-en").addEventListener("click", function () { setLang("en"); });
+$("b-loc").addEventListener("click", function () { $("drawer").classList.toggle("open"); });
+
+/* ---------- ANFITRIONA (el video solo se carga cuando se abre) ---------- */
+var hv = $("hv"), hl = "es", hi = 0;
+function updateAudio() { $("h-a").textContent = L[lang].audio[hv.muted ? 1 : 0]; }
+function hostPlay() {
+  hv.muted = false; updateAudio();
+  var p = hv.play();
+  if (p && p.catch) p.catch(function () { hv.muted = true; updateAudio(); hv.play().catch(function () {}); });
+}
+function hostLoad(l, i) {
+  var list = HOST[l];
+  if (i >= list.length) { hv.removeAttribute("data-s"); toast(L[lang].vid); return; }
+  hl = l; hi = i; hv.setAttribute("data-s", list[i]); hv.src = list[i]; hv.load(); hostPlay();
+}
+function openHost(l) { setLang(l); $("host").classList.add("on"); if (hv.getAttribute("data-s") && hl === l) { hv.currentTime = 0; hostPlay(); } else hostLoad(l, 0); }
+function closeHost() { $("host").classList.remove("on"); hv.pause(); hv.removeAttribute("data-s"); hv.removeAttribute("src"); hv.load(); }
+hv.addEventListener("error", function () { if (hv.getAttribute("data-s")) hostLoad(hl, hi + 1); });
+$("b-guide").addEventListener("click", function () { if ($("host").classList.contains("on")) closeHost(); else openHost(lang); });
+$("h-es").addEventListener("click", function () { openHost("es"); });
+$("h-en").addEventListener("click", function () { openHost("en"); });
+$("h-x").addEventListener("click", closeHost);
+$("h-a").addEventListener("click", function () { hv.muted = !hv.muted; if (!hv.muted) hv.play().catch(function () {}); updateAudio(); });
+setLang("es");
+
+/* ---------- CONTROLES ---------- */
+var stick = $("stick"), knob = $("knob"), sid = null, sc = { x: 0, y: 0 };
+function moveStick(e) {
+  var R = 40, dx = e.clientX - sc.x, dy = e.clientY - sc.y, d = Math.hypot(dx, dy);
+  if (d > R) { dx *= R / d; dy *= R / d; }
+  joy.x = dx / R; joy.y = dy / R; knob.style.transform = "translate(" + dx + "px," + dy + "px)";
+}
+stick.addEventListener("pointerdown", function (e) { sid = e.pointerId; stick.setPointerCapture(sid); var r = stick.getBoundingClientRect(); sc = { x: r.left + r.width / 2, y: r.top + r.height / 2 }; moveStick(e); });
+stick.addEventListener("pointermove", function (e) { if (e.pointerId === sid) moveStick(e); });
+["pointerup", "pointercancel"].forEach(function (t) { stick.addEventListener(t, function (e) { if (e.pointerId === sid) { sid = null; joy.x = joy.y = 0; knob.style.transform = "translate(0,0)"; } }); });
+var lid = null, lx = 0;
+cv.addEventListener("pointerdown", function (e) { lid = e.pointerId; lx = e.clientX; cv.setPointerCapture(lid); $("drawer").classList.remove("open"); });
+cv.addEventListener("pointermove", function (e) { if (e.pointerId === lid) { ang += (e.clientX - lx) * .006; lx = e.clientX; } });
+["pointerup", "pointercancel"].forEach(function (t) { cv.addEventListener(t, function (e) { if (e.pointerId === lid) lid = null; }); });
+window.addEventListener("keydown", function (e) { keys[e.key.toLowerCase()] = true; });
+window.addEventListener("keyup", function (e) { keys[e.key.toLowerCase()] = false; });
+
+var last = performance.now();
+function loop(now) {
+  var dt = Math.min(.05, (now - last) / 1000); last = now;
+  var fw = -joy.y, st = joy.x;
+  if (keys.w || keys.arrowup) fw += 1; if (keys.s || keys.arrowdown) fw -= 1;
+  if (keys.d) st += 1; if (keys.a) st -= 1;
+  if (keys.arrowleft) ang -= 1.9 * dt; if (keys.arrowright) ang += 1.9 * dt;
+  var sp = 2.6 * dt, c = Math.cos(ang), s = Math.sin(ang);
+  if (fw || st) tryMove(px + (c * fw - s * st) * sp, py + (s * fw + c * st) * sp);
+  render(); updateUI(); requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
+var last = performance.now();
+function loop(now) {
+  var dt = Math.min(.05, (now - last) / 1000); last = now;
+  var fw = -joy.y, st = joy.x;
+  if (keys.w || keys.arrowup) fw += 1; if (keys.s || keys.arrowdown) fw -= 1;
+  if (keys.d) st += 1; if (keys.a) st -= 1;
+  if (keys.arrowleft) ang -= 1.9 * dt; if (keys.arrowright) ang += 1.9 * dt;
+  var sp = 2.6 * dt, c = Math.cos(ang), s = Math.sin(ang);
+  if (fw || st) tryMove(px + (c * fw - s * st) * sp, py + (s * fw + c * st) * sp);
+  render(); updateUI(); requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
